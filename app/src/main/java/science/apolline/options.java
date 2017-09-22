@@ -1,4 +1,4 @@
-package ioio.examples.hello;
+package science.apolline;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,6 +14,8 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import science.apolline.spirals.oscar.R;
 
 /**
  * Created by Cyril on 17/02/2017.

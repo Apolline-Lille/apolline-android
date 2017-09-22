@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Oscar</string>
+
     <string name="hello">PM sensor</string>
-    <string name="app_name">Particulate Monitor</string>
+
     <string name="mapKey">AIzaSyD04i3XxUqRZ7dAfPArm_JhmcdhPFe88uk</string>
 </resources>

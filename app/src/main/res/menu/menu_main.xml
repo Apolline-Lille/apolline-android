@@ -5,14 +5,14 @@
         android:id="@+id/refresh"
         android:icon="@drawable/ic_menu_play_clip"
         android:title="Refresh"
-        android:showAsAction="ifRoom">
+        app:showAsAction="ifRoom">
     </item>
 
     <item
         android:id="@+id/empty"
         android:title="opt"
         android:orderInCategory="101"
-        android:showAsAction="always"
+        app:showAsAction="always"
         android:icon="@drawable/ic_action_overflow">
 
         <menu>
