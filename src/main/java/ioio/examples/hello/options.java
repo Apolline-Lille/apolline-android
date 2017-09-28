@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
@@ -22,8 +24,6 @@ import android.widget.Toast;
 public class options extends ActionBarActivity implements CompoundButton.OnCheckedChangeListener {
 
     private SharedPreferences settings;
-
-
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,10 +76,6 @@ public class options extends ActionBarActivity implements CompoundButton.OnCheck
                 return false;  // Focus will change according to the actionId
             }
         });
-
-
-
-
     }
 
     @Override
@@ -95,9 +91,11 @@ public class options extends ActionBarActivity implements CompoundButton.OnCheck
             MainActivity.textPM1.setVisibility(View.VISIBLE);
             MainActivity.textPM2.setVisibility(View.VISIBLE);
             MainActivity.textPM10.setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams params = MainActivity.graph.getLayoutParams();
+            params.height = 0;
+            MainActivity.graph.setLayoutParams(params);
 
         }else{
-
             MainActivity.graph.setVisibility(View.VISIBLE);
             MainActivity.pm1.setVisibility(View.INVISIBLE);
             MainActivity.pm2.setVisibility(View.INVISIBLE);
@@ -108,20 +106,34 @@ public class options extends ActionBarActivity implements CompoundButton.OnCheck
             MainActivity.textPM1.setVisibility(View.INVISIBLE);
             MainActivity.textPM2.setVisibility(View.INVISIBLE);
             MainActivity.textPM10.setVisibility(View.INVISIBLE);
+            ViewGroup.LayoutParams params = MainActivity.graph.getLayoutParams();
+            params.height = 270*2;
+            MainActivity.graph.setLayoutParams(params);
         }
         if(MainActivity.SwitchOpt4.isChecked()){
             MainActivity.mapFragment.getView().setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams params = MainActivity.mapFragment.getView().getLayoutParams();
+            params.height = 256*2;
+            MainActivity.mapFragment.getView().setLayoutParams(params);
         }
         else {
             MainActivity.mapFragment.getView().setVisibility(View.INVISIBLE);
+            ViewGroup.LayoutParams params = MainActivity.mapFragment.getView().getLayoutParams();
+            params.height = 0;
+            MainActivity.mapFragment.getView().setLayoutParams(params);
         }
         if(MainActivity.SwitchOpt5.isChecked()){
             MainActivity.view.setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams params = MainActivity.view.getLayoutParams();
+            params.height = 320*2;
+            MainActivity.view.setLayoutParams(params);
         }
         else {
             MainActivity.view.setVisibility(View.INVISIBLE);
+            ViewGroup.LayoutParams params = MainActivity.view.getLayoutParams();
+            params.height = 0;
+            MainActivity.view.setLayoutParams(params);
         }
-
     }
 
 
@@ -150,7 +162,6 @@ public class options extends ActionBarActivity implements CompoundButton.OnCheck
         editor.putInt("Frequency",MainActivity.frequency);
         editor.putString("IDSensor",MainActivity.IDSensor);
         editor.commit();
-
     }
 
     @Override
