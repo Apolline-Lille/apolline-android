@@ -54,18 +54,18 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.text.SimpleDateFormat;
 import java.util.Set;
 
-
+import science.apolline.ioio.IOIOService;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     static LineGraphSeries<DataPoint> series;
     static LineGraphSeries<DataPoint> series2;
     static LineGraphSeries<DataPoint> series10;
     static public GoogleMap Map = null;
     static public GraphView graph;
-    static public TextView textView1;
+
     static String tempview;
     static double Lat;
     static double Long;

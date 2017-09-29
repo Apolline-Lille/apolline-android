@@ -40,7 +40,7 @@
             android:name="com.google.android.maps"
             android:required="false" />
 
-        <service android:name="science.apolline.IOIOService" />
+        <service android:name="science.apolline.ioio.IOIOService" />
         <activity
             android:label="@string/app_name"
             android:name="science.apolline.MainActivity"
