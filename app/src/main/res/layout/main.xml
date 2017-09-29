@@ -190,6 +190,7 @@
         android:layout_marginBottom="5dip"
         android:orientation="horizontal">
 
+
         <fragment
         android:id="@+id/map"
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -218,8 +219,30 @@
         android:id="@+id/webView" />
     </LinearLayout>
 
-    </LinearLayout>
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
+
+
+    </LinearLayout>
 
 
 
