@@ -2,12 +2,18 @@ package science.apolline;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -16,8 +22,13 @@ import android.support.v4.app.ActivityCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -40,8 +51,9 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.SimpleDateFormat;
+import java.util.Set;
 
-import science.apolline.spirals.oscar.R;
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,6 +105,15 @@ public class MainActivity extends Activity {
     static public EditText SensorId;
     static public String IDSensor;
     static public WebView view;
+    static public Button pieton;
+    static public Button velo;
+    static public Button voiture;
+    static public Button other;
+    static public String remarque;
+    static public EditText Remark;
+
+    private final static int REQUEST_CODE_ENABLE_BLUETOOTH = 0;
+    private Set<BluetoothDevice> devices;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,6 +151,9 @@ public class MainActivity extends Activity {
             textPM1.setVisibility(View.VISIBLE);
             textPM2.setVisibility(View.VISIBLE);
             textPM10.setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams params = MainActivity.graph.getLayoutParams();
+            params.height = 0;
+            MainActivity.graph.setLayoutParams(params);
         } else {
             graph.setVisibility(View.VISIBLE);
             pm1.setVisibility(View.INVISIBLE);
@@ -141,6 +165,9 @@ public class MainActivity extends Activity {
             textPM1.setVisibility(View.INVISIBLE);
             textPM2.setVisibility(View.INVISIBLE);
             textPM10.setVisibility(View.INVISIBLE);
+            ViewGroup.LayoutParams params = MainActivity.graph.getLayoutParams();
+            params.height = 270 * 2;
+            MainActivity.graph.setLayoutParams(params);
         }
 
         frequency = prefs.getInt("Frequency", frequency);
@@ -156,21 +183,183 @@ public class MainActivity extends Activity {
 
         if (prefs.getBoolean("Atmo", true) == true) {
             view.setVisibility(View.VISIBLE);
+            MainActivity.view.setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams params = MainActivity.view.getLayoutParams();
+            params.height = 320 * 2;
+            MainActivity.view.setLayoutParams(params);
         } else {
             view.setVisibility(View.INVISIBLE);
+            MainActivity.view.setVisibility(View.INVISIBLE);
+            ViewGroup.LayoutParams params = MainActivity.view.getLayoutParams();
+            params.height = 0;
+            MainActivity.view.setLayoutParams(params);
         }
 
         onMap();
         if (prefs.getBoolean("Maps", true) == true) {
             mapFragment.getView().setVisibility(View.VISIBLE);
+            MainActivity.mapFragment.getView().setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams params = MainActivity.mapFragment.getView().getLayoutParams();
+            params.height = 256 * 2;
+            MainActivity.mapFragment.getView().setLayoutParams(params);
         } else {
             mapFragment.getView().setVisibility(View.INVISIBLE);
+            MainActivity.mapFragment.getView().setVisibility(View.INVISIBLE);
+            ViewGroup.LayoutParams params = MainActivity.mapFragment.getView().getLayoutParams();
+            params.height = 0;
+            MainActivity.mapFragment.getView().setLayoutParams(params);
         }
 
-        //	startService(new Intent(this, IOIOService.class));
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!bluetoothAdapter.isEnabled()) {
+            Intent enableBlueTooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBlueTooth, REQUEST_CODE_ENABLE_BLUETOOTH);
+        }
+
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Toast.makeText(MainActivity.this, "Voulez-vous activer le GPS?", Toast.LENGTH_LONG).show();
+            Intent i = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(i, 1);
+        }
+
+        pieton = (Button) findViewById(R.id.button2);
+        velo = (Button) findViewById(R.id.button3);
+        voiture = (Button) findViewById(R.id.button4);
+        other = (Button) findViewById(R.id.button5);
+        pieton.setOnClickListener(myhandler1);
+        velo.setOnClickListener(myhandler2);
+        voiture.setOnClickListener(myhandler3);
+        other.setOnClickListener(myhandler4);
+
+        if (prefs.getBoolean("pieton", true) == true) {
+            pieton.setBackgroundResource(R.drawable.pieton_2);
+            remarque = "pieton";
+        } else {
+            pieton.setBackgroundResource(R.drawable.pieton);
+        }
+        if (prefs.getBoolean("velo", true) == true) {
+            velo.setBackgroundResource(R.drawable.velo_2);
+            remarque = "velo";
+        } else {
+            velo.setBackgroundResource(R.drawable.velo);
+        }
+        if (prefs.getBoolean("voiture", true) == true) {
+            voiture.setBackgroundResource(R.drawable.voiture_2);
+            remarque = "voiture";
+        } else {
+            voiture.setBackgroundResource(R.drawable.voiture);
+        }
+        other.setBackgroundResource(R.drawable.other);
+        SharedPreferences.Editor editor = getSharedPreferences(MainActivity.MY_PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putBoolean("other", false);
+        editor.commit();
+
+        Remark = (EditText) findViewById(R.id.editText2);
+        Remark.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    remarque = v.getText().toString();
+                    other.setVisibility(View.VISIBLE);
+                    Remark.setVisibility(View.INVISIBLE);
+                    Toast.makeText(MainActivity.this, "Votre remarque:" + remarque, Toast.LENGTH_LONG).show();
+                    return true; // Focus will do whatever you put in the logic.
+                }
+                return false;  // Focus will change according to the actionId
+            }
+        });
+
+
+        startService(new Intent(this, IOIOService.class));
 
     }
 
+
+    View.OnClickListener myhandler1 = new View.OnClickListener() {
+        public void onClick(View v) {
+            Toast.makeText(MainActivity.this, "En marche!", Toast.LENGTH_LONG).show();
+            SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+            SharedPreferences.Editor editor = getSharedPreferences(MainActivity.MY_PREFS_NAME, MODE_PRIVATE).edit();
+            if (prefs.getBoolean("pieton", true) == false) {
+                editor.putBoolean("pieton", true);
+                editor.putBoolean("velo", false);
+                editor.putBoolean("voiture", false);
+                editor.putBoolean("other", false);
+                pieton.setBackgroundResource(R.drawable.pieton_2);
+                velo.setBackgroundResource(R.drawable.velo);
+                voiture.setBackgroundResource(R.drawable.voiture);
+                other.setBackgroundResource(R.drawable.other);
+                editor.commit();
+                remarque = "pieton";
+            }
+        }
+    };
+
+    View.OnClickListener myhandler2 = new View.OnClickListener() {
+        public void onClick(View v) {
+            Toast.makeText(MainActivity.this, "Ca roule!", Toast.LENGTH_LONG).show();
+            SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+            SharedPreferences.Editor editor = getSharedPreferences(MainActivity.MY_PREFS_NAME, MODE_PRIVATE).edit();
+            if (prefs.getBoolean("velo", true) == false) {
+                editor.putBoolean("velo", true);
+                editor.putBoolean("pieton", false);
+                editor.putBoolean("voiture", false);
+                editor.putBoolean("other", false);
+                velo.setBackgroundResource(R.drawable.velo_2);
+                pieton.setBackgroundResource(R.drawable.pieton);
+                voiture.setBackgroundResource(R.drawable.voiture);
+                other.setBackgroundResource(R.drawable.other);
+                editor.commit();
+                remarque = "velo";
+            }
+        }
+    };
+
+    View.OnClickListener myhandler3 = new View.OnClickListener() {
+        public void onClick(View v) {
+            Toast.makeText(MainActivity.this, "Pas de sport aujourd'hui?", Toast.LENGTH_LONG).show();
+            SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+            SharedPreferences.Editor editor = getSharedPreferences(MainActivity.MY_PREFS_NAME, MODE_PRIVATE).edit();
+            if (prefs.getBoolean("voiture", true) == false) {
+                editor.putBoolean("voiture", true);
+                editor.putBoolean("pieton", false);
+                editor.putBoolean("velo", false);
+                editor.putBoolean("other", false);
+                voiture.setBackgroundResource(R.drawable.voiture_2);
+                pieton.setBackgroundResource(R.drawable.pieton);
+                velo.setBackgroundResource(R.drawable.velo);
+                other.setBackgroundResource(R.drawable.other);
+                editor.commit();
+                remarque = "voiture";
+            }
+        }
+    };
+
+    View.OnClickListener myhandler4 = new View.OnClickListener() {
+        public void onClick(View v) {
+            Toast.makeText(MainActivity.this, "Une remarque?", Toast.LENGTH_LONG).show();
+            SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+            SharedPreferences.Editor editor = getSharedPreferences(MainActivity.MY_PREFS_NAME, MODE_PRIVATE).edit();
+            if (prefs.getBoolean("other", true) == false) {
+                editor.putBoolean("other", true);
+                editor.putBoolean("pieton", false);
+                editor.putBoolean("velo", false);
+                editor.putBoolean("voiture", false);
+                other.setBackgroundResource(R.drawable.other_2);
+                pieton.setBackgroundResource(R.drawable.pieton);
+                velo.setBackgroundResource(R.drawable.velo);
+                voiture.setBackgroundResource(R.drawable.voiture);
+                editor.commit();
+            }
+            other.setVisibility(View.INVISIBLE);
+            Remark.setVisibility(View.VISIBLE);
+            final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+    };
 
     // Menu icons are inflated just as they were with actionbar
     @Override

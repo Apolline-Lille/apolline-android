@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 
-    package="science.apolline.spirals.oscar">
+    package="science.apolline">
 
 
     <uses-permission android:name="android.permission.READ_CALENDAR" />
@@ -40,10 +40,10 @@
             android:name="com.google.android.maps"
             android:required="false" />
 
-        <service android:name="science.apolline.spirals.oscar.science.apolline.IOIOService" />
+        <service android:name="science.apolline.IOIOService" />
         <activity
             android:label="@string/app_name"
-            android:name="science.apolline.spirals.oscar.science.apolline.MainActivity"
+            android:name="science.apolline.MainActivity"
             android:configChanges="orientation|screenSize"
             android:launchMode="singleTask">
             <intent-filter>
@@ -61,33 +61,33 @@
         <activity
             android:windowSoftInputMode="stateHidden"
             android:label="options"
-            android:name="science.apolline.spirals.oscar.science.apolline.options"
+            android:name="science.apolline.options"
             android:theme="@style/Theme.AppCompat"
-            android:parentActivityName="science.apolline.spirals.oscar.science.apolline.MainActivity">
+            android:parentActivityName="science.apolline.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="science.apolline.spirals.oscar.science.apolline.MainActivity" />
+                android:value="science.apolline.MainActivity" />
         </activity>
 
         <activity
             android:label="informations"
-            android:name="science.apolline.spirals.oscar.science.apolline.informations"
+            android:name="science.apolline.informations"
             android:theme="@style/Theme.AppCompat"
-            android:parentActivityName="science.apolline.spirals.oscar.science.apolline.MainActivity">
+            android:parentActivityName="science.apolline.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="science.apolline.spirals.oscar.science.apolline.MainActivity" />
+                android:value="science.apolline.MainActivity" />
 
         </activity>
 
         <activity
             android:label="contact"
-            android:name="science.apolline.spirals.oscar.science.apolline.contact"
+            android:name="science.apolline.contact"
             android:theme="@style/Theme.AppCompat"
-            android:parentActivityName="science.apolline.spirals.oscar.science.apolline.MainActivity">
+            android:parentActivityName="science.apolline.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="science.apolline.spirals.oscar.science.apolline.MainActivity" />
+                android:value="science.apolline.MainActivity" />
 
         </activity>
 

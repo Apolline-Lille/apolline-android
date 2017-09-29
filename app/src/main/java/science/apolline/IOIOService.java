@@ -41,7 +41,6 @@ import ioio.lib.api.Uart;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
-import science.apolline.spirals.oscar.R;
 
 
 public class IOIOService extends ioio.lib.util.android.IOIOService {
@@ -173,7 +172,7 @@ public class IOIOService extends ioio.lib.util.android.IOIOService {
                                                                     .setContentIntent(pendingIntent);
                                                             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                                             Notification notification = builder.getNotification();
-                                                            notification.vibrate = new long[]{0, 200, 0};
+//                                                            notification.vibrate = new long[]{0, 200, 0};
                                                             notificationManager.notify(R.drawable.logoandroidpng, notification);
                                                         }
                                                     }
@@ -276,13 +275,14 @@ public class IOIOService extends ioio.lib.util.android.IOIOService {
                                                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss\t");
                                                     String data = "";
                                                     if (myFile.exists() == false) {
-                                                        data += "#Fichier des données brutes issues du capteur de poussières SEN0177\r\n#Format:\r\n#AA-MM-JJ hh:mm:ss\tPM1.0;PM2.5;PM10(ug/m3)\tAbove PM0.3;PM0.5;PM1;PM2.5;PM5;PM10(ug/m3)\tLatitude;Longitude;Température;Humidité\r\n";
+                                                        data += "#Fichier des données brutes issues du capteur de poussières SEN0177\r\n#Format:\r\n#AA-MM-JJ hh:mm:ss\tPM1.0;PM2.5;PM10(ug/m3)\tAbove PM0.3;PM0.5;PM1;PM2.5;PM5;PM10(ug/m3)\tLatitude;Longitude;Température;Humidité\tRemarques\r\n";
                                                     }
 
                                                     data += simpleDateFormat.format(d1);
                                                     data += Integer.toString(MainActivity.PM01Value) + ";" + Integer.toString(MainActivity.PM2_5Value) + ";" + Integer.toString(MainActivity.PM10Value) + "\t";
                                                     data += Integer.toString(MainActivity.PM0_3Above) + ";" + Integer.toString(MainActivity.PM0_5Above) + ";" + Integer.toString(MainActivity.PM1Above) + ";" + Integer.toString(MainActivity.PM2_5Above) + ";" + Integer.toString(MainActivity.PM5Above) + ";" + Integer.toString(MainActivity.PM10Above) + "\t";
-                                                    data += String.format("%.05f", MainActivity.Lat) + ";" + String.format("%.05f", MainActivity.Long) + ";" + String.format("%.02f", temperature) + ";" + String.format("%.02f", RHT) + "\r\n";
+                                                    data += String.format("%.05f", MainActivity.Lat) + ";" + String.format("%.05f", MainActivity.Long) + ";" + String.format("%.02f", temperature) + ";" + String.format("%.02f", RHT) + "\t";
+                                                    data += MainActivity.remarque + "\r\n";
 
                                                     FileOutputStream output = new FileOutputStream(myFile, true); //le true est pour écrire en fin de fichier, et non l'écraser
                                                     output.write(data.getBytes());

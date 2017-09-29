@@ -3,7 +3,6 @@ package science.apolline;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import science.apolline.spirals.oscar.R;
 
 /**
  * Created by Cyril on 17/02/2017.
