@@ -3,10 +3,8 @@ package science.apolline;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
@@ -22,56 +20,67 @@ import android.widget.Toast;
  * Created by Cyril on 17/02/2017.
  */
 
-public class options extends ActionBarActivity implements CompoundButton.OnCheckedChangeListener {
+public class options extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
-    private SharedPreferences settings;
+    private SharedPreferences prefs;
+
+    private Switch swChart;
+    private Switch swTemperature;
+    private Switch swTracking;
+    private Switch swMaps;
+    private Switch swAtmo;
+    private SeekBar sbFrequency;
+    private EditText etSensorId;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.options);
 
-        MainActivity.SwitchOpt1 = (Switch) findViewById(R.id.switch2);
-        MainActivity.SwitchOpt1.setOnCheckedChangeListener(this);
-        MainActivity.SwitchOpt2 = (Switch) findViewById(R.id.switch3);
-        MainActivity.SwitchOpt2.setOnCheckedChangeListener(this);
-        MainActivity.SwitchOpt3 = (Switch) findViewById(R.id.switch4);
-        MainActivity.SwitchOpt3.setOnCheckedChangeListener(this);
-        MainActivity.SwitchOpt4 = (Switch) findViewById(R.id.switch5);
-        MainActivity.SwitchOpt4.setOnCheckedChangeListener(this);
-        MainActivity.SwitchOpt5 = (Switch) findViewById(R.id.switch6);
-        MainActivity.SwitchOpt5.setOnCheckedChangeListener(this);
-        MainActivity.simpleSeekBar = (SeekBar) findViewById(R.id.simpleSeekBar);
-        MainActivity.SensorId = (EditText) findViewById(R.id.editText);
+        prefs = getApplicationContext().getSharedPreferences(MainActivity.MY_PREFS_NAME,MODE_PRIVATE);
+
+        swChart = (Switch) findViewById(R.id.opt_sw_chart_types);
+        swChart.setOnCheckedChangeListener(this);
+        swTemperature = (Switch) findViewById(R.id.opt_sw_temp);
+        swTemperature.setOnCheckedChangeListener(this);
+        swTracking = (Switch) findViewById(R.id.opt_sw_auto_tracking);
+        swTracking.setOnCheckedChangeListener(this);
+        swMaps = (Switch) findViewById(R.id.opt_sw_maps);
+        swMaps.setOnCheckedChangeListener(this);
+        swAtmo = (Switch) findViewById(R.id.opt_sw_ATMO);
+        swAtmo.setOnCheckedChangeListener(this);
+
+        sbFrequency = (SeekBar) findViewById(R.id.opt_sb_frequency);
+
+        etSensorId = (EditText) findViewById(R.id.opt_et_sensor_id);
 
         // perform seek bar change listener event used for getting the progress value
-        MainActivity.simpleSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
+        sbFrequency.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                MainActivity.frequency = progress + 1;
-            }
 
+            }
             public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
 
+            }
             public void onStopTrackingTouch(SeekBar seekBar) {
-                final SeekBar.OnSeekBarChangeListener context = this;
-                Toast.makeText(options.this, "Enregistrement toute les :" + MainActivity.frequency + "s",
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putInt("Frequency", seekBar.getProgress());
+                Toast.makeText(getApplicationContext(), "Enregistrement toute les :" + seekBar.getProgress() + "s",
                         Toast.LENGTH_SHORT).show();
+                editor.apply();
             }
         });
 
         // getting the id sensor value (EditText)
-        MainActivity.SensorId.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        etSensorId.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-
+                    SharedPreferences.Editor editor = prefs.edit();
                     InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    MainActivity.IDSensor = v.getText().toString();
-
+                    editor.putString("IDSensor", v.getText().toString());
+                    editor.apply();
                     return true; // Focus will do whatever you put in the logic.
                 }
                 return false;  // Focus will change according to the actionId
@@ -83,87 +92,102 @@ public class options extends ActionBarActivity implements CompoundButton.OnCheck
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (MainActivity.SwitchOpt1.isChecked()) {
-            MainActivity.graph.setVisibility(View.INVISIBLE);
-            MainActivity.pm1.setVisibility(View.VISIBLE);
-            MainActivity.pm2.setVisibility(View.VISIBLE);
-            MainActivity.pm10.setVisibility(View.VISIBLE);
-            MainActivity.textViewPM1.setVisibility(View.VISIBLE);
-            MainActivity.textViewPM2.setVisibility(View.VISIBLE);
-            MainActivity.textViewPM10.setVisibility(View.VISIBLE);
-            MainActivity.textPM1.setVisibility(View.VISIBLE);
-            MainActivity.textPM2.setVisibility(View.VISIBLE);
-            MainActivity.textPM10.setVisibility(View.VISIBLE);
-            ViewGroup.LayoutParams params = MainActivity.graph.getLayoutParams();
-            params.height = 0;
-            MainActivity.graph.setLayoutParams(params);
-        } else {
 
-            MainActivity.graph.setVisibility(View.VISIBLE);
-            MainActivity.pm1.setVisibility(View.INVISIBLE);
-            MainActivity.pm2.setVisibility(View.INVISIBLE);
-            MainActivity.pm10.setVisibility(View.INVISIBLE);
-            MainActivity.textViewPM1.setVisibility(View.INVISIBLE);
-            MainActivity.textViewPM2.setVisibility(View.INVISIBLE);
-            MainActivity.textViewPM10.setVisibility(View.INVISIBLE);
-            MainActivity.textPM1.setVisibility(View.INVISIBLE);
-            MainActivity.textPM2.setVisibility(View.INVISIBLE);
-            MainActivity.textPM10.setVisibility(View.INVISIBLE);
-            ViewGroup.LayoutParams params = MainActivity.graph.getLayoutParams();
-            params.height = 270 * 2;
-            MainActivity.graph.setLayoutParams(params);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        if(buttonView==swAtmo){
+            editor.putBoolean("Atmo", isChecked);
+        }else if(buttonView==swTracking){
+            editor.putBoolean("Tracking", isChecked);
+        }else if(buttonView==swMaps){
+            editor.putBoolean("Maps", isChecked);
+        }else if(buttonView==swTemperature){
+            editor.putBoolean("Temperature", isChecked);
+        }else if(buttonView==swChart){
+            editor.putBoolean("swChart", isChecked);
         }
-        if (MainActivity.SwitchOpt4.isChecked()) {
-            MainActivity.mapFragment.getView().setVisibility(View.VISIBLE);
-            ViewGroup.LayoutParams params = MainActivity.mapFragment.getView().getLayoutParams();
-            params.height = 256 * 2;
-            MainActivity.mapFragment.getView().setLayoutParams(params);
-        } else {
-            MainActivity.mapFragment.getView().setVisibility(View.INVISIBLE);
-            ViewGroup.LayoutParams params = MainActivity.mapFragment.getView().getLayoutParams();
-            params.height = 0;
-            MainActivity.mapFragment.getView().setLayoutParams(params);
-        }
-        if (MainActivity.SwitchOpt5.isChecked()) {
-            MainActivity.view.setVisibility(View.VISIBLE);
-            ViewGroup.LayoutParams params = MainActivity.view.getLayoutParams();
-            params.height = 320 * 2;
-            MainActivity.view.setLayoutParams(params);
-        } else {
-            MainActivity.view.setVisibility(View.INVISIBLE);
-            ViewGroup.LayoutParams params = MainActivity.view.getLayoutParams();
-            params.height = 0;
-            MainActivity.view.setLayoutParams(params);
-        }
+
+        editor.apply();
+//        if (swChart.isChecked()) {
+//            graph.setVisibility(View.INVISIBLE);
+//            pm1.setVisibility(View.VISIBLE);
+//            pm2.setVisibility(View.VISIBLE);
+//            pm10.setVisibility(View.VISIBLE);
+//            textViewPM1.setVisibility(View.VISIBLE);
+//            textViewPM2.setVisibility(View.VISIBLE);
+//            textViewPM10.setVisibility(View.VISIBLE);
+//            textPM1.setVisibility(View.VISIBLE);
+//            textPM2.setVisibility(View.VISIBLE);
+//            textPM10.setVisibility(View.VISIBLE);
+//            ViewGroup.LayoutParams params = graph.getLayoutParams();
+//            params.height = 0;
+//            graph.setLayoutParams(params);
+//        } else {
+//
+//            graph.setVisibility(View.VISIBLE);
+//            pm1.setVisibility(View.INVISIBLE);
+//            pm2.setVisibility(View.INVISIBLE);
+//            pm10.setVisibility(View.INVISIBLE);
+//            textViewPM1.setVisibility(View.INVISIBLE);
+//            textViewPM2.setVisibility(View.INVISIBLE);
+//            textViewPM10.setVisibility(View.INVISIBLE);
+//            textPM1.setVisibility(View.INVISIBLE);
+//            textPM2.setVisibility(View.INVISIBLE);
+//            textPM10.setVisibility(View.INVISIBLE);
+//            ViewGroup.LayoutParams params = graph.getLayoutParams();
+//            params.height = 270 * 2;
+//            graph.setLayoutParams(params);
+//        }
+//        if (swMaps.isChecked()) {
+//            mapFragment.getView().setVisibility(View.VISIBLE);
+//            ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
+//            params.height = 256 * 2;
+//            mapFragment.getView().setLayoutParams(params);
+//        } else {
+//            mapFragment.getView().setVisibility(View.INVISIBLE);
+//            ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
+//            params.height = 0;
+//            mapFragment.getView().setLayoutParams(params);
+//        }
+//        if (swAtmo.isChecked()) {
+//            view.setVisibility(View.VISIBLE);
+//            ViewGroup.LayoutParams params = view.getLayoutParams();
+//            params.height = 320 * 2;
+//            view.setLayoutParams(params);
+//        } else {
+//            view.setVisibility(View.INVISIBLE);
+//            ViewGroup.LayoutParams params = view.getLayoutParams();
+//            params.height = 0;
+//            view.setLayoutParams(params);
+//        }
     }
 
 
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
-        SharedPreferences prefs = getSharedPreferences(MainActivity.MY_PREFS_NAME, MODE_PRIVATE);
-        MainActivity.SwitchOpt1.setChecked(prefs.getBoolean("chart", true));
-        MainActivity.SwitchOpt2.setChecked(prefs.getBoolean("Temperature", true));
-        MainActivity.SwitchOpt3.setChecked(prefs.getBoolean("Tracking", true));
-        MainActivity.SwitchOpt4.setChecked(prefs.getBoolean("Maps", true));
-        MainActivity.SwitchOpt5.setChecked(prefs.getBoolean("Atmo", true));
-        MainActivity.simpleSeekBar.setProgress(prefs.getInt("Frequency", MainActivity.frequency));
-        MainActivity.SensorId.setText(prefs.getString("IDSensor", MainActivity.IDSensor));
+        prefs=getApplicationContext().getSharedPreferences(MainActivity.MY_PREFS_NAME,MODE_PRIVATE);
+        swChart.setChecked(prefs.getBoolean("swChart", true));
+        swTemperature.setChecked(prefs.getBoolean("Temperature", true));
+        swTracking.setChecked(prefs.getBoolean("Tracking", true));
+        swMaps.setChecked(prefs.getBoolean("Maps", true));
+        swAtmo.setChecked(prefs.getBoolean("Atmo", true));
+        sbFrequency.setProgress(prefs.getInt("Frequency", 60));
+        etSensorId.setText(prefs.getString("IDSensor", getResources().getString(R.string.opt_sensor_id_default)));
     }
 
     @Override
     public void onPause() {
         super.onPause();  // Always call the superclass method first
-        SharedPreferences.Editor editor = getSharedPreferences(MainActivity.MY_PREFS_NAME, MODE_PRIVATE).edit();
-        editor.putBoolean("chart", MainActivity.SwitchOpt1.isChecked());
-        editor.putBoolean("Temperature", MainActivity.SwitchOpt2.isChecked());
-        editor.putBoolean("Tracking", MainActivity.SwitchOpt3.isChecked());
-        editor.putBoolean("Maps", MainActivity.SwitchOpt4.isChecked());
-        editor.putBoolean("Atmo", MainActivity.SwitchOpt5.isChecked());
-        editor.putInt("Frequency", MainActivity.frequency);
-        editor.putString("IDSensor", MainActivity.IDSensor);
-        editor.commit();
-
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("swChart", swChart.isChecked());
+        editor.putBoolean("Temperature", swTemperature.isChecked());
+        editor.putBoolean("Tracking", swTracking.isChecked());
+        editor.putBoolean("Maps", swMaps.isChecked());
+        editor.putBoolean("Atmo", swAtmo.isChecked());
+        editor.putInt("Frequency", sbFrequency.getProgress());
+        editor.putString("IDSensor", etSensorId.getText().toString());
+        editor.apply();
     }
 
     @Override

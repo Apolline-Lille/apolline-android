@@ -1,7 +1,25 @@
 <resources>
-    <string name="app_name">Oscar</string>
+    <string name="app_name">Apolline</string>
 
     <string name="hello">PM sensor</string>
 
     <string name="mapKey">AIzaSyD04i3XxUqRZ7dAfPArm_JhmcdhPFe88uk</string>
+    <string name="opt_chart_types_title">Chart types:</string>
+    <string name="opt_chart_type_curve">Curve</string>
+    <string name="opt_chart_type_bar">Bar</string>
+    <string name="opt_temp_title">Temperatures:</string>
+    <string name="opt_temp_celsius">Degree Celsius</string>
+    <string name="opt_temp_kelvin">Degree Kelvin</string>
+    <string name="opt_maps_title">Maps:</string>
+    <string name="opt_maps_off">Off</string>
+    <string name="opt_maps_on">On</string>
+    <string name="opt_auto_tracking_title">Auto-tracking:</string>
+    <string name="opt_auto_tracking_off">Off</string>
+    <string name="opt_auto_tracking_on">On</string>
+    <string name="opt_frequency_title">Frequency of recording:</string>
+    <string name="opt_sensor_id_title">Sensor id:</string>
+    <string name="opt_sensor_id_default">SEN001</string>
+    <string name="opt_ATMO_title">Data ATMO:</string>
+    <string name="opt_ATMO_off">Off</string>
+    <string name="opt_ATMO_on">On</string>
 </resources>

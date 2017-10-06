@@ -55,6 +55,9 @@ import science.apolline.ioio.IOIOService;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 public class MainActivity extends AppCompatActivity {
 
+    //shared pref name
+    public static final String MY_PREFS_NAME = "MyPrefsFile";
+
     static LineGraphSeries<DataPoint> series;
     static LineGraphSeries<DataPoint> series2;
     static LineGraphSeries<DataPoint> series10;
@@ -92,15 +95,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView textPM1;
     private TextView textPM2;
     private TextView textPM10;
-    private Switch SwitchOpt1;
-    private Switch SwitchOpt2;
-    private Switch SwitchOpt3;
-    private Switch SwitchOpt4;
-    private Switch SwitchOpt5;
-    private final String MY_PREFS_NAME = "MyPrefsFile";
-    private SeekBar simpleSeekBar;
+
     private int frequency;
-    private EditText SensorId;
     private String IDSensor;
     private WebView view;
     private Button pieton;
@@ -138,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         textPM10 = (TextView) findViewById(R.id.PM10);
 
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        if (prefs.getBoolean("chart", true) == true) {
+        if (prefs.getBoolean("chart", true)) {
             graph.setVisibility(View.INVISIBLE);
             pm1.setVisibility(View.VISIBLE);
             pm2.setVisibility(View.VISIBLE);
@@ -179,14 +175,12 @@ public class MainActivity extends AppCompatActivity {
         view.getSettings().setJavaScriptEnabled(true);
         view.loadDataWithBaseURL("", url, "text/html", "UTF-8", "");
 
-        if (prefs.getBoolean("Atmo", true) == true) {
-            view.setVisibility(View.VISIBLE);
+        if (prefs.getBoolean("Atmo", true)) {
             view.setVisibility(View.VISIBLE);
             ViewGroup.LayoutParams params = view.getLayoutParams();
             params.height = 320 * 2;
             view.setLayoutParams(params);
         } else {
-            view.setVisibility(View.INVISIBLE);
             view.setVisibility(View.INVISIBLE);
             ViewGroup.LayoutParams params = view.getLayoutParams();
             params.height = 0;
@@ -194,14 +188,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         onMap();
-        if (prefs.getBoolean("Maps", true) == true) {
-            mapFragment.getView().setVisibility(View.VISIBLE);
+        if (prefs.getBoolean("Maps", true)) {
             mapFragment.getView().setVisibility(View.VISIBLE);
             ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
             params.height = 256 * 2;
             mapFragment.getView().setLayoutParams(params);
         } else {
-            mapFragment.getView().setVisibility(View.INVISIBLE);
             mapFragment.getView().setVisibility(View.INVISIBLE);
             ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
             params.height = 0;
@@ -230,19 +222,19 @@ public class MainActivity extends AppCompatActivity {
         voiture.setOnClickListener(myhandler3);
         other.setOnClickListener(myhandler4);
 
-        if (prefs.getBoolean("pieton", true) == true) {
+        if (prefs.getBoolean("pieton", true)) {
             pieton.setBackgroundResource(R.drawable.ic_directions_run_white_48dp);
             remarque = "pieton";
         } else {
             pieton.setBackgroundResource(R.drawable.ic_directions_run_black_48dp);
         }
-        if (prefs.getBoolean("velo", true) == true) {
+        if (prefs.getBoolean("velo", true)) {
             velo.setBackgroundResource(R.drawable.ic_directions_bike_white_48dp);
             remarque = "velo";
         } else {
             velo.setBackgroundResource(R.drawable.ic_directions_bike_black_48dp);
         }
-        if (prefs.getBoolean("voiture", true) == true) {
+        if (prefs.getBoolean("voiture", true)) {
             voiture.setBackgroundResource(R.drawable.ic_directions_car_white_48dp);
             remarque = "voiture";
         } else {
@@ -251,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
         other.setBackgroundResource(R.drawable.ic_navigation_black_24dp);
         SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
         editor.putBoolean("other", false);
-        editor.commit();
+        editor.apply();
 
         Remark = (EditText) findViewById(R.id.editText2);
         Remark.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -281,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "En marche!", Toast.LENGTH_LONG).show();
             SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-            if (prefs.getBoolean("pieton", true) == false) {
+            if (prefs.getBoolean("pieton", true)) {
                 editor.putBoolean("pieton", true);
                 editor.putBoolean("velo", false);
                 editor.putBoolean("voiture", false);
@@ -290,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
                 velo.setBackgroundResource(R.drawable.ic_directions_bike_black_48dp);
                 voiture.setBackgroundResource(R.drawable.ic_directions_car_black_48dp);
                 other.setBackgroundResource(R.drawable.ic_navigation_black_24dp);
-                editor.commit();
+                editor.apply();
                 remarque = "pieton";
             }
         }
@@ -301,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Ca roule!", Toast.LENGTH_LONG).show();
             SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-            if (prefs.getBoolean("velo", true) == false) {
+            if (prefs.getBoolean("velo", true)) {
                 editor.putBoolean("velo", true);
                 editor.putBoolean("pieton", false);
                 editor.putBoolean("voiture", false);
@@ -310,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
                 pieton.setBackgroundResource(R.drawable.ic_directions_run_black_48dp);
                 voiture.setBackgroundResource(R.drawable.ic_directions_car_black_48dp);
                 other.setBackgroundResource(R.drawable.ic_navigation_black_24dp);
-                editor.commit();
+                editor.apply();
                 remarque = "velo";
             }
         }
@@ -321,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Pas de sport aujourd'hui?", Toast.LENGTH_LONG).show();
             SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-            if (prefs.getBoolean("voiture", true) == false) {
+            if (prefs.getBoolean("voiture", true)) {
                 editor.putBoolean("voiture", true);
                 editor.putBoolean("pieton", false);
                 editor.putBoolean("velo", false);
@@ -330,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
                 pieton.setBackgroundResource(R.drawable.ic_directions_run_black_48dp);
                 velo.setBackgroundResource(R.drawable.ic_directions_bike_black_48dp);
                 other.setBackgroundResource(R.drawable.ic_navigation_black_24dp);
-                editor.commit();
+                editor.apply();
                 remarque = "voiture";
             }
         }
@@ -341,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Une remarque?", Toast.LENGTH_LONG).show();
             SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-            if (prefs.getBoolean("other", true) == false) {
+            if (prefs.getBoolean("other", true)) {
                 editor.putBoolean("other", true);
                 editor.putBoolean("pieton", false);
                 editor.putBoolean("velo", false);
@@ -350,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
                 pieton.setBackgroundResource(R.drawable.ic_directions_run_black_48dp);
                 velo.setBackgroundResource(R.drawable.ic_directions_bike_black_48dp);
                 voiture.setBackgroundResource(R.drawable.ic_directions_car_black_48dp);
-                editor.commit();
+                editor.apply();
             }
             other.setVisibility(View.INVISIBLE);
             Remark.setVisibility(View.VISIBLE);

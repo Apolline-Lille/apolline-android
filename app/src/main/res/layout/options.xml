@@ -1,250 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:weightSum="1">
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dip"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:paddingLeft="20dp"
-                android:text="Chart types:"
-                android:textSize="18sp" />
-        </LinearLayout>
-
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/opt_chart_types_title"
+            android:textSize="18sp" />
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="1">
-
             <TextView
                 android:id="@+id/textView2"
-                android:layout_width="115dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.72"
+                android:layout_weight="0.5"
                 android:gravity="center"
-                android:text="Curve" />
-
+                android:text="@string/opt_chart_type_curve" />
             <Switch
-                android:id="@+id/switch2"
+                android:id="@+id/opt_sw_chart_types"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:autoText="false" />
-
+                android:checked="false" />
             <TextView
                 android:id="@+id/textView3"
-                android:layout_width="115dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.5"
                 android:gravity="center"
-                android:text="Bar" />
-
+                android:text="@string/opt_chart_type_bar" />
         </LinearLayout>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1" />
 
         <View
-            android:id="@+id/view"
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#FF909090" />
+            android:layout_marginTop="10dp"
+            android:layout_height="1dp"
+            android:background="#FF909090"/>
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dip"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:paddingLeft="20dp"
-                android:text="Temperatures:"
-                android:textSize="18sp" />
-
-        </LinearLayout>
-
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/opt_temp_title"
+            android:textSize="18sp" />
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="1">
-
             <TextView
                 android:id="@+id/textView7"
-                android:layout_width="115dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.72"
+                android:layout_weight="0.5"
                 android:gravity="center"
-                android:text="Degré" />
-
+                android:text="@string/opt_temp_celsius" />
             <Switch
-                android:id="@+id/switch3"
+                android:id="@+id/opt_sw_temp"
                 android:layout_width="50dp"
-                android:layout_height="wrap_content" />
-
+                android:layout_height="wrap_content"
+                android:checked="false"/>
             <TextView
                 android:id="@+id/textView8"
-                android:layout_width="115dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Kelvin" />
-
+                android:layout_weight="0.5"
+                android:text="@string/opt_temp_kelvin" />
         </LinearLayout>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1" />
 
         <View
-            android:id="@+id/view2"
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#FF909090" />
+            android:layout_marginTop="10dp"
+            android:layout_height="1dp"
+            android:background="#FF909090"/>
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:paddingLeft="20dp"
-                android:text="Maps:"
-                android:textSize="18sp" />
-
-        </LinearLayout>
-
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/opt_maps_title"
+            android:textSize="18sp" />
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="1">
-
             <TextView
                 android:id="@+id/textView14"
-                android:layout_width="115dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.72"
+                android:layout_weight="0.5"
                 android:gravity="center"
-                android:text="Off" />
-
+                android:text="@string/opt_maps_off" />
             <Switch
-                android:id="@+id/switch5"
+                android:id="@+id/opt_sw_maps"
                 android:layout_width="50dp"
-                android:layout_height="wrap_content" />
-
-
+                android:layout_height="wrap_content"
+                android:checked="false"/>
             <TextView
                 android:id="@+id/textView16"
-                android:layout_width="115dp"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="On" />
-
+                android:text="@string/opt_maps_on" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dip"
-            android:orientation="horizontal">
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_height="1dp"
+            android:background="#FF909090"/>
 
-            <TextView
-                android:id="@+id/textView9"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:paddingLeft="20dp"
-                android:text="Auto-tracking:"
-                android:textSize="18sp" />
-        </LinearLayout>
-
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/opt_auto_tracking_title"
+            android:textSize="18sp" />
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="1">
-
             <TextView
                 android:id="@+id/textView10"
-                android:layout_width="115dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.72"
+                android:layout_weight="0.5"
                 android:gravity="center"
-                android:text="Off" />
-
+                android:text="@string/opt_auto_tracking_off" />
             <Switch
-                android:id="@+id/switch4"
+                android:id="@+id/opt_sw_auto_tracking"
                 android:layout_width="50dp"
-                android:layout_height="wrap_content" />
-
-
+                android:layout_height="wrap_content"
+                android:checked="false"/>
             <TextView
                 android:id="@+id/textView11"
-                android:layout_width="115dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.5"
                 android:gravity="center"
-                android:text="On" />
-
+                android:text="@string/opt_auto_tracking_on" />
         </LinearLayout>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1" />
 
         <View
-            android:id="@+id/view3"
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#FF909090" />
+            android:layout_marginTop="10dp"
+            android:layout_height="1dp"
+            android:background="#FF909090"/>
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dip"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView12"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:paddingLeft="20dp"
-                android:text="Frequency of recording:"
-                android:textSize="18sp" />
-        </LinearLayout>
-
-
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/opt_frequency_title"
+            android:textSize="18sp" />
         <SeekBar
-            android:id="@+id/simpleSeekBar"
+            android:id="@+id/opt_sb_frequency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
@@ -254,119 +192,77 @@
             android:paddingRight="60dp"
             android:progress="60" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1" />
-
         <View
-            android:id="@+id/view4"
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#FF909090" />
+            android:layout_marginTop="10dp"
+            android:layout_height="1dp"
+            android:background="#FF909090"/>
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dip"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView13"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:paddingLeft="20dp"
-                android:text="Sensor id:"
-                android:textSize="18sp" />
-        </LinearLayout>
-
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/opt_sensor_id_title"
+            android:textSize="18sp" />
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/opt_et_sensor_id"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="80dp"
+            android:layout_marginStart="80dp"
             android:ems="10"
             android:imeOptions="actionDone"
             android:inputType="text"
-            android:text="SEN001" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.1" />
+            android:text="@string/opt_sensor_id_default" />
 
         <View
-            android:id="@+id/view5"
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#FF909090" />
+            android:layout_marginTop="10dp"
+            android:layout_height="1dp"
+            android:background="#FF909090"/>
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dip"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView19"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:paddingLeft="20dp"
-                android:text="Data ATMO:"
-                android:textSize="18sp" />
-        </LinearLayout>
-
+        <TextView
+            android:id="@+id/textView19"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/opt_ATMO_title"
+            android:textSize="18sp" />
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="1">
-
             <TextView
                 android:id="@+id/textView17"
-                android:layout_width="115dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.72"
+                android:layout_weight="0.5"
                 android:gravity="center"
-                android:text="Off" />
-
+                android:text="@string/opt_ATMO_off" />
             <Switch
-                android:id="@+id/switch6"
+                android:id="@+id/opt_sw_ATMO"
                 android:layout_width="50dp"
-                android:layout_height="wrap_content" />
-
-
+                android:layout_height="wrap_content"
+                android:checked="false"/>
             <TextView
                 android:id="@+id/textView18"
-                android:layout_width="115dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.5"
                 android:gravity="center"
-                android:text="On" />
-
+                android:text="@string/opt_ATMO_on" />
         </LinearLayout>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.72" />
-
         <View
-            android:id="@+id/view6"
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="0.72"
-            android:background="#FF909090" />
-
+            android:layout_marginTop="10dp"
+            android:layout_height="1dp"
+            android:background="#FF909090"/>
     </LinearLayout>
 
 </ScrollView>
