@@ -31,7 +31,7 @@ public class InfluxDBManager {
     public InfluxDB configInfluxDB(String dbName, String dbUrlPort, String dbUser, String dbPassword) {
 
         InfluxDB influxDB = InfluxDBFactory.connect(dbUrlPort, dbUser, dbPassword);
-        influxDB.setLogLevel(InfluxDB.LogLevel.FULL);
+        influxDB.setLogLevel(InfluxDB.LogLevel.NONE);
         influxDB.setConsistency(InfluxDB.ConsistencyLevel.QUORUM);
         // influxDB.createDatabase(dbName);
         // Flush every 2000 Points, at least every 100ms
@@ -41,7 +41,7 @@ public class InfluxDBManager {
     }
 
 
-    public void writePoint(InfluxDB influxDB, String dbName, String jsonArg) {
+    public void write(InfluxDB influxDB, String dbName, String jsonArg) {
 
         BatchPoints batchPoints = BatchPoints
                 .database(dbName)

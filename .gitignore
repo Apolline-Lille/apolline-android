@@ -4,6 +4,9 @@
 # Log file
 *.log
 
+# Secret file
+knox.xml
+
 # BlueJ files
 *.ctxt
 

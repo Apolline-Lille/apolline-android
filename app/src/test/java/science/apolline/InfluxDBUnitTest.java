@@ -14,7 +14,7 @@ import org.junit.Test;
 public class InfluxDBUnitTest {
 
     String json = "{" +
-            "  \"deviceId\": \"Arduino\"," +
+            "  \"device\": \"Arduino\"," +
             "  \"sensorId\": \"MQ135\"," +
             "  \"gasId\":" +
             "    {" +
@@ -23,8 +23,8 @@ public class InfluxDBUnitTest {
             "      \"CH4\":3," +
             "      \"O3\":4" +
             "    }," +
-            "  \"unitId\": \"PPM\" ," +
-            "  \"timeId\": \"15:20\"" +
+            "  \"unit\": \"PPM\" ," +
+            "  \"time\": \"Wed Sep 26 14:23:28 EST 2017\"" +
             "  " +
             "}";
 
@@ -57,7 +57,7 @@ public class InfluxDBUnitTest {
 
         InfluxDBManager testManager = new InfluxDBManager();
         InfluxDB influxDB = testManager.configInfluxDB("test1", "http://localhost:8086", "foo", "root");
-        testManager.writePoint(influxDB, "test0", "android", json);
+        testManager.write(influxDB, "test1", json);
 
     }
 }
