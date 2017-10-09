@@ -28,12 +28,11 @@ public class InfluxDBManager {
     public final String DATE = "date";
 
 
-    public InfluxDB configInfluxDB(String dbName, String dbUrlPort, String dbUser, String dbPassword) {
+    public InfluxDB setup(String dbUrlPort, String dbUser, String dbPassword) {
 
         InfluxDB influxDB = InfluxDBFactory.connect(dbUrlPort, dbUser, dbPassword);
         influxDB.setLogLevel(InfluxDB.LogLevel.NONE);
         influxDB.setConsistency(InfluxDB.ConsistencyLevel.QUORUM);
-        // influxDB.createDatabase(dbName);
         // Flush every 2000 Points, at least every 100ms
         influxDB.enableBatch(2000, 100, TimeUnit.NANOSECONDS);
 
@@ -41,45 +40,50 @@ public class InfluxDBManager {
     }
 
 
-    public void write(InfluxDB influxDB, String dbName, String jsonArg) {
+    public boolean write(InfluxDB influxDB, String dbName, String jsonArg) {
 
-        BatchPoints batchPoints = BatchPoints
-                .database(dbName)
-                .build();
+        try {
+            BatchPoints batchPoints = BatchPoints
+                    .database(dbName)
+                    .build();
 
-        JsonParser parser = new JsonParser();
-        JsonElement jsonElement = parser.parse(jsonArg);
+            JsonParser parser = new JsonParser();
+            JsonElement jsonElement = parser.parse(jsonArg);
 
-        if (jsonElement.isJsonObject()) {
+            if (jsonElement.isJsonObject()) {
 
-            JsonObject json = jsonElement.getAsJsonObject();
+                JsonObject json = jsonElement.getAsJsonObject();
 
-            if (json.has(DATA)) {
-                JsonObject tmp = json.get(DATA).getAsJsonObject();
+                if (json.has(DATA)) {
+                    JsonObject tmp = json.get(DATA).getAsJsonObject();
 
-                Set<Map.Entry<String, JsonElement>> entries = tmp.entrySet();
-                for (Map.Entry<String, JsonElement> entry : entries) {
+                    Set<Map.Entry<String, JsonElement>> entries = tmp.entrySet();
+                    for (Map.Entry<String, JsonElement> entry : entries) {
 
-                    Point.Builder pointBuilder = Point.measurement(entry.getKey())
-                            .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
-                            .addField(VALUE, entry.getValue().toString())
-                            .addField(DATE, json.get(DATE).getAsString())
-                            .tag(DEVICE, json.get(DEVICE).getAsString())
-                            .tag(SENSOR, json.get(SENSOR).getAsString())
-                            .tag(UNIT, json.get(UNIT).getAsString());
+                        Point.Builder pointBuilder = Point.measurement(entry.getKey())
+                                .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                                .addField(VALUE, entry.getValue().toString())
+                                .addField(DATE, json.get(DATE).getAsString())
+                                .tag(DEVICE, json.get(DEVICE).getAsString())
+                                .tag(SENSOR, json.get(SENSOR).getAsString())
+                                .tag(UNIT, json.get(UNIT).getAsString());
 
-                    Point point = pointBuilder.build();
-                    batchPoints.point(point);
+                        Point point = pointBuilder.build();
+                        batchPoints.point(point);
+
+                    }
 
                 }
 
+                influxDB.write(batchPoints);
+
             }
-
-            influxDB.write(batchPoints);
-
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
 
-
+        return true;
     }
 
 
