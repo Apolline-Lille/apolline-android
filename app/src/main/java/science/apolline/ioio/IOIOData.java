@@ -7,6 +7,7 @@ public class IOIOData {
     private int PM01Value = 0;          //define PM1.0 value of the air detector module
     private int PM2_5Value = 0;         //define PM2.5 value of the air detector module
     private int PM10Value = 0;         //define PM10 value of the air detector module
+
     private int PM0_3Above = 0;
     private int PM0_5Above = 0;
     private int PM1Above = 0;

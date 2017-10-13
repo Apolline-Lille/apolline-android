@@ -1,8 +1,10 @@
 package science.apolline.ioio;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,17 +20,21 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
 
     boolean led = true;
 
+
+
     @Override
     protected IOIOLooper createIOIOLooper() {
         return new BaseIOIOLooper(){
-
+            private IOIOData data = new IOIOData();
             private DigitalOutput led_;
             private Uart uart_ = null;
             private InputStream uartIn_ = null;
             private AnalogInput inputTemp;
             private AnalogInput inputHum;
+            private int freq = 10;
+            private int count = 0;
+            private int realCount = 0;
 
-            private IOIOData data = new IOIOData();
 
             @Override
             protected void setup() throws ConnectionLostException,InterruptedException {
@@ -45,7 +51,6 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
                     int availableCount = this.uartIn_.available();
                     if (availableCount > 0) {
                         byte[] buffer = new byte[availableCount];
-                        int col;
                         this.uartIn_.read(buffer);
                         for (int b : buffer) {
                             switch (b) {
@@ -84,10 +89,44 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                if(count<freq){
+                    sendBroadcast(data,realCount);
+                    count++;
+                    realCount++;
+                }
+                else {
+                    count=0;
+                    realCount++;
+                }
             }
         };
     }
 
+    private void sendBroadcast(IOIOData data, int count){
+        Intent intent = new Intent("IOIOdata");
+        Bundle extras = new Bundle();
+        extras.putInt("PM01Value",data.getPM01Value());
+        extras.putInt("PM2_5Value",data.getPM2_5Value());
+        extras.putInt("PM10Value",data.getPM10Value());
+
+        extras.putInt("PM0_3Above",data.getPM0_3Above());
+        extras.putInt("PM0_5Above",data.getPM0_5Above());
+        extras.putInt("PM1Above",data.getPM1Above());
+        extras.putInt("PM2_5Above",data.getPM2_5Above());
+        extras.putInt("PM5Above",data.getPM5Above());
+        extras.putInt("PM10Above",data.getPM10Above());
+
+        extras.putFloat("tempKelvin",data.getTempKelvin());
+        extras.putFloat("tempCelcius",data.getTempCelcius());
+
+        extras.putFloat("RH",data.getRH());
+        extras.putDouble("RHT",data.getRHT());
+
+        extras.putInt("count",count);
+
+        intent.putExtra("dataBundle",extras);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
 
 
     @Nullable

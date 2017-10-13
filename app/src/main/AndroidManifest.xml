@@ -27,80 +27,79 @@
         android:roundIcon="@drawable/logoandroidpng"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-
-
-        android:icon="@drawable/logoandroidpng"
-        android:allowBackup="true"
-        android:hardwareAccelerated="true"
-        android:label="@string/app_name">
-        <uses-library android:name="com.android.future.usb.accessory"
+        <uses-library
+            android:name="com.android.future.usb.accessory"
             android:required="false" />
         <uses-library
             android:name="com.google.android.maps"
             android:required="false" />
 
-        <service android:name="science.apolline.ioio.IOIOService" />
+        <service android:name=".ioio.IOIOService" />
+
         <activity
-            android:label="@string/app_name"
-            android:name="science.apolline.MainActivity"
+            android:name=".ioio.ioioActivity"
             android:configChanges="orientation|screenSize"
+            android:label="@string/app_name"
             android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter" />
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
-            </intent-filter>
-            <meta-data android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
-                android:resource="@xml/accessory_filter" />
-
         </activity>
 
         <activity
-            android:windowSoftInputMode="stateHidden"
+            android:name=".options"
             android:label="options"
-            android:name="science.apolline.options"
-            android:theme="@style/Theme.AppCompat"
-            android:parentActivityName="science.apolline.MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AppCompat">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="science.apolline.MainActivity" />
         </activity>
-
         <activity
+            android:name=".informations"
             android:label="informations"
-            android:name="science.apolline.informations"
-            android:theme="@style/Theme.AppCompat"
-            android:parentActivityName="science.apolline.MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AppCompat">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="science.apolline.MainActivity" />
-
         </activity>
-
         <activity
+            android:name=".contact"
             android:label="contact"
-            android:name="science.apolline.contact"
-            android:theme="@style/Theme.AppCompat"
-            android:parentActivityName="science.apolline.MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AppCompat">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="science.apolline.MainActivity" />
-
         </activity>
-
-
 
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/mapKey" /><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+            android:value="@string/mapKey" />
+        <!--
+ ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more activity_information.
+        -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+
     </application>
 
 </manifest>

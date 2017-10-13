@@ -1,47 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <item
-        android:id="@+id/refresh"
-        android:icon="@drawable/ic_menu_play_clip"
-        android:title="Refresh"
-        app:showAsAction="ifRoom">
-    </item>
-
-    <item
-        android:id="@+id/empty"
-        android:title="opt"
-        android:orderInCategory="101"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_action_overflow">
-
-        <menu>
-
-            <item
-                android:id="@+id/options"
-                android:title="Options"
-                app:showAsAction="ifRoom">
-            </item>
-
-            <item
-                android:id="@+id/informations"
-                app:showAsAction="ifRoom"
-                android:title="Informations">
-            </item>
-
-            <item
-                android:id="@+id/contact"
-                app:showAsAction="ifRoom"
-                android:title="Contact">
-            </item>
-
-            <item
-                android:id="@+id/close"
-                app:showAsAction="ifRoom"
-                android:title="Close">
-            </item>
-
-        </menu>
-
-    </item>
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
 </menu>

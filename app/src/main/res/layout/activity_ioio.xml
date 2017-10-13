@@ -49,7 +49,7 @@
                 android:layout_weight="0.5"
                 android:layout_width="120dp">
                 <ProgressBar
-                    android:id="@+id/progressBar3"
+                    android:id="@+id/fragment_ioio_progress_pm1"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
@@ -60,7 +60,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/textPM1"
+                    android:id="@+id/fragment_ioio_tv_pm1_value"
                     android:textColor="#0000FF"
                     tools:textSize="@android:dimen/app_icon_size"
                     android:layout_weight="0.12"
@@ -80,7 +80,7 @@
                 android:layout_width="120dp">
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
-                android:id="@+id/progressBar4"
+                android:id="@+id/fragment_ioio_progress_pm2"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:max="100"
@@ -89,7 +89,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/textPM2"
+                android:id="@+id/fragment_ioio_tv_pm2_value"
                 android:textColor="#0000FF"
                 tools:textSize="@android:dimen/app_icon_size"
                 android:layout_weight="0.12"
@@ -109,7 +109,7 @@
                 android:layout_width="120dp">
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
-                android:id="@+id/progressBar5"
+                android:id="@+id/fragment_ioio_progress_pm10"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:max="100"
@@ -118,7 +118,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/textPM10"
+                android:id="@+id/fragment_ioio_tv_pm10_value"
                 android:textColor="#0000FF"
                 tools:textSize="@android:dimen/app_icon_size"
                 android:layout_weight="0.12"
@@ -146,7 +146,7 @@
 
             <TextView
                 android:layout_height="120dp"
-                android:id="@+id/PM1"
+                android:id="@+id/fragment_ioio_tv_pm1_label"
                 tools:textSize="30sp"
                 android:textColor="#0000FF"
                 android:gravity="center"
@@ -156,7 +156,7 @@
 
             <TextView
                 android:layout_height="120dp"
-                android:id="@+id/PM2"
+                android:id="@+id/fragment_ioio_tv_pm2_label"
                 tools:textSize="30sp"
                 android:textColor="#0000FF"
                 android:gravity="center"
@@ -166,7 +166,7 @@
 
             <TextView
                 android:layout_height="120dp"
-                android:id="@+id/PM10"
+                android:id="@+id/fragment_ioio_tv_pm10_label"
                 tools:textSize="30sp"
                 android:textColor="#0000FF"
                 android:gravity="center"
@@ -178,7 +178,7 @@
         <com.jjoe64.graphview.GraphView
         android:layout_width="wrap_content"
         android:layout_height="270dip"
-        android:id="@+id/graph"
+        android:id="@+id/fragment_ioio_graph"
         android:layout_marginRight="5dip"
         android:layout_alignParentTop="true"
         android:soundEffectsEnabled="true" />
@@ -192,7 +192,7 @@
 
 
         <fragment
-        android:id="@+id/map"
+        android:id="@+id/fragment_ioio_map"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         android:name="com.google.android.gms.maps.MapFragment"
@@ -220,19 +220,19 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/fragment_ioio_pieton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/fragment_ioio_velo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/fragment_ioio_voiture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/fragment_ioio_other"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText

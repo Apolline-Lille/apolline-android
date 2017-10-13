@@ -14,6 +14,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import science.apolline.ioio.ioioActivity;
 
 
 /**
@@ -35,7 +36,7 @@ public class options extends AppCompatActivity implements CompoundButton.OnCheck
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.options);
+        setContentView(R.layout.activity_options);
 
         prefs = getApplicationContext().getSharedPreferences(MainActivity.MY_PREFS_NAME,MODE_PRIVATE);
 
@@ -166,7 +167,7 @@ public class options extends AppCompatActivity implements CompoundButton.OnCheck
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
-        prefs=getApplicationContext().getSharedPreferences(MainActivity.MY_PREFS_NAME,MODE_PRIVATE);
+        prefs=getApplicationContext().getSharedPreferences(ioioActivity.MY_PREFS_NAME,MODE_PRIVATE);
         swChart.setChecked(prefs.getBoolean("swChart", true));
         swTemperature.setChecked(prefs.getBoolean("Temperature", true));
         swTracking.setChecked(prefs.getBoolean("Tracking", true));
