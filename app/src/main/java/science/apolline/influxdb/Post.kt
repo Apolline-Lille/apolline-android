@@ -9,10 +9,10 @@ data class Post(var dbName: String, var dbUserName: String, var dbPassword: Stri
 
     override fun toString(): String {
         return """
-        |Database Name = $dbName ,
-        |Database Username = $dbUserName ,
-        |Database Password = $dbPassword ,
-        |Database Requeste content = $data ,
+        |dbName = $dbName ,
+        |dbUsername = $dbUserName ,
+        |dbPassword = $dbPassword ,
+        |dbData = $data ,
         """.trimMargin()
     }
 }
