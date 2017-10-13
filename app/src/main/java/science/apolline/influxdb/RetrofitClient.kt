@@ -1,8 +1,7 @@
 package science.apolline.influxdb
 
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.Retrofit
-
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 /**
@@ -17,6 +16,7 @@ object RetrofitClient {
         if (retrofit == null) {
             retrofit = Retrofit.Builder()
                     .baseUrl(baseUrl)
+                    .addConverterFactory(GsonConverterFactory.create())
                     .build()
         }
         return retrofit
