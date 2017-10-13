@@ -38,6 +38,7 @@ dependencies {
     // retrofit
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile  'com.squareup.retrofit2:converter-scalars:2.3.0'
 
     // influxDB
     compile 'org.influxdb:influxdb-java:2.7'

@@ -1,8 +1,8 @@
 package science.apolline.influxdb
 
-import retrofit2.http.FormUrlEncoded
+import retrofit2.Call
+import retrofit2.http.*
 import retrofit2.http.POST
-import retrofit2.http.Field
 
 
 /**
@@ -11,11 +11,11 @@ import retrofit2.http.Field
 
 interface APIService {
 
-    @POST("/write")
-    @FormUrlEncoded
-    fun savePost(@Field("dbName") dbName: String,
-                 @Field("dbUsername") dbUserName: String,
-                 @Field("dbPassword") dbPassword: String,
-                 @Field("dbData") data: String)
+    @POST("write")
+    //@FormUrlEncoded
+    fun savePost(@Query("db") dbName: String,
+                 @Query("u") dbUserName: String,
+                 @Query("p") dbPassword: String,
+                 @Body data: String): Call<Post>
 
 }

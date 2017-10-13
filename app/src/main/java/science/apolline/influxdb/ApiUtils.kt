@@ -7,7 +7,7 @@ package science.apolline.influxdb
 
 object ApiUtils {
 
-    val BASE_URL = "http://127.0.0.1"
+    val BASE_URL = "http://localhost:8086/"
 
     val apiService: APIService
         get() = RetrofitClient.getClient(BASE_URL)!!.create(APIService::class.java)

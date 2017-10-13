@@ -39,11 +39,10 @@ object DataParser {
                         sb.append(key).append(",")
                         sb.append(DEVICE).append("=").append(json.get(DEVICE).asString).append(",")
                         sb.append(SENSOR).append("=").append(json.get(SENSOR).asString).append(",")
-                        sb.append(" ")
-                        sb.append(VALUE).append("=").append(value.toString()).append(" ")
+                        sb.append(DATE).append("=").append(json.get(DATE).asString).append(",")
                         sb.append(UNIT).append("=").append(json.get(UNIT).asString).append(" ")
-                        sb.append(DATE).append("=").append(json.get(DATE).asString).append(" ")
-                        sb.append(TIMESTAMP).append("=").append(System.currentTimeMillis()).append("\n")
+                        sb.append(VALUE).append("=").append(value.toString()).append(" ")
+                        sb.append(System.currentTimeMillis()).append("\n")
                     }
                 }
 
