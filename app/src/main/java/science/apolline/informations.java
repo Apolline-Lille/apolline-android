@@ -12,6 +12,6 @@ public class informations extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.information);
+        setContentView(R.layout.activity_information);
     }
 }
