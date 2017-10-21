@@ -25,10 +25,10 @@ data class Position (
 
     override fun toString(): String {
         return """
-        |Provider = $provider ,
-        |Longitude = $longitude ,
-        |Latitude = $latitude,
-        |Location= $location,
+        |Provider = $provider
+        |Longitude = $longitude
+        |Latitude = $latitude
+        |Location = $location
         """.trimMargin()
     }
 

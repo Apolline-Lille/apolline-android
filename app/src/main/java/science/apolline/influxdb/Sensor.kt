@@ -27,11 +27,11 @@ class Sensor (
 
     override fun toString(): String {
         return """
-        |Device= $device ,
-        |Sensor = $sensor ,
-        |Date = $date,
-        |Position = $position,
-        |Data = $data,
+        |Device = $device
+        |Sensor = $sensor
+        |Date = $date
+        |Position = $position
+        |Data = $data
         """.trimMargin()
     }
 

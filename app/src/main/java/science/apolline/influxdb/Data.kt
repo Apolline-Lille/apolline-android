@@ -21,9 +21,9 @@ data class Data(
 
     override fun toString(): String {
         return """
-        |Name = $name ,
-        |Value = $value ,
-        |Unit = $unit,
+        |Name = $name
+        |Value = $value
+        |Unit = $unit
         """.trimMargin()
     }
 
