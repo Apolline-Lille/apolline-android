@@ -4,8 +4,7 @@ import com.google.gson.JsonParser
 import org.junit.Assert
 import org.junit.Test
 import junit.framework.Assert.assertTrue
-import science.apolline.influxdb.ApiUtils
-import science.apolline.influxdb.DataParser
+import science.apolline.influxdb.*
 import java.io.IOException
 
 
@@ -50,6 +49,34 @@ class InfluxDBServiceTest {
     }
 
 
+
+    /**
+     * Test for writing points to remote InfluxDB server (New).
+     */
+    @Test
+    @Throws(IOException::class)
+    fun testWriteToInfluxDBNWithGsonModel() {
+
+        //given
+        val positionInitObject = Position("GPS",152.36,142.36,"Train")
+        val dataInitObjectItem1 = Data("CO2",100.0,"PPM")
+        val dataInitObjectItem2 = Data("SMOKE",200.0,"PPM")
+        val dataInitObjectItem3 = Data("O3",300.0,"PPM")
+        val datalist = listOf(dataInitObjectItem1,dataInitObjectItem2,dataInitObjectItem3)
+        val sensorInitObject = Sensor("Arduino","MQ135","WedSep2614:23:28EST2017", positionInitObject, datalist)
+
+        //when
+        val dataTosend = RequestParser.createRequestBody(sensorInitObject)
+        val api = ApiUtils.apiService
+        val call = api.savePost("test","toto","root", dataTosend )
+        val response = call.execute()
+
+        //then
+        Assert.assertNotNull(api)
+        Assert.assertNotNull(call)
+        assertTrue(response.isSuccessful)
+
+    }
 
 }
 
