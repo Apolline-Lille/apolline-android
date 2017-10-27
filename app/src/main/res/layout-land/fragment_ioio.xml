@@ -2,22 +2,22 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:background="@drawable/bg"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:weightSum="1">
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:gravity="center"
         android:baselineAligned="false">
         <RelativeLayout
-            android:layout_height="120dp"
+            android:layout_height="0dp"
             android:orientation="horizontal"
             android:layout_weight="0.5"
-            android:layout_width="0dp">
+            android:layout_width="120dp">
             <ProgressBar
                 android:id="@+id/fragment_ioio_progress_pm1"
                 style="?android:attr/progressBarStyleHorizontal"
@@ -42,10 +42,10 @@
                 android:text="0" />
         </RelativeLayout>
         <RelativeLayout
-            android:layout_height="120dp"
+            android:layout_height="0dp"
             android:orientation="horizontal"
             android:layout_weight="0.5"
-            android:layout_width="0dp">
+            android:layout_width="120dp">
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
                 android:id="@+id/fragment_ioio_progress_pm2"
@@ -69,10 +69,10 @@
                 android:text="0" />
         </RelativeLayout>
         <RelativeLayout
-            android:layout_height="120dp"
+            android:layout_height="0dp"
             android:orientation="horizontal"
             android:layout_weight="0.5"
-            android:layout_width="0dp">
+            android:layout_width="120dp">
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
                 android:id="@+id/fragment_ioio_progress_pm10"
@@ -96,38 +96,43 @@
                 android:text="0" />
         </RelativeLayout>
     </LinearLayout>
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
         <TextView
-            android:layout_height="wrap_content"
             android:id="@+id/fragment_ioio_tv_pm1_label"
-            tools:textSize="30sp"
-            android:textColor="#0000FF"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="PM1"
-            android:layout_width="0dp"
-            android:layout_weight="1" />
-        <TextView
-            android:layout_height="wrap_content"
-            android:id="@+id/fragment_ioio_tv_pm2_label"
-            tools:textSize="30sp"
             android:textColor="#0000FF"
+            tools:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/fragment_ioio_tv_pm2_label"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="PM2.5"
-            android:layout_width="0dp"
-            android:layout_weight="1" />
-        <TextView
-            android:layout_height="wrap_content"
-            android:id="@+id/fragment_ioio_tv_pm10_label"
-            tools:textSize="30sp"
             android:textColor="#0000FF"
+            tools:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/fragment_ioio_tv_pm10_label"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="PM10"
-            android:layout_width="0dp"
-            android:layout_weight="1" />
+            android:textColor="#0000FF"
+            tools:textSize="30sp" />
     </LinearLayout>
+
     <com.jjoe64.graphview.GraphView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -135,4 +140,8 @@
     android:layout_marginEnd="20dp"
     android:layout_marginStart="20dp"
     android:soundEffectsEnabled="true" />
+
 </LinearLayout>
+
+
+

@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +25,12 @@ import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import science.apolline.R;
-
 
 public class IOIOFragment extends Fragment {
 
@@ -42,20 +45,18 @@ public class IOIOFragment extends Fragment {
     private TextView textViewPM1;
     private TextView textViewPM2;
     private TextView textViewPM10;
-    private TextView labelPM1;
-    private TextView labelPM2;
-    private TextView labelPM10;
 
     private Button pieton;
     private Button velo;
     private Button voiture;
     private Button other;
 
-    private GraphView graph;
     private MapFragment mapFragment;
     private GoogleMap map = null;
 
     private BroadcastReceiver BReceiver;
+
+    private GraphView graph;
 
     public IOIOFragment() {
 
@@ -67,13 +68,10 @@ public class IOIOFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_ioio,container,false);
         progressPM1 = view.findViewById(R.id.fragment_ioio_progress_pm1);
         textViewPM1 = view.findViewById(R.id.fragment_ioio_tv_pm1_value);
-        labelPM1 = view.findViewById(R.id.fragment_ioio_tv_pm1_label);
         progressPM2 = view.findViewById(R.id.fragment_ioio_progress_pm2);
         textViewPM2 = view.findViewById(R.id.fragment_ioio_tv_pm2_value);
-        labelPM2 = view.findViewById(R.id.fragment_ioio_tv_pm2_label);
         progressPM10 = view.findViewById(R.id.fragment_ioio_progress_pm10);
         textViewPM10 = view.findViewById(R.id.fragment_ioio_tv_pm10_value);
-        labelPM10 = view.findViewById(R.id.fragment_ioio_tv_pm10_label);
         graph = view.findViewById(R.id.fragment_ioio_graph);
         initGraph(graph);
 //        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_ioio_map);
@@ -99,10 +97,15 @@ public class IOIOFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         BReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+
                 Bundle b = intent.getBundleExtra("dataBundle");
+
+                Log.e("receiver","PM01Value : "+b.getInt("PM01Value"));
+
                 progressPM1.setProgress(b.getInt("PM01Value"));
                 progressPM2.setProgress(b.getInt("PM2_5Value"));
                 progressPM10.setProgress(b.getInt("PM10Value"));
@@ -110,33 +113,46 @@ public class IOIOFragment extends Fragment {
                 textViewPM1.setText(b.getInt("PM01Value")+"");
                 textViewPM2.setText(b.getInt("PM2_5Value")+"");
                 textViewPM10.setText(b.getInt("PM10Value")+"");
-                series.appendData(new DataPoint(b.getInt("count"),b.getInt("PM01Value")),true,10);
-                series2.appendData(new DataPoint(b.getInt("count"),b.getInt("PM2_5Value")),true,10);
-                series10.appendData(new DataPoint(b.getInt("count"),b.getInt("PM10Value")),true,10);
+                Calendar c = Calendar.getInstance();
+                Date d1 = c.getTime();
+
+                int nbPoint = 10 * 60; // 10 min * 60 second, 1 point per second
+
+                series.appendData(new DataPoint(d1,b.getInt("PM01Value")),true,nbPoint);
+                series2.appendData(new DataPoint(d1,b.getInt("PM2_5Value")),true,nbPoint);
+                series10.appendData(new DataPoint(d1,b.getInt("PM10Value")),true,nbPoint);
+
             }
         };
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(BReceiver, new IntentFilter("IOIOdata"));
     }
 
     public void initGraph(GraphView graph) {
+
         // set date label formatter
-        // enable scaling and scrolling
-        graph.getViewport().setScalable(true);
-//        graph.getGridLabelRenderer().setLabelFormatter(
-//                new DateAsXAxisLabelFormatter(graph.getContext(), new SimpleDateFormat("HH:mm")));
-        graph.getViewport().setScrollable(true);
-        graph.getViewport().setScalableY(true);
-        //	graph.getGridLabelRenderer().setNumVerticalLabels(5);
-        graph.getGridLabelRenderer().setNumHorizontalLabels(11);
-//        graph.getGridLabelRenderer().setLabelVerticalWidth(45);
-        // set manual x bounds to have nice steps
-        graph.getViewport().setMinX(0);
-//        graph.getViewport().setMaxX(10 * 60 * 1000); //10mn
-        graph.getViewport().setMaxX(10);
-        graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(10);
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(),
+                DateFormat.getTimeInstance(DateFormat.SHORT)));
+
+        graph.getViewport().setScrollable(true); // enables horizontal scrolling
+        graph.getViewport().setScrollableY(true); // enables vertical scrolling
+
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setYAxisBoundsManual(true);
+
+        graph.getGridLabelRenderer().setNumHorizontalLabels(9);
+        graph.getGridLabelRenderer().setNumVerticalLabels(5);
+        graph.getGridLabelRenderer().setLabelVerticalWidth(45);
+
+        Calendar calendar = Calendar.getInstance();
+        Date d1 = calendar.getTime();
+        graph.getViewport().setMinX(d1.getTime());
+
+        calendar.add(Calendar.MINUTE,10);
+        d1=calendar.getTime();
+        graph.getViewport().setMaxX(d1.getTime());
+
+        graph.getViewport().setMinY(0);
+        graph.getViewport().setMaxY(100);
 
         graph.getViewport().setDrawBorder(true);
 
@@ -156,15 +172,18 @@ public class IOIOFragment extends Fragment {
         series2.setTitle("PM2.5");
         series10.setTitle("PM10");
         graph.getLegendRenderer().setVisible(true);
-        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.BOTTOM);
+        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+
         series.setColor(Color.BLUE);
         series.setDrawDataPoints(true);
         series.setThickness(7);
         series.setDataPointsRadius(8);
+
         series2.setColor(Color.GREEN);
         series2.setDrawDataPoints(true);
         series2.setThickness(7);
         series2.setDataPointsRadius(8);
+
         series10.setColor(Color.YELLOW);
         series10.setDrawDataPoints(true);
         series10.setThickness(7);
@@ -172,7 +191,6 @@ public class IOIOFragment extends Fragment {
         // as we use dates as labels, the human rounding to nice readable numbers
         // is not nessecary
         graph.getGridLabelRenderer().setHumanRounding(false);
-        graph.getGridLabelRenderer().setPadding(15);
-
+        //graph.getGridLabelRenderer().setPadding(15);
     }
 }

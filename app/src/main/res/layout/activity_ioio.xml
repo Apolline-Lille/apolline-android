@@ -219,22 +219,7 @@
         android:id="@+id/webView" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/fragment_ioio_pieton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/fragment_ioio_velo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/fragment_ioio_voiture"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/fragment_ioio_other"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+
     <EditText
         android:id="@+id/editText2"
         android:layout_width="match_parent"

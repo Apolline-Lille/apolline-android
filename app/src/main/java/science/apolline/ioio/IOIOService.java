@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.DigitalOutput;
@@ -31,9 +33,7 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
             private InputStream uartIn_ = null;
             private AnalogInput inputTemp;
             private AnalogInput inputHum;
-            private int freq = 10000;
-            private int count = 0;
-            private int realCount = 0;
+            private int freq = 1000;
 
 
             @Override
@@ -47,6 +47,7 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
 
             @Override
             public void loop() throws ConnectionLostException,InterruptedException {
+                //Log.e("ioioService","loop");
                 try {
                     int availableCount = this.uartIn_.available();
                     if (availableCount > 0) {
@@ -89,22 +90,20 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if(count<freq){
-                    sendBroadcast(data,realCount);
-                    count++;
-                    realCount++;
-                }
-                else {
-                    count=0;
-                    realCount++;
-                }
+
+                
+                Thread.sleep(freq);
+                sendBroadcast(data);
             }
         };
     }
 
-    private void sendBroadcast(IOIOData data, int count){
+    private void sendBroadcast(IOIOData data){
+
         Intent intent = new Intent("IOIOdata");
         Bundle extras = new Bundle();
+        Log.e("sender","PM01Value : "+data.getPM01Value());
+
         extras.putInt("PM01Value",data.getPM01Value());
         extras.putInt("PM2_5Value",data.getPM2_5Value());
         extras.putInt("PM10Value",data.getPM10Value());
@@ -121,9 +120,6 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
 
         extras.putFloat("RH",data.getRH());
         extras.putDouble("RHT",data.getRHT());
-
-        extras.putInt("count",count);
-
         intent.putExtra("dataBundle",extras);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
