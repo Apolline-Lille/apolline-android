@@ -4,6 +4,7 @@ package science.apolline.influxdb
  * Created by sparow on 10/20/17.
  */
 
+import com.google.gson.JsonObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -22,7 +23,7 @@ class Sensor (
         val position: Position,
         @SerializedName("data")
         @Expose
-        val data: List<Data>
+        val data: JsonObject
 ){
 
     override fun toString(): String {

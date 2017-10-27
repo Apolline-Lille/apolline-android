@@ -7,7 +7,7 @@ android {
 
 
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "spirals.inria.fr.oscar"
         minSdkVersion 21
@@ -33,15 +33,10 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.+'
     testCompile 'junit:junit:4.12'
 
-    // testCompile "org.robolectric:robolectric:3.4.2"
-
     // retrofit
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile  'com.squareup.retrofit2:converter-scalars:2.3.0'
-
-    // influxDB
-    compile 'org.influxdb:influxdb-java:2.7'
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     compile 'com.google.code.gson:gson:2.8.2'
@@ -51,7 +46,7 @@ dependencies {
     compile 'com.github.ytai.ioio:IOIOLibAndroidBluetooth:5.07'
     compile 'com.github.ytai.ioio:IOIOLibAndroidAccessory:5.07'
     compile 'com.github.ytai.ioio:IOIOLibAndroidDevice:5.07'
-    // compile files('libs/GraphView-4.2.1.jar')
+
     compile 'com.jjoe64:graphview:4.2.1'
     compile 'com.google.android.gms:play-services-maps:11.0.4'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"

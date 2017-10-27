@@ -1,10 +1,13 @@
 package science.apolline
 
+/**
+ * Created by sparow on 10/9/17.
+ */
 object TestUtility {
 
     val influxDBIP: String
         get() {
-            var ip = "127.0.0.1"
+            var ip = "localhost"
 
             val getenv = System.getenv()
             if (getenv.containsKey("INFLUXDB_IP")) {
@@ -26,6 +29,4 @@ object TestUtility {
         return port
     }
 }
-/**
- * Created by sparow on 10/9/17.
- */
+

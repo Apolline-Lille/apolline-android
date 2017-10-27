@@ -16,7 +16,6 @@ public class PropertiesReader {
     private Context context;
     private Properties properties;
 
-
     public PropertiesReader(Context context) {
         this.context = context;
         //creates a new object ‘Properties’

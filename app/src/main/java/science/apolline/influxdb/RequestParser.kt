@@ -1,5 +1,7 @@
 package science.apolline.influxdb
 
+import org.json.JSONException
+
 /**
  * Created by sparow on 10/20/17.
  */
@@ -20,25 +22,41 @@ object RequestParser {
 
         val sb = StringBuilder()
 
-        SensorData.data.forEach {
-            //co2,device=ard001,sensor=mq135,provider=gps,location=car longitude=45.521 latitude=15.256
-            // date=WedSep2614:23:28EST2017 unit=PPM value=1452 1434055562000000000
-            sb.append(it.name).append(",")
-            sb.append(DEVICE).append("=").append(SensorData.device).append(",")
-            sb.append(SENSOR).append("=").append(SensorData.sensor).append(",")
-            sb.append(PROVIDER).append("=").append(SensorData.position.provider).append(",")
-            sb.append(LOCATION).append("=").append(SensorData.position.location).append(",")
-            sb.append(LONGITUDE).append("=").append(SensorData.position.longitude).append(",")
-            sb.append(LATITUDE).append("=").append(SensorData.position.latitude).append(",")
-            sb.append(DATE).append("=").append(SensorData.date).append(",")
-            sb.append(UNIT).append("=").append(it.unit).append(" ")
-            sb.append(VALUE).append("=").append(it.value).append(" ")
-            sb.append(System.currentTimeMillis()).append("\n")
+        try {
+
+            val json = SensorData.data
+            val temp = json.entrySet().iterator()
+
+            while (temp.hasNext()) {
+
+                val it = temp.next()
+                val  key = it.key
+                val  value = it.value.asJsonArray
+
+                sb.append(key).append(",")
+
+                sb.append(DEVICE).append("=").append(SensorData.device).append(",")
+                sb.append(SENSOR).append("=").append(SensorData.sensor).append(",")
+                sb.append(PROVIDER).append("=").append(SensorData.position.provider).append(",")
+                sb.append(LOCATION).append("=").append(SensorData.position.location).append(",")
+                sb.append(LONGITUDE).append("=").append(SensorData.position.longitude).append(",")
+                sb.append(LATITUDE).append("=").append(SensorData.position.latitude).append(",")
+                sb.append(DATE).append("=").append(SensorData.date).append(",")
+
+                sb.append(UNIT).append("=").append(value[0]).append(" ")
+                sb.append(VALUE).append("=").append(value[1]).append(" ")
+
+                sb.append(System.currentTimeMillis()).append("\n")
+            }
+
+        } catch (e: JSONException) {
+            e.printStackTrace()
         }
 
         return sb.toString()
     }
-
-
 }
+
+
+
 
