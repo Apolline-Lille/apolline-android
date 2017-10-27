@@ -106,9 +106,10 @@ public class IOIOFragment extends Fragment {
                 progressPM1.setProgress(b.getInt("PM01Value"));
                 progressPM2.setProgress(b.getInt("PM2_5Value"));
                 progressPM10.setProgress(b.getInt("PM10Value"));
-                textViewPM1.setText(b.getInt("PM01Value"));
-                textViewPM2.setText(b.getInt("PM2_5Value"));
-                textViewPM10.setText(b.getInt("PM10Value"));
+
+                textViewPM1.setText(b.getInt("PM01Value")+"");
+                textViewPM2.setText(b.getInt("PM2_5Value")+"");
+                textViewPM10.setText(b.getInt("PM10Value")+"");
                 series.appendData(new DataPoint(b.getInt("count"),b.getInt("PM01Value")),true,10);
                 series2.appendData(new DataPoint(b.getInt("count"),b.getInt("PM2_5Value")),true,10);
                 series10.appendData(new DataPoint(b.getInt("count"),b.getInt("PM10Value")),true,10);

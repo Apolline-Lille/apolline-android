@@ -31,7 +31,7 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
             private InputStream uartIn_ = null;
             private AnalogInput inputTemp;
             private AnalogInput inputHum;
-            private int freq = 10;
+            private int freq = 10000;
             private int count = 0;
             private int realCount = 0;
 
