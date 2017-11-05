@@ -1,4 +1,4 @@
-package science.apolline.influxdb
+package science.apolline.networks
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

@@ -1,6 +1,7 @@
-package science.apolline.influxdb
+package science.apolline.utils
 
 import org.json.JSONException
+import science.apolline.models.Sensor
 
 /**
  * Created by sparow on 10/20/17.

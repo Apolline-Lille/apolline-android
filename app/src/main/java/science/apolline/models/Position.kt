@@ -1,4 +1,4 @@
-package science.apolline.influxdb
+package science.apolline.models
 
 /**
  * Created by sparow on 10/20/17.

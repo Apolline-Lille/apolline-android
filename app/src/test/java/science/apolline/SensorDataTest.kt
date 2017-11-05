@@ -5,8 +5,8 @@ import java.io.IOException
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.junit.Assert.*
-import science.apolline.influxdb.Position
-import science.apolline.influxdb.Sensor
+import science.apolline.models.Position
+import science.apolline.models.Sensor
 
 
 
@@ -30,7 +30,7 @@ class SensorDataTest {
                 "\"latitude\":142.36," +
                 "\"location\":\"Train\"" +
                 "}"
-        val positionInitObject = Position("GPS",152.36,142.36,"Train")
+        val positionInitObject = Position("GPS", 152.36, 142.36, "Train")
 
         //when
         val gson = Gson()
@@ -84,13 +84,13 @@ class SensorDataTest {
                         "\"O3\":[400,\"PPM\"]" +
                         "}"
 
-        val positionInitObject = Position("GPS",152.36,142.36,"Train")
+        val positionInitObject = Position("GPS", 152.36, 142.36, "Train")
 
         //when
         val gson = Gson()
         val dataListObject = gson.fromJson(dataList, JsonObject::class.java)
         val sensor = gson.fromJson(jsonInit, Sensor::class.java)
-        val sensorInitObject = Sensor("Arduino","MQ135","WedSep2614:23:28EST2017", positionInitObject, dataListObject)
+        val sensorInitObject = Sensor("Arduino", "MQ135", "WedSep2614:23:28EST2017", positionInitObject, dataListObject)
         val jsonSensorFromObject = gson.toJson(sensorInitObject)
 
         //then
