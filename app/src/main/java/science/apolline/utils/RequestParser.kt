@@ -26,22 +26,22 @@ object RequestParser {
         try {
 
             val json = SensorData.data
-            val temp = json.entrySet().iterator()
+            val temp = json!!.entrySet().iterator()
 
             while (temp.hasNext()) {
 
                 val it = temp.next()
-                val  key = it.key
-                val  value = it.value.asJsonArray
+                val key = it.key
+                val value = it.value.asJsonArray
 
                 sb.append(key).append(",")
 
                 sb.append(DEVICE).append("=").append(SensorData.device).append(",")
                 sb.append(SENSOR).append("=").append(SensorData.sensor).append(",")
-                sb.append(PROVIDER).append("=").append(SensorData.position.provider).append(",")
-                sb.append(LOCATION).append("=").append(SensorData.position.location).append(",")
-                sb.append(LONGITUDE).append("=").append(SensorData.position.longitude).append(",")
-                sb.append(LATITUDE).append("=").append(SensorData.position.latitude).append(",")
+                sb.append(PROVIDER).append("=").append(SensorData.position!!.provider).append(",")
+                sb.append(LOCATION).append("=").append(SensorData.position!!.location).append(",")
+                sb.append(LONGITUDE).append("=").append(SensorData.position!!.longitude).append(",")
+                sb.append(LATITUDE).append("=").append(SensorData.position!!.latitude).append(",")
                 sb.append(DATE).append("=").append(SensorData.date).append(",")
 
                 sb.append(UNIT).append("=").append(value[0]).append(" ")

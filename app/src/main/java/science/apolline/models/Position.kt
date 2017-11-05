@@ -4,24 +4,28 @@ package science.apolline.models
  * Created by sparow on 10/20/17.
  */
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class Position (
+@Entity
+data class Position(
         @SerializedName("provider")
         @Expose
-        val provider: String,
+        var provider: String,
         @SerializedName("longitude")
         @Expose
-        val longitude: Double,
+        var longitude: Double,
         @SerializedName("latitude")
         @Expose
-        val latitude: Double,
+        var latitude: Double,
         @SerializedName("location")
         @Expose
-        val location: String
+        var location: String
 
 ) {
+    constructor() : this("", 0.0, 0.0, "")
 
     override fun toString(): String {
         return """

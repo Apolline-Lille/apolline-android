@@ -4,27 +4,35 @@ package science.apolline.models
  * Created by sparow on 10/20/17.
  */
 
+import android.arch.persistence.room.*
 import com.google.gson.JsonObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Sensor (
+@Entity
+class Sensor(
+        @SerializedName("sensorId")
+        @Expose
+        @PrimaryKey(autoGenerate = true)
+        var sensorId: Int?,
         @SerializedName("device")
         @Expose
-        val device: String,
+        var device: String,
         @SerializedName("sensor")
         @Expose
-        val sensor: String,
+        var sensor: String,
         @SerializedName("date")
         @Expose
-        val date: String,
+        var date: String,
         @SerializedName("position")
         @Expose
-        val position: Position,
+        @Embedded
+        var position: Position?,
         @SerializedName("data")
         @Expose
-        val data: JsonObject
-){
+        var data: JsonObject?
+) {
+    constructor() : this(0, "", "", "", null, null)
 
     override fun toString(): String {
         return """

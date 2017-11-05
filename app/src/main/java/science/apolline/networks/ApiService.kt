@@ -13,7 +13,7 @@ import science.apolline.models.Post
 interface ApiService {
 
     @POST("write")
-    //@FormUrlEncoded
+            //@FormUrlEncoded
     fun savePost(@Query("db") dbName: String,
                  @Query("u") dbUserName: String,
                  @Query("p") dbPassword: String,

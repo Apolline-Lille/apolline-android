@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import science.apolline.database.AppDatabase;
 import science.apolline.ioio.IOIOFragment;
 import science.apolline.ioio.IOIOService;
 
@@ -24,6 +26,9 @@ public class MainActivity extends AppCompatActivity
 
     public static final String MY_PREFS_NAME = "MyPrefsFile";
     private final int REQUEST_CODE_ENABLE_BLUETOOTH = 0;
+
+    private Context myContext;
+    private AppDatabase appDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,11 @@ public class MainActivity extends AppCompatActivity
 
         Fragment IOIOFragment = new IOIOFragment();
         replaceFragment(IOIOFragment);
+
+        myContext = getBaseContext();
+        appDatabase = AppDatabase.Companion.getAppDatabase(myContext);
+        appDatabase.SensorModel().getAll();
+
 
     }
 

@@ -20,11 +20,11 @@ class InfluxDBServiceTest {
 
     private var parser = JsonParser()
     private var JSONTOSEND = "{" +
-                            "\"CO2\":[100,\"PPM\"]," +
-                            "\"SMOKE\":[200,\"PPM\"]," +
-                            "\"CH4\":[300,\"PPM\"]," +
-                            "\"O3\":[400,\"PPM\"]" +
-                            "}"
+            "\"CO2\":[100,\"PPM\"]," +
+            "\"SMOKE\":[200,\"PPM\"]," +
+            "\"CH4\":[300,\"PPM\"]," +
+            "\"O3\":[400,\"PPM\"]" +
+            "}"
 
     /**
      * Test for input JSON parsing.
@@ -48,21 +48,23 @@ class InfluxDBServiceTest {
 
         //given
         val dataList = "{" +
-                        "\"CO2\":[100,\"PPM\"]," +
-                        "\"SMOKE\":[200,\"PPM\"]," +
-                        "\"CH4\":[300,\"PPM\"]," +
-                        "\"O3\":[400,\"PPM\"]" +
-                        "}"
+                "\"CO2\":[100,\"PPM\"]," +
+                "\"SMOKE\":[200,\"PPM\"]," +
+                "\"CH4\":[300,\"PPM\"]," +
+                "\"O3\":[400,\"PPM\"]" +
+                "}"
 
         val gson = Gson()
         val dataListObject = gson.fromJson(dataList, JsonObject::class.java)
         val positionInitObject = Position("GPS", 152.36, 142.36, "Train")
-        val sensorInitObject = Sensor("Arduino", "MQ135", "WedSep2614:23:28EST2017", positionInitObject, dataListObject)
+        val sensorInitObject = Sensor(1, "Arduino", "MQ135", "WedSep2614:23:28EST2017", positionInitObject, dataListObject)
 
         //when
         val dataTosend = RequestParser.createRequestBody(sensorInitObject)
+
+        print(dataTosend)
         val api = ApiUtils.apiService
-        val call = api.savePost("test","toto","root", dataTosend )
+        val call = api.savePost("test", "toto", "root", dataTosend)
         val response = call.execute()
 
         //then

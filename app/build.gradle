@@ -22,6 +22,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -76,7 +81,7 @@ dependencies {
 
     // Room
     implementation "android.arch.persistence.room:runtime:$project.rc"
-    annotationProcessor "android.arch.persistence.room:compiler:$project.rc"
+    kapt "android.arch.persistence.room:compiler:$project.rc"
     implementation "android.arch.persistence.room:rxjava2:$project.rc"
     testImplementation"android.arch.persistence.room:testing:$project.rc"
 

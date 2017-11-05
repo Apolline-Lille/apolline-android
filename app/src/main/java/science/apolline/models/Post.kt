@@ -7,8 +7,8 @@ package science.apolline.models
 data class Post(
         val dbName: String,
         val dbUserName: String,
-        val dbPassword: String ,
-        val body: String){
+        val dbPassword: String,
+        val body: String) {
 
     override fun toString(): String {
         return """
