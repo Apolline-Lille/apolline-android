@@ -55,8 +55,7 @@ public class MainActivity extends AppCompatActivity
         Fragment IOIOFragment = new IOIOFragment();
         replaceFragment(IOIOFragment);
 
-        myContext = getBaseContext();
-        appDatabase = AppDatabase.Companion.getAppDatabase(myContext);
+        appDatabase = AppDatabase.Companion.getAppDatabase(getApplicationContext());
         appDatabase.SensorModel().getAll();
 
 
