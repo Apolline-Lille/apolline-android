@@ -18,8 +18,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import science.apolline.database.AppDatabase;
-import science.apolline.ioio.IOIOFragment;
-import science.apolline.ioio.IOIOService;
+import science.apolline.sensor.ioio.view.IOIOFragment;
+import science.apolline.sensor.ioio.service.IOIOService;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

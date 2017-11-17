@@ -32,5 +32,6 @@
     <string name="drawer_contact">Contact</string>
     <string name="drawer_capteur">Capteur</string>
     <string name="drawer_loa_ioio">LOA IOIO</string>
+    <string name="dataBroadcastFilter">apollineDataSet</string>
 
 </resources>

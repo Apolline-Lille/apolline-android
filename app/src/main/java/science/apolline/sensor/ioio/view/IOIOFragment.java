@@ -1,6 +1,12 @@
-package science.apolline.ioio;
+package science.apolline.sensor.ioio.view;
 
 import android.app.Fragment;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LifecycleRegistry;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,8 +14,9 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +35,6 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -40,9 +46,13 @@ import science.apolline.models.Post;
 import science.apolline.models.Sensor;
 import science.apolline.networks.ApiService;
 import science.apolline.networks.ApiUtils;
+import science.apolline.sensor.common.sensorData;
+import science.apolline.sensor.common.sensorViewModel;
+import science.apolline.sensor.ioio.model.IOIOData;
+import science.apolline.sensor.ioio.service.IOIOService;
 import science.apolline.utils.RequestParser;
 
-public class IOIOFragment extends Fragment {
+public class IOIOFragment extends Fragment implements LifecycleOwner{
 
     static LineGraphSeries<DataPoint> series;
     static LineGraphSeries<DataPoint> series2;
@@ -68,14 +78,28 @@ public class IOIOFragment extends Fragment {
 
     private GraphView graph;
 
+    private LiveData<IOIOData> dataLive;
+    private LifecycleRegistry mLyfeCycleRegistry;
+
     public IOIOFragment() {
 
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mLyfeCycleRegistry = new LifecycleRegistry(this);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_ioio,container,false);
+        return inflater.inflate(R.layout.fragment_ioio,container,false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         progressPM1 = view.findViewById(R.id.fragment_ioio_progress_pm1);
         textViewPM1 = view.findViewById(R.id.fragment_ioio_tv_pm1_value);
         progressPM2 = view.findViewById(R.id.fragment_ioio_progress_pm2);
@@ -89,79 +113,18 @@ public class IOIOFragment extends Fragment {
 //        velo = view.findViewById(R.id.fragment_ioio_velo);
 //        voiture = view.findViewById(R.id.fragment_ioio_voiture);
 //        other = view.findViewById(R.id.fragment_ioio_other);
-        return view;
     }
-
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         getActivity().startService(new Intent(getActivity(), IOIOService.class));
-
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        BReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-                Bundle b = intent.getBundleExtra("dataBundle");
-
-               IOIOData data = b.getParcelable("IOIOData");
-               int PM01Value = data.getPM01Value();
-               int PM2_5Value = data.getPM2_5Value();
-               int PM10Value = data.getPM10Value();
-
-                progressPM1.setProgress(PM01Value);
-                progressPM2.setProgress(PM2_5Value);
-                progressPM10.setProgress(PM10Value);
-
-                textViewPM1.setText(PM01Value+"");
-                textViewPM2.setText(PM2_5Value+"");
-                textViewPM10.setText(PM10Value+"");
-                Calendar c = Calendar.getInstance();
-                Date d1 = c.getTime();
-
-                int nbPoint = 10 * 60;
-
-                series.appendData(new DataPoint(d1,PM01Value),true,nbPoint);
-                series2.appendData(new DataPoint(d1,PM2_5Value),true,nbPoint);
-                series10.appendData(new DataPoint(d1,PM10Value),true,nbPoint);
-
-
-//TODO localisation
-                Sensor sensor = new Sensor("IOIO","IOIO",d1.toString(),null,data.toJson());
-
-                AppDatabase appDatabase = AppDatabase.Companion.getAppDatabase(getActivity());
-                appDatabase.SensorModel().insertOne(sensor);
-
-                String requestBody = RequestParser.INSTANCE.createRequestBody(sensor);
-                ApiService api = ApiUtils.INSTANCE.getApiService();
-                Call<Post> postCall = api.savePost("test", "toto", "root", requestBody);
-                Response<Post> postResponse;
-                try {
-                    postResponse= postCall.execute();
-                    if (postResponse.isSuccessful()){
-                        Toast.makeText(getActivity(),"Data send: success",Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        Toast.makeText(getActivity(),"Data send: Failure, message = "+postResponse.message(),Toast.LENGTH_SHORT).show();
-                    }
-                } catch (IOException e) {
-                    Toast.makeText(getActivity(),"Unable to send data",Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        };
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(BReceiver, new IntentFilter("IOIOdata"));
     }
 
     public void initGraph(GraphView graph) {
@@ -225,9 +188,41 @@ public class IOIOFragment extends Fragment {
         series10.setDrawDataPoints(true);
         series10.setThickness(7);
         series10.setDataPointsRadius(8);
-        // as we use dates as labels, the human rounding to nice readable numbers
-        // is not nessecary
         graph.getGridLabelRenderer().setHumanRounding(false);
-        //graph.getGridLabelRenderer().setPadding(15);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        sensorViewModel viewModel = new sensorViewModel(getActivity().getApplication());
+        viewModel.getDataLive().observe(this, new Observer<sensorData>() {
+            @Override
+            public void onChanged(@Nullable sensorData sensorData) {
+                if(sensorData != null && sensorData.getClass() == IOIOData.class){
+                    IOIOData data = (IOIOData) sensorData;
+                    int PM01Value = data.getPM01Value();
+                    int PM2_5Value = data.getPM2_5Value();
+                    int PM10Value = data.getPM10Value();
+                    progressPM1.setProgress(PM01Value);
+                    progressPM2.setProgress(PM2_5Value);
+                    progressPM10.setProgress(PM10Value);
+                    textViewPM1.setText(PM01Value+"");
+                    textViewPM2.setText(PM2_5Value+"");
+                    textViewPM10.setText(PM10Value+"");
+                    Calendar c = Calendar.getInstance();
+                    Date d1 = c.getTime();
+                    int nbPoint = 10 * 60;
+                    series.appendData(new DataPoint(d1,PM01Value),true,nbPoint);
+                    series2.appendData(new DataPoint(d1,PM2_5Value),true,nbPoint);
+                    series10.appendData(new DataPoint(d1,PM10Value),true,nbPoint);
+                }
+            }
+        });
+    }
+
+    @NonNull
+    @Override
+    public Lifecycle getLifecycle() {
+        return mLyfeCycleRegistry;
     }
 }

@@ -1,24 +1,21 @@
-package science.apolline.ioio;
+package science.apolline.sensor.ioio.service;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
 
-import io.reactivex.Observable;
-import io.reactivex.Single;
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.Uart;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
+import science.apolline.sensor.ioio.model.IOIOData;
 
 public class IOIOService extends ioio.lib.util.android.IOIOService{
 
@@ -103,8 +100,7 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
     private void sendBroadcast(IOIOData data){
 
         Intent intent = new Intent("IOIOdata");
-        Bundle extras = new Bundle();
-        extras.putParcelable("IOIOData",data);
+        intent.putExtra("dataBundle",data);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 

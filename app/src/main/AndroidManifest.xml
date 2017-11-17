@@ -34,7 +34,7 @@
             android:name="com.google.android.maps"
             android:required="false" />
 
-        <service android:name=".ioio.IOIOService" />
+        <service android:name=".sensor.ioio.service.IOIOService" />
 
         <activity
             android:name=".MainActivity"
