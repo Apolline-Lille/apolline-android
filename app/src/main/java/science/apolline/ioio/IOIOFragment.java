@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -25,14 +26,21 @@ import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import retrofit2.Call;
+import retrofit2.Response;
 import science.apolline.R;
 import science.apolline.database.AppDatabase;
+import science.apolline.models.Post;
 import science.apolline.models.Sensor;
+import science.apolline.networks.ApiService;
+import science.apolline.networks.ApiUtils;
+import science.apolline.utils.RequestParser;
 
 public class IOIOFragment extends Fragment {
 
@@ -128,6 +136,28 @@ public class IOIOFragment extends Fragment {
                 series2.appendData(new DataPoint(d1,PM2_5Value),true,nbPoint);
                 series10.appendData(new DataPoint(d1,PM10Value),true,nbPoint);
 
+
+//TODO localisation
+                Sensor sensor = new Sensor("IOIO","IOIO",d1.toString(),null,data.toJson());
+
+                AppDatabase appDatabase = AppDatabase.Companion.getAppDatabase(getActivity());
+                appDatabase.SensorModel().insertOne(sensor);
+
+                String requestBody = RequestParser.INSTANCE.createRequestBody(sensor);
+                ApiService api = ApiUtils.INSTANCE.getApiService();
+                Call<Post> postCall = api.savePost("test", "toto", "root", requestBody);
+                Response<Post> postResponse;
+                try {
+                    postResponse= postCall.execute();
+                    if (postResponse.isSuccessful()){
+                        Toast.makeText(getActivity(),"Data send: success",Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Toast.makeText(getActivity(),"Data send: Failure, message = "+postResponse.message(),Toast.LENGTH_SHORT).show();
+                    }
+                } catch (IOException e) {
+                    Toast.makeText(getActivity(),"Unable to send data",Toast.LENGTH_SHORT).show();
+                }
 
             }
         };

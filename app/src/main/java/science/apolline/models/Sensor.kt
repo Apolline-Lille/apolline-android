@@ -10,11 +10,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 @Entity
-class Sensor(
-        @SerializedName("sensorId")
-        @Expose
-        @PrimaryKey(autoGenerate = true)
-        var sensorId: Int?,
+data class Sensor(
         @SerializedName("device")
         @Expose
         var device: String,
@@ -32,7 +28,11 @@ class Sensor(
         @Expose
         var data: JsonObject?
 ) {
-    constructor() : this(0, "", "", "", null, null)
+    @SerializedName("sensorId")
+    @Expose
+    @PrimaryKey(autoGenerate = true)
+    var sensorId: Int? = 0
+    constructor() : this("", "", "", null, null)
 
     override fun toString(): String {
         return """

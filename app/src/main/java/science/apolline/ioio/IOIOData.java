@@ -113,6 +113,28 @@ public class IOIOData implements Parcelable {
         return tempKelvin - 273.15f;
     }
     
+    public JsonObject toJson(){
+        JsonObject obj = new JsonObject();
+        obj.addProperty("PM01Value",PM01Value);
+        obj.addProperty("PM2_5Value",PM2_5Value);
+        obj.addProperty("PM10Value",PM10Value);
+
+        obj.addProperty("PM0_3Above",PM0_3Above);
+        obj.addProperty("PM0_5Above",PM0_5Above);
+        obj.addProperty("PM1Above",PM1Above);
+        obj.addProperty("PM2_5Above",PM2_5Above);
+        obj.addProperty("PM5Above",PM5Above);
+        obj.addProperty("PM10Above",PM10Above);
+
+        obj.addProperty("tempKelvin",tempKelvin);
+        obj.addProperty("RH",RH);
+        obj.addProperty("RHT",RHT);
+
+        return obj;
+    }
+
+
+    
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -227,4 +249,6 @@ public class IOIOData implements Parcelable {
     public void setRHT(double RHT) {
         this.RHT = RHT;
     }
+
+
 }
