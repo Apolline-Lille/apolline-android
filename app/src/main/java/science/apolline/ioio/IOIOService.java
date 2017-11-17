@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.Uart;
@@ -102,25 +104,7 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
 
         Intent intent = new Intent("IOIOdata");
         Bundle extras = new Bundle();
-        Log.e("sender","PM01Value : "+data.getPM01Value());
-
-        extras.putInt("PM01Value",data.getPM01Value());
-        extras.putInt("PM2_5Value",data.getPM2_5Value());
-        extras.putInt("PM10Value",data.getPM10Value());
-
-        extras.putInt("PM0_3Above",data.getPM0_3Above());
-        extras.putInt("PM0_5Above",data.getPM0_5Above());
-        extras.putInt("PM1Above",data.getPM1Above());
-        extras.putInt("PM2_5Above",data.getPM2_5Above());
-        extras.putInt("PM5Above",data.getPM5Above());
-        extras.putInt("PM10Above",data.getPM10Above());
-
-        extras.putFloat("tempKelvin",data.getTempKelvin());
-        extras.putFloat("tempCelcius",data.getTempCelcius());
-
-        extras.putFloat("RH",data.getRH());
-        extras.putDouble("RHT",data.getRHT());
-        intent.putExtra("dataBundle",extras);
+        extras.putParcelable("IOIOData",data);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 

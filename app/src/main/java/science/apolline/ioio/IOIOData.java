@@ -1,6 +1,11 @@
 package science.apolline.ioio;
 
-public class IOIOData {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.gson.JsonObject;
+
+public class IOIOData implements Parcelable {
     private int count;
     private int[] buff = new int[64];
 
@@ -20,6 +25,60 @@ public class IOIOData {
     private double RHT = 0;
 
     final byte LENG = 31;
+
+    public IOIOData(){}
+
+    protected IOIOData(Parcel in) {
+        PM01Value = in.readInt();
+        PM2_5Value = in.readInt();
+        PM10Value = in.readInt();
+        PM0_3Above = in.readInt();
+        PM0_5Above = in.readInt();
+        PM1Above = in.readInt();
+        PM2_5Above = in.readInt();
+        PM5Above = in.readInt();
+        PM10Above = in.readInt();
+        tempKelvin = in.readFloat();
+        RH = in.readFloat();
+        RHT = in.readDouble();
+    }
+
+    public static final Creator<IOIOData> CREATOR = new Creator<IOIOData>() {
+        @Override
+        public IOIOData createFromParcel(Parcel in) {
+            return new IOIOData(in);
+        }
+
+        @Override
+        public IOIOData[] newArray(int size) {
+            return new IOIOData[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(PM01Value);
+        parcel.writeInt(PM2_5Value);
+        parcel.writeInt(PM10Value);
+
+        parcel.writeInt(PM0_3Above);
+        parcel.writeInt(PM0_5Above);
+        parcel.writeInt(PM1Above);
+        parcel.writeInt(PM2_5Above);
+        parcel.writeInt(PM5Above);
+        parcel.writeInt(PM10Above);
+
+        parcel.writeFloat(tempKelvin);
+        parcel.writeFloat(RH);
+        parcel.writeDouble(RHT);
+    }
+
+    
 
     public boolean checkValue() {
         boolean receiveflag = false;
