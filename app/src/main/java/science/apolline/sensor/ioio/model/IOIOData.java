@@ -1,11 +1,16 @@
-package science.apolline.ioio;
+package science.apolline.sensor.ioio.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 
-public class IOIOData implements Parcelable {
+import java.util.Arrays;
+
+import science.apolline.sensor.common.sensorData;
+
+public class IOIOData implements sensorData {
     private int count;
     private int[] buff = new int[64];
 
@@ -24,7 +29,7 @@ public class IOIOData implements Parcelable {
     private float RH = 0;
     private double RHT = 0;
 
-    final byte LENG = 31;
+    public final byte LENG = 31;
 
     public IOIOData(){}
 
@@ -108,11 +113,11 @@ public class IOIOData implements Parcelable {
         PM10Above = ((buff[25] << 8) + buff[26]);
     }
 
-
     public float getTempCelcius(){
         return tempKelvin - 273.15f;
     }
-    
+
+    @Override
     public JsonObject toJson(){
         JsonObject obj = new JsonObject();
         obj.addProperty("PM01Value",PM01Value);
