@@ -14,6 +14,7 @@ import retrofit2.Call
 import retrofit2.Response
 import science.apolline.R
 import science.apolline.database.AppDatabase
+import science.apolline.database.SensorDao
 import science.apolline.models.Post
 import science.apolline.models.Sensor
 import science.apolline.networks.ApiService
@@ -65,8 +66,9 @@ class sensorViewModel (application: Application) : AndroidViewModel(application)
     }
 
     private fun setPersistant(sensor: Sensor) {
-        val appDatabase: AppDatabase = AppDatabase.getAppDatabase(getApplication());
-        appDatabase.SensorModel().insertOne(sensor);
+
+        val sensorModel: SensorDao = AppDatabase.getInstance(getApplication())
+        sensorModel.insertOne(sensor)
     }
 //    BReceiver = new BroadcastReceiver() {
 //        @Override
