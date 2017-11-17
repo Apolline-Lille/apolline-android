@@ -31,6 +31,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import science.apolline.R;
+import science.apolline.database.AppDatabase;
+import science.apolline.models.Sensor;
 
 public class IOIOFragment extends Fragment {
 
@@ -87,6 +89,7 @@ public class IOIOFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         getActivity().startService(new Intent(getActivity(), IOIOService.class));
+
     }
 
     @Override
@@ -104,23 +107,27 @@ public class IOIOFragment extends Fragment {
 
                 Bundle b = intent.getBundleExtra("dataBundle");
 
-                Log.e("receiver","PM01Value : "+b.getInt("PM01Value"));
+               IOIOData data = b.getParcelable("IOIOData");
+               int PM01Value = data.getPM01Value();
+               int PM2_5Value = data.getPM2_5Value();
+               int PM10Value = data.getPM10Value();
 
-                progressPM1.setProgress(b.getInt("PM01Value"));
-                progressPM2.setProgress(b.getInt("PM2_5Value"));
-                progressPM10.setProgress(b.getInt("PM10Value"));
+                progressPM1.setProgress(PM01Value);
+                progressPM2.setProgress(PM2_5Value);
+                progressPM10.setProgress(PM10Value);
 
-                textViewPM1.setText(b.getInt("PM01Value")+"");
-                textViewPM2.setText(b.getInt("PM2_5Value")+"");
-                textViewPM10.setText(b.getInt("PM10Value")+"");
+                textViewPM1.setText(PM01Value+"");
+                textViewPM2.setText(PM2_5Value+"");
+                textViewPM10.setText(PM10Value+"");
                 Calendar c = Calendar.getInstance();
                 Date d1 = c.getTime();
 
-                int nbPoint = 10 * 60; // 10 min * 60 second, 1 point per second
+                int nbPoint = 10 * 60;
 
-                series.appendData(new DataPoint(d1,b.getInt("PM01Value")),true,nbPoint);
-                series2.appendData(new DataPoint(d1,b.getInt("PM2_5Value")),true,nbPoint);
-                series10.appendData(new DataPoint(d1,b.getInt("PM10Value")),true,nbPoint);
+                series.appendData(new DataPoint(d1,PM01Value),true,nbPoint);
+                series2.appendData(new DataPoint(d1,PM2_5Value),true,nbPoint);
+                series10.appendData(new DataPoint(d1,PM10Value),true,nbPoint);
+
 
             }
         };
