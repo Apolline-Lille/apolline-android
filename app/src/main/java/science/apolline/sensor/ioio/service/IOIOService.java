@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +16,7 @@ import ioio.lib.api.Uart;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
+import science.apolline.R;
 import science.apolline.sensor.ioio.model.IOIOData;
 
 public class IOIOService extends ioio.lib.util.android.IOIOService{
@@ -93,13 +95,14 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
                 
                 Thread.sleep(freq);
                 sendBroadcast(data);
+                Log.e("service","broadcast");
             }
         };
     }
 
     private void sendBroadcast(IOIOData data){
 
-        Intent intent = new Intent("IOIOdata");
+        Intent intent = new Intent(getString(R.string.dataBroadcastFilter));
         intent.putExtra("dataBundle",data);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
