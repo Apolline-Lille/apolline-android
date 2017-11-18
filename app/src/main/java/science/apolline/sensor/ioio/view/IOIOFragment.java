@@ -1,6 +1,5 @@
 package science.apolline.sensor.ioio.view;
 
-import android.app.Fragment;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.LifecycleOwner;
@@ -16,7 +15,9 @@ import android.os.Bundle;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +80,7 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
     private GraphView graph;
 
     private LiveData<IOIOData> dataLive;
-    private LifecycleRegistry mLyfeCycleRegistry;
+
 
     public IOIOFragment() {
 
@@ -88,7 +89,6 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLyfeCycleRegistry = new LifecycleRegistry(this);
     }
 
     @Override
@@ -195,10 +195,13 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         sensorViewModel viewModel = new sensorViewModel(getActivity().getApplication());
-        viewModel.getDataLive().observe(this, new Observer<sensorData>() {
+        LiveData<sensorData> data = viewModel.getDataLive();
+        data.observe(this, new Observer<sensorData>() {
             @Override
             public void onChanged(@Nullable sensorData sensorData) {
+                Log.e("fragment", "onChanged");
                 if(sensorData != null && sensorData.getClass() == IOIOData.class){
+                    Log.e("fragment","if statement");
                     IOIOData data = (IOIOData) sensorData;
                     int PM01Value = data.getPM01Value();
                     int PM2_5Value = data.getPM2_5Value();
@@ -218,11 +221,5 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
                 }
             }
         });
-    }
-
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-        return mLyfeCycleRegistry;
     }
 }

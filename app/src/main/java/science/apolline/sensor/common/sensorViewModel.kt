@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.support.v4.content.LocalBroadcastManager
+import android.util.Log
 import android.widget.Toast
 import retrofit2.Call
 import retrofit2.Response
@@ -25,8 +26,11 @@ class sensorViewModel (application: Application) : AndroidViewModel(application)
     init {
         val BReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
+                Log.e("viewModel","receiver")
                 val data : sensorData = intent.getParcelableExtra("dataBundle")
                 dataLive.postValue(data)
+
+                Log.e("viewModel","${dataLive.hasActiveObservers()}");
                 //TODO : move that to sensor sendBroadcast as intent extra
                 val calendar = Calendar.getInstance()
                 var d1 = calendar.time
@@ -34,7 +38,7 @@ class sensorViewModel (application: Application) : AndroidViewModel(application)
                 //TODO device and sensor param as intent extra
                 val sensor : Sensor = Sensor("IOIO","IOIO",d1.toString(),null,dataLive.value?.toJson())
                 setPersistant(sensor)
-                sendData(sensor)
+                //sendData(sensor)
             }
         }
         LocalBroadcastManager.getInstance(application).registerReceiver(BReceiver, IntentFilter(application.getString(R.string.dataBroadcastFilter)))
