@@ -1,4 +1,4 @@
-package science.apolline.sensor.common
+package science.apolline.models
 
 import android.os.Parcelable
 import com.google.gson.JsonObject
@@ -6,7 +6,7 @@ import com.google.gson.JsonObject
 /**
  * Created by damien-lenovo on 17/11/2017.
  */
-interface sensorData : Parcelable{
+interface IntfSensorData : Parcelable{
 
     fun toJson(): JsonObject
 

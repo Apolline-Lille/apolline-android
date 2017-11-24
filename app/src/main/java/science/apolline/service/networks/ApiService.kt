@@ -1,9 +1,9 @@
-package science.apolline.networks
+package science.apolline.service.networks
 
 import retrofit2.Call
 import retrofit2.http.*
 import retrofit2.http.POST
-import science.apolline.models.Post
+import science.apolline.models.InfluxBody
 
 
 /**
@@ -17,6 +17,6 @@ interface ApiService {
     fun savePost(@Query("db") dbName: String,
                  @Query("u") dbUserName: String,
                  @Query("p") dbPassword: String,
-                 @Body data: String): Call<Post>
+                 @Body data: String): Call<InfluxBody>
 
 }
