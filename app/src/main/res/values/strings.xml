@@ -31,7 +31,14 @@
     <string name="drawer_information">Information</string>
     <string name="drawer_contact">Contact</string>
     <string name="drawer_capteur">Capteur</string>
-    <string name="drawer_loa_ioio">LOA IOIO</string>
-    <string name="dataBroadcastFilter">apollineDataSet</string>
+
+    <string name="loa_ioio_name">LOA IOIO</string>
+
+    <string name="sensorBroadCast">apolineSensorBroadCast</string>
+
+    <string name="serviceBroadCastDataSet">dataSet</string>
+    <string name="serviceBroadCastDate">date</string>
+    <string name="serviceBroadCastSensorName">sensorName</string>
+
 
 </resources>

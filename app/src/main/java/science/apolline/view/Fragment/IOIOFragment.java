@@ -74,7 +74,6 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SingleShotLocationProvider.INSTANCE.checkLocationPermission(getActivity());
     }
 
     @Override
