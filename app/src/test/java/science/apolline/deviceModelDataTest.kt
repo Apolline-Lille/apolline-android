@@ -27,7 +27,7 @@ class deviceModelDataTest {
                 "\"provider\":\"GPS\"," +
                 "\"longitude\":152.36," +
                 "\"latitude\":142.36," +
-                "\"location\":\"Train\"" +
+                "\"transport\":\"Train\"" +
                 "}"
         val positionInitObject = Position("GPS", 152.36, 142.36, "Train")
 
@@ -43,8 +43,8 @@ class deviceModelDataTest {
         assertNotEquals(position.provider, "toto")
         assertNotEquals(position.longitude, 100.0)
         assertNotEquals(position.latitude, 100.0)
-        assertEquals(position.location, "Train")
-        assertNotEquals(position.location, "toto")
+        assertEquals(position.transport, "Train")
+        assertNotEquals(position.transport, "toto")
         assertEquals(position.toString(), positionInitObject.toString())
         assertEquals(jsonPositionFromObject, jsonInit)
 
@@ -68,7 +68,7 @@ class deviceModelDataTest {
                 "\"provider\":\"GPS\"," +
                 "\"longitude\":152.36," +
                 "\"latitude\":142.36," +
-                "\"location\":\"Train\"" +
+                "\"transport\":\"Train\"" +
                 "}," +
                 "\"data\": {" +
                 "\"CO2\": [100,\"PPM\"]," +

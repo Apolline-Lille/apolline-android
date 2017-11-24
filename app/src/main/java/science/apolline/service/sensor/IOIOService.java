@@ -8,6 +8,8 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Date;
 
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.DigitalOutput;
@@ -101,8 +103,13 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
 
     private void sendBroadcast(IOIOData data){
 
-        Intent intent = new Intent(getString(R.string.dataBroadcastFilter));
-        intent.putExtra("dataBundle",data);
+        Intent intent = new Intent(getString(R.string.sensorBroadCast));
+        intent.putExtra(getString(R.string.serviceBroadCastDataSet),data);
+        Calendar calendar = Calendar.getInstance();
+        Date d1 = calendar.getTime();
+        intent.putExtra(getString(R.string.serviceBroadCastDate),d1);
+        String sensorName = getString(R.string.loa_ioio_name);
+        intent.putExtra(getString(R.string.serviceBroadCastSensorName),sensorName);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 

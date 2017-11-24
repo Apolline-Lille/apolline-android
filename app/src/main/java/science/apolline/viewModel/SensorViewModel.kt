@@ -1,6 +1,5 @@
 package science.apolline.viewModel
 
-import android.Manifest
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
@@ -8,7 +7,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.support.v4.content.ContextCompat
+import android.location.Location
+import android.location.LocationListener
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.widget.Toast
@@ -23,33 +23,53 @@ import science.apolline.service.networks.ApiService
 import science.apolline.service.networks.ApiUtils
 import science.apolline.models.IntfSensorData
 import science.apolline.utils.RequestParser
-import java.io.IOException
 import java.util.*
+import android.os.Bundle
+import science.apolline.models.Position
+import science.apolline.service.geolocalisation.SingleShotLocationProvider
+
 
 class SensorViewModel(application: Application) : AndroidViewModel(application){
     init {
         val BReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 Log.e("viewModel","receiver")
-                val data : IntfSensorData = intent.getParcelableExtra("dataBundle")
+                val data : IntfSensorData = intent.getParcelableExtra(
+                        application.getString(R.string.serviceBroadCastDataSet)
+                )
                 dataLive.postValue(data)
 
                 Log.e("viewModel","${dataLive.hasActiveObservers()}");
-                //TODO : move that to Device sendBroadcast as intent extra
-                val calendar = Calendar.getInstance()
-                var d1 = calendar.time
-                //TODO position
 
-                //TODO device and Device param as intent extra
-                val device: Device = Device("IOIO",d1.toString(),null,dataLive.value?.toJson())
-                setPersistant(device)
-                //sendData(Device)
+                val d1 = intent.getSerializableExtra(application.getString(R.string.serviceBroadCastDate)) as Date;
+
+                var position: Position
+                mLocationListener = object : LocationListener {
+                    override fun onLocationChanged(location: Location) {
+                        position=Position(location.provider,location.longitude,location.latitude,"null")
+
+                        val device: Device = Device(
+                                intent.getStringExtra(application.getString(R.string.serviceBroadCastSensorName))
+                                ,d1.toString()
+                                ,position,dataLive.value?.toJson()
+                        )
+                        setPersistant(device)
+                        //sendData(Device)
+                    }
+                    override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
+                    override fun onProviderEnabled(provider: String) {}
+                    override fun onProviderDisabled(provider: String) {}
+                }
+                val singleShotLocationProvider  = SingleShotLocationProvider
+                singleShotLocationProvider.requestSingleUpdate(application,mLocationListener)
             }
         }
-        LocalBroadcastManager.getInstance(application).registerReceiver(BReceiver, IntentFilter(application.getString(R.string.dataBroadcastFilter)))
+        LocalBroadcastManager.getInstance(application).registerReceiver(BReceiver, IntentFilter(application.getString(R.string.sensorBroadCast)))
     }
 
     var dataLive : MutableLiveData<IntfSensorData> = MutableLiveData()
+    lateinit var mLocationListener: LocationListener
+
 
     private fun sendData(device: Device) {
         val requestBody: String = RequestParser.createRequestBody(device)
