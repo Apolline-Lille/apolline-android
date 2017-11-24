@@ -1,4 +1,4 @@
-package science.apolline.networks
+package science.apolline.service.networks
 
 /**
  * Created by sparow on 13/10/2017.

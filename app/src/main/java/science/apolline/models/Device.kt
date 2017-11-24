@@ -10,13 +10,10 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 @Entity
-data class Sensor(
+data class Device(
         @SerializedName("device")
         @Expose
         var device: String,
-        @SerializedName("sensor")
-        @Expose
-        var sensor: String,
         @SerializedName("date")
         @Expose
         var date: String,
@@ -32,12 +29,11 @@ data class Sensor(
     @Expose
     @PrimaryKey(autoGenerate = true)
     var sensorId: Int? = 0
-    constructor() : this("", "", "", null, null)
+    constructor() : this("", "", null, null)
 
     override fun toString(): String {
         return """
         |Device = $device
-        |Sensor = $sensor
         |Date = $date
         |Position = $position
         |Data = $data

@@ -1,4 +1,4 @@
-package science.apolline.database
+package science.apolline.service.database
 
 /**
  * Created by sparow on 11/5/17.
@@ -17,14 +17,10 @@ class Converters {
 
 
     @TypeConverter
-    fun fromTimestamp(value: Long?): Date? {
-        return if (value == null) null else Date(value)
-    }
+    fun fromTimestamp(value: Long?): Date? = if (value == null) null else Date(value)
 
     @TypeConverter
-    fun dateToTimestamp(date: Date?): Long? {
-        return date?.time
-    }
+    fun dateToTimestamp(date: Date?): Long? = date?.time
 
     @TypeConverter
     fun fromData(data: String?): JsonObject? {
