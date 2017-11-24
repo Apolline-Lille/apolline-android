@@ -1,34 +1,30 @@
-apply plugin: 'com.android.application'
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  repositories {
-    mavenCentral()
-  }
+    ext.kotlin_version = '1.1.51'
+    ext.gradle_version = '3.0.0'
+    repositories {
+        jcenter()
+        google()
+    }
+    dependencies {
 
-  dependencies {
-    classpath 'com.android.tools.build:gradle:2.3.3'
-  }
+        classpath "com.android.tools.build:gradle:$gradle_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
 }
 
-android {
-  buildToolsVersion '25.0.2'
-  compileSdkVersion 25
+allprojects {
+    repositories {
+        jcenter()
+        google()
+        maven { url 'https://maven.google.com' }
+    }
 }
 
-dependencies {
-    compile 'com.github.ytai.ioio:IOIOLibAndroid:5.07'
-    compile 'com.github.ytai.ioio:IOIOLibAndroidBluetooth:5.07'
-    compile 'com.github.ytai.ioio:IOIOLibAndroidAccessory:5.07'
-    compile 'com.github.ytai.ioio:IOIOLibAndroidDevice:5.07'
-    // compile files('libs/GraphView-4.2.1.jar')
-    compile 'com.jjoe64:graphview:4.2.1'
-    compile 'com.google.android.gms:play-services-maps:10.0.1'
-    compile 'com.android.support:design:25.1.1'
-    compile 'com.android.support:appcompat-v7:25.1.1'
-
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
-
-repositories {
-  mavenCentral()
-}
-
