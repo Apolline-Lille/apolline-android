@@ -1,5 +1,4 @@
 # Tag last commit as 'latest'.
-
 if [ "$TRAVIS_BRANCH" = "travisci" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
   git config --global user.email "apolline@travis-ci.org"
   git config --global user.name "Sr. Travis"
