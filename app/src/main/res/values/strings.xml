@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Apolline</string>
 
-    <string name="hello">PM sensor</string>
+    <string name="hello">PM device</string>
 
     <string name="mapKey">AIzaSyD04i3XxUqRZ7dAfPArm_JhmcdhPFe88uk</string>
     <string name="opt_chart_types_title">Chart types:</string>

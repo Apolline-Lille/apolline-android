@@ -1,4 +1,4 @@
-package science.apolline;
+package science.apolline.view.Activity;
 
 
 
@@ -19,13 +19,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import science.apolline.database.AppDatabase;
-import science.apolline.database.SensorDao;
-import science.apolline.sensor.ioio.view.IOIOFragment;
-import science.apolline.sensor.ioio.service.IOIOService;
+import science.apolline.R;
+import science.apolline.service.database.AppDatabase;
+import science.apolline.service.database.SensorDao;
+import science.apolline.service.sensor.IOIOService;
+import science.apolline.view.Fragment.IOIOFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public void toto() throws  SecurityException{
+
+    }
 
     public static final String MY_PREFS_NAME = "MyPrefsFile";
     private final int REQUEST_CODE_ENABLE_BLUETOOTH = 0;
@@ -114,14 +119,14 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.grp_fonction :
                 if (itemId == R.id.nav_setting) {
-                    Intent intent = new Intent(this, options.class);
+                    Intent intent = new Intent(this, OptionsActivity.class);
                     startActivity(intent);
                 } else if (itemId == R.id.nav_info) {
-                    Intent intent = new Intent(this, informations.class);
+                    Intent intent = new Intent(this, InformationActivity.class);
                     startActivity(intent);
                     return true;
                 } else if (itemId == R.id.nav_contact) {
-                    Intent intent = new Intent(this, contact.class);
+                    Intent intent = new Intent(this, ContactActivity.class);
                     startActivity(intent);
                 }
                 break;

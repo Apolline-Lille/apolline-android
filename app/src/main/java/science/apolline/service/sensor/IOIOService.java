@@ -1,7 +1,6 @@
-package science.apolline.sensor.ioio.service;
+package science.apolline.service.sensor;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -17,7 +16,7 @@ import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
 import science.apolline.R;
-import science.apolline.sensor.ioio.model.IOIOData;
+import science.apolline.models.IOIOData;
 
 public class IOIOService extends ioio.lib.util.android.IOIOService{
 

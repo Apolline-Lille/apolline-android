@@ -10,10 +10,10 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import science.apolline.database.AppDatabase
-import science.apolline.database.SensorDao
+import science.apolline.service.database.AppDatabase
+import science.apolline.service.database.SensorDao
 import science.apolline.models.Position
-import science.apolline.models.Sensor
+import science.apolline.models.Device
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -48,11 +48,11 @@ class RoomDatabaseTest {
         val gson = Gson()
         val dataListObject = gson.fromJson(dataList, JsonObject::class.java)
         val positionInitObject = Position("GPS", 152.36, 142.36, "Train")
-        val sensor = Sensor("Arduino", "MQ135", "WedSep2614:23:28EST2017", positionInitObject, dataListObject )
+        val sensor = Device("Arduino", "WedSep2614:23:28EST2017", positionInitObject, dataListObject )
 
         sensorDao?.insertOne(sensor)
         val sensorTest = getValue(sensorDao?.getSensorById(sensor.sensorId)!!)
-        Assert.assertEquals(sensor.sensor, sensorTest.sensor)
+        Assert.assertEquals(sensor.device, sensorTest.device)
     }
 
     @Test
