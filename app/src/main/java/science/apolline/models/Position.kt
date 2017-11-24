@@ -5,7 +5,6 @@ package science.apolline.models
  */
 
 import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -20,9 +19,9 @@ data class Position(
         @SerializedName("latitude")
         @Expose
         var latitude: Double,
-        @SerializedName("location")
+        @SerializedName("transport")
         @Expose
-        var location: String
+        var transport: String
 
 ) {
     constructor() : this("", 0.0, 0.0, "")
@@ -32,7 +31,7 @@ data class Position(
         |Provider = $provider
         |Longitude = $longitude
         |Latitude = $latitude
-        |Location = $location
+        |Location = $transport
         """.trimMargin()
     }
 

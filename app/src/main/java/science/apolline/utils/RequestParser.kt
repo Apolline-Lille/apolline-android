@@ -14,7 +14,7 @@ object RequestParser {
     val PROVIDER = "provider"
     val LONGITUDE = "longitude"
     val LATITUDE = "latitude"
-    val LOCATION = "location"
+    val LOCATION = "transport"
     val UNIT = "unit"
     val VALUE = "value"
     val DATE = "date"
@@ -38,7 +38,7 @@ object RequestParser {
 
                 sb.append(DEVICE).append("=").append(device.device).append(",")
                 sb.append(PROVIDER).append("=").append(device.position!!.provider).append(",")
-                sb.append(LOCATION).append("=").append(device.position!!.location).append(",")
+                sb.append(LOCATION).append("=").append(device.position!!.transport).append(",")
                 sb.append(LONGITUDE).append("=").append(device.position!!.longitude).append(",")
                 sb.append(LATITUDE).append("=").append(device.position!!.latitude).append(",")
                 sb.append(DATE).append("=").append(device.date).append(",")
