@@ -12,6 +12,7 @@ cache:
   - $HOME/.gradle/wrapper/
   - $HOME/.android/build-cache
 before_install:
+  - chmod +x scripts/tag.sh
   - docker pull influxdb
   - docker run --name=influxdb -d -p 127.0.0.1:8086:8086 influxdb
   - docker ps -a
