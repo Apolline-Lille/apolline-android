@@ -1,14 +1,16 @@
 package science.apolline;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+
+
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,8 +20,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import science.apolline.database.AppDatabase;
-import science.apolline.ioio.IOIOFragment;
-import science.apolline.ioio.IOIOService;
+import science.apolline.database.SensorDao;
+import science.apolline.sensor.ioio.view.IOIOFragment;
+import science.apolline.sensor.ioio.service.IOIOService;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -28,7 +31,7 @@ public class MainActivity extends AppCompatActivity
     private final int REQUEST_CODE_ENABLE_BLUETOOTH = 0;
 
     private Context myContext;
-    private AppDatabase appDatabase;
+    private SensorDao sensorModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +58,8 @@ public class MainActivity extends AppCompatActivity
         Fragment IOIOFragment = new IOIOFragment();
         replaceFragment(IOIOFragment);
 
-        myContext = getBaseContext();
-        appDatabase = AppDatabase.Companion.getAppDatabase(myContext);
-        appDatabase.SensorModel().getAll();
+        sensorModel = AppDatabase.Companion.getInstance(getApplicationContext());
+        sensorModel.getAll();
 
 
     }
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity
     private void replaceFragment (Fragment fragment){
         String backStateName =  fragment.getClass().getName();
 
-        FragmentManager manager = getFragmentManager();
+        FragmentManager manager = getSupportFragmentManager();
         boolean fragmentPopped = manager.popBackStackImmediate (backStateName, 0);
 
         if (!fragmentPopped && manager.findFragmentByTag(backStateName) == null){ //fragment not in back stack, create it.
