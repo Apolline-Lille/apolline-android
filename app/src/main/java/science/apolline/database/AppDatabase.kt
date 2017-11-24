@@ -19,21 +19,29 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun SensorModel(): SensorDao
 
     companion object {
-        private var INSTANCE: AppDatabase? = null
 
-        fun getAppDatabase(context: Context): AppDatabase {
-            if (INSTANCE == null) {
-                INSTANCE = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "sensors-database")
-                        // allow queries on the main thread.
-                        // Don't do this on a real app! See PersistenceBasicSample for an example.
-                        .allowMainThreadQueries()
-                        .build()
+        var TEST_MODE = false
+        private val databaseName = "sensors-database"
+
+        private var db: AppDatabase? = null
+        private var dbInstance: SensorDao? = null
+
+        fun getInstance(context: Context): SensorDao {
+            if (dbInstance == null) {
+                if (TEST_MODE) {
+                    db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).allowMainThreadQueries().build()
+                    dbInstance = db?.SensorModel()
+                } else {
+                    db = Room.databaseBuilder(context, AppDatabase::class.java, databaseName).build()
+                    dbInstance = db?.SensorModel()
+                }
             }
-            return INSTANCE as AppDatabase
+            return dbInstance!!
         }
 
-        fun destroyInstance() {
-            INSTANCE = null
+        private fun close() {
+            db?.close()
         }
+
     }
 }

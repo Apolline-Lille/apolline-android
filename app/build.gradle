@@ -85,6 +85,10 @@ dependencies {
     implementation "android.arch.persistence.room:rxjava2:$project.rc"
     testImplementation"android.arch.persistence.room:testing:$project.rc"
 
+    //LiveData
+    implementation "android.arch.lifecycle:extensions:1.0.0"
+    testImplementation "android.arch.core:core-testing:1.0.0"
+
 }
 repositories {
     mavenCentral()

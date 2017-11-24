@@ -1,5 +1,6 @@
 package science.apolline.database
 
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
 import science.apolline.models.Sensor
@@ -17,11 +18,20 @@ interface SensorDao {
     @Query("SELECT * FROM sensor WHERE sensorId IN (:arg0)")
     fun loadAllByIds(sensorIds: IntArray): List<Sensor>
 
+    @Query("SELECT count(*) FROM sensor")
+    fun getSensorCount(): Int
+
+    @Query("SELECT * FROM sensor WHERE sensorId=:arg0")
+    fun getSensorById(sensor_id: Int?): LiveData<Sensor>
+
     @Insert(onConflict = REPLACE)
     fun insertOne(sensor: Sensor)
 
     @Update(onConflict = REPLACE)
     fun update(sensor: Sensor)
+
+    @Query("DELETE FROM sensor")
+    fun flushSensorData()
 
     @Delete
     fun delete(sensor: Sensor)
