@@ -48,10 +48,11 @@ before_deploy:
 deploy:
   provider: releases
   skip_cleanup: true
-  file: "app/build/outputs/apk/release/Apolline.apk"
+  file: Apolline.apk
   api_key:
     secure: "wNyHnxqWJcwqR6ZwxkY8/xh/7yWedut5c+PX+0aaNtL+xBDzbXlFyf5SqwKrG3/UN+JtiVVtjomrzE7MALiHEUpeqmA1jT5BwirFwB7hFYSHu26p4pwsanZM1tkZxkGW8rlLx75qrud70MOboi3nb2ZoAaJk27khfTViDv8BowrPFTG6X26Lzg0P0dD94s+24cB7KtcdmBlkZvp8uK1xfLYQflAUGPRpFC0lPJujqODZXTyqapXQZPcCDOvG+A1iKNWR175EuAgSwdcqLqp3cB6KGZJ+44ODE2zv3W9sR9bSQ0xQqYjBRaCeIwNmpRyB8UW4rY8zTw/gput2gV/nJZBBE+xDsuLTSVRuqSABTRfPzJVYy6QJ2R936/EIIsIdyzU45a7k48hHOQFWiopabBxm0uilS7T0Y1PNuOUln3SABL7igjGfaPeNH511F9qUDdSUuvaNEFialUk5L7V6syPb8tYQ/sJDRZjE9gk6V5J8Z+Ig9pw9lD/3SAPIi1f5bVD1WNhfy7tHWR4Y+s5gZ7B0T76SKmiVIcgolBTEx0OXiG0Z2ML5pRw8zkj0R016Wq/kjeSqJlQnKFhbLFFB4ZzDH6ac6jIz6FOYqv0gBd5FzoSY31+34CoVaKqEhnCFCtjpR6tVGIHMbRkaSECwCKU4LITTl8borVr3yUly0+8=" #ApiGitHubRawToken
   on:
-    branch: master
+    repo: Apolline-Lille/apolline-android
     tags: true
+    all_branches: true
 
