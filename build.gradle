@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
 
-        classpath "com.android.tools.build:gradle:$gradle_version"
+        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         
         // NOTE: Do not place your application dependencies here; they belong
@@ -27,4 +27,10 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+task printVersionName {
+    doLast {
+        println android.defaultConfig.versionName
+    }
 }
