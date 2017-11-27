@@ -29,10 +29,14 @@ abstract class AppDatabase : RoomDatabase() {
         fun getInstance(context: Context): SensorDao {
             if (dbInstance == null) {
                 if (TEST_MODE) {
-                    db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).allowMainThreadQueries().build()
+                    db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
+                            .allowMainThreadQueries()
+                            .build()
                     dbInstance = db?.SensorModel()
                 } else {
-                    db = Room.databaseBuilder(context, AppDatabase::class.java, databaseName).allowMainThreadQueries().build()
+                    db = Room.databaseBuilder(context, AppDatabase::class.java, databaseName)
+                            .allowMainThreadQueries()
+                            .build()
                     dbInstance = db?.SensorModel()
                 }
             }
