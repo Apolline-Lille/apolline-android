@@ -1,0 +1,75 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "d0b78717a0434676c4cdf80ac4ef1c6c",
+    "entities": [
+      {
+        "tableName": "Device",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sensorId` INTEGER PRIMARY KEY AUTOINCREMENT, `device` TEXT NOT NULL, `date` TEXT NOT NULL, `data` TEXT, `provider` TEXT, `longitude` REAL, `latitude` REAL, `transport` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "sensorId",
+            "columnName": "sensorId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "device",
+            "columnName": "device",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "data",
+            "columnName": "data",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "position.provider",
+            "columnName": "provider",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "position.longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "position.latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "position.transport",
+            "columnName": "transport",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "sensorId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d0b78717a0434676c4cdf80ac4ef1c6c\")"
+    ]
+  }
+}
