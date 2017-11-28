@@ -2,23 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
-project.ext {
-    appcompat = "26.1.0"
-    rc = "1.0.0-rc1"
-    ioio ="5.07"
-    maps = "11.4.2"
-    retrofit = "2.3.0"
-    constraintLayout = "1.0.2"
-}
-
 android {
 
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "apoline.science"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -35,6 +26,15 @@ android {
         }
     }
 
+}
+
+project.ext {
+    appcompat = "27.0.1"
+    rc = "1.0.0-rc1"
+    ioio ="5.07"
+    maps = "11.4.2"
+    retrofit = "2.3.0"
+    constraintLayout = "1.0.2"
 }
 
 dependencies {
