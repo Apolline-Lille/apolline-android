@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import android.support.annotation.Nullable;
@@ -19,30 +20,37 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.LegendRenderer;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.text.DateFormat;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import science.apolline.R;
 import science.apolline.models.IntfSensorData;
-import science.apolline.service.geolocalisation.SingleShotLocationProvider;
 import science.apolline.viewModel.SensorViewModel;
 import science.apolline.models.IOIOData;
 import science.apolline.service.sensor.IOIOService;
 
-public class IOIOFragment extends Fragment implements LifecycleOwner{
 
-    static LineGraphSeries<DataPoint> series;
-    static LineGraphSeries<DataPoint> series2;
-    static LineGraphSeries<DataPoint> series10;
+
+public class IOIOFragment extends Fragment implements LifecycleOwner, OnChartValueSelectedListener {
+
 
     private ProgressBar progressPM1;
     private ProgressBar progressPM2;
@@ -62,12 +70,11 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
 
     private BroadcastReceiver BReceiver;
 
-    private GraphView graph;
-
     private LiveData<IOIOData> dataLive;
+    private LineChart mChart;
+    private List<ILineDataSet> dataList;
 
     public IOIOFragment() {
-
     }
 
     @Override
@@ -78,7 +85,7 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_ioio,container,false);
+        return inflater.inflate(R.layout.fragment_ioio, container, false);
     }
 
     @Override
@@ -90,13 +97,155 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
         textViewPM2 = view.findViewById(R.id.fragment_ioio_tv_pm2_value);
         progressPM10 = view.findViewById(R.id.fragment_ioio_progress_pm10);
         textViewPM10 = view.findViewById(R.id.fragment_ioio_tv_pm10_value);
-        graph = view.findViewById(R.id.fragment_ioio_graph);
-        initGraph(graph);
+
+        mChart = view.findViewById(R.id.chart1);
+
 //        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_ioio_map);
 //        pieton = view.findViewById(R.id.fragment_ioio_pieton);
 //        velo = view.findViewById(R.id.fragment_ioio_velo);
 //        voiture = view.findViewById(R.id.fragment_ioio_voiture);
 //        other = view.findViewById(R.id.fragment_ioio_other);
+
+        dataList = createMultiSet();
+
+
+        // LineTimeChart
+        mChart.setOnChartValueSelectedListener(this);
+        // enable description text
+        mChart.getDescription().setEnabled(true);
+        // enable touch gestures
+        mChart.setTouchEnabled(true);
+        // enable scaling and dragging
+        mChart.setDragEnabled(true);
+        mChart.setScaleEnabled(true);
+        mChart.setDrawGridBackground(false);
+        // if disabled, scaling can be done on x- and y-axis separately
+        mChart.setPinchZoom(true);
+        // set an alternative background color
+        mChart.setBackgroundColor(Color.TRANSPARENT);
+
+
+        LineData data = new LineData();
+        data.setValueTextColor(Color.WHITE);
+        // add empty data
+        mChart.setData(data);
+
+        // get the legend (only possible after setting data)
+        Legend l = mChart.getLegend();
+        // modify the legend ...
+        l.setForm(Legend.LegendForm.LINE);
+        l.setTypeface(Typeface.DEFAULT);
+        l.setTextColor(Color.WHITE);
+
+        XAxis xl = mChart.getXAxis();
+        xl.setTypeface(Typeface.DEFAULT);
+        xl.setTextColor(Color.BLACK);
+        xl.setDrawGridLines(false);
+        xl.setAvoidFirstLastClipping(true);
+        xl.setEnabled(true);
+        xl.setCenterAxisLabels(true);
+        xl.setGranularity(1f); // one hour
+        xl.setPosition(XAxis.XAxisPosition.TOP_INSIDE);
+        xl.setValueFormatter(new IAxisValueFormatter() {
+            private SimpleDateFormat mFormat = new SimpleDateFormat("dd MMM HH:mm");
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                long millis = TimeUnit.HOURS.toMillis((long) value);
+                return mFormat.format(new Date(millis));
+            }
+        });
+
+        YAxis leftAxis = mChart.getAxisLeft();
+        leftAxis.setTypeface(Typeface.DEFAULT);
+        leftAxis.setTextColor(Color.BLACK);
+        leftAxis.setAxisMaximum(2000f);
+        leftAxis.setAxisMinimum(0f);
+        leftAxis.setDrawGridLines(true);
+
+        YAxis rightAxis = mChart.getAxisRight();
+        rightAxis.setEnabled(false);
+
+    }
+
+
+    private void addEntry(int[] dataTosend ) {
+        LineData data = mChart.getData();
+
+        if (data != null) {
+            if (data.getDataSetCount()!=3)
+                    for (ILineDataSet temp : dataList) {
+                        data.addDataSet(temp);
+                    }
+            }
+
+            long now = TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis());
+
+            data.addEntry(new Entry(now, (float) dataTosend[0]), 0);
+            data.addEntry(new Entry(now, (float) dataTosend[1]), 1);
+            data.addEntry(new Entry(now, (float) dataTosend[2]), 2);
+
+            data.notifyDataChanged();
+            // let the chart know it's data has changed
+            mChart.notifyDataSetChanged();
+            // limit the number of visible entries
+            mChart.setVisibleXRangeMaximum(20);
+            // mChart.setVisibleYRange(30, AxisDependency.LEFT);
+            // move to the latest entry
+            mChart.moveViewToX(data.getEntryCount());
+            // this automatically refreshes the chart (calls invalidate())
+            // mChart.moveViewTo(data.getXValCount()-7, 55f,
+            // AxisDependency.LEFT);
+
+    }
+
+    private ArrayList<ILineDataSet> createMultiSet() {
+
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+
+                LineDataSet setPM1 = new LineDataSet(null, "PM1");
+                setPM1.setAxisDependency(YAxis.AxisDependency.LEFT);
+                setPM1.setColor(Color.BLUE);
+                setPM1.setCircleColor(Color.BLUE);
+                setPM1.setLineWidth(2f);
+                setPM1.setCircleRadius(4f);
+                setPM1.setFillAlpha(65);
+                setPM1.setFillColor(Color.BLUE);
+                setPM1.setHighLightColor(Color.rgb(244, 117, 117));
+                setPM1.setValueTextColor(Color.BLUE);
+                setPM1.setValueTextSize(9f);
+                setPM1.setDrawValues(false);
+
+                LineDataSet setPM2 = new LineDataSet(null, "PM2");
+                setPM2.setAxisDependency(YAxis.AxisDependency.LEFT);
+                setPM2.setColor(Color.GREEN);
+                setPM2.setCircleColor(Color.GREEN);
+                setPM2.setLineWidth(2f);
+                setPM2.setCircleRadius(4f);
+                setPM2.setFillAlpha(65);
+                setPM2.setFillColor(Color.GREEN);
+                setPM2.setHighLightColor(Color.rgb(244, 117, 117));
+                setPM2.setValueTextColor(Color.GREEN);
+                setPM2.setValueTextSize(9f);
+                setPM2.setDrawValues(false);
+
+                LineDataSet setPM10 = new LineDataSet(null, "PM10");
+                setPM10.setAxisDependency(YAxis.AxisDependency.LEFT);
+                setPM10.setColor(Color.YELLOW);
+                setPM10.setCircleColor(Color.YELLOW);
+                setPM10.setLineWidth(2f);
+                setPM10.setCircleRadius(4f);
+                setPM10.setFillAlpha(65);
+                setPM10.setFillColor(Color.YELLOW);
+                setPM10.setHighLightColor(Color.rgb(244, 117, 117));
+                setPM10.setValueTextColor(Color.YELLOW);
+                setPM10.setValueTextSize(9f);
+                setPM10.setDrawValues(false);
+
+                dataSets.add(setPM1);
+                dataSets.add(setPM2);
+                dataSets.add(setPM10);
+
+        return dataSets;
     }
 
     @Override
@@ -111,69 +260,6 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
 
     }
 
-    public void initGraph(GraphView graph) {
-
-        // set date label formatter
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(),
-                DateFormat.getTimeInstance(DateFormat.SHORT)));
-
-        graph.getViewport().setScrollable(true); // enables horizontal scrolling
-        graph.getViewport().setScrollableY(true); // enables vertical scrolling
-
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getViewport().setYAxisBoundsManual(true);
-
-        graph.getGridLabelRenderer().setNumHorizontalLabels(9);
-        graph.getGridLabelRenderer().setNumVerticalLabels(5);
-        graph.getGridLabelRenderer().setLabelVerticalWidth(45);
-
-        Calendar calendar = Calendar.getInstance();
-        Date d1 = calendar.getTime();
-        graph.getViewport().setMinX(d1.getTime());
-
-        calendar.add(Calendar.MINUTE,10);
-        d1=calendar.getTime();
-        graph.getViewport().setMaxX(d1.getTime());
-
-        graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(100);
-
-        graph.getViewport().setDrawBorder(true);
-
-        graph.getGridLabelRenderer().setHorizontalLabelsColor(Color.BLACK);
-        graph.getGridLabelRenderer().setVerticalLabelsColor(Color.BLACK);
-
-        //series
-        series = new LineGraphSeries<>();
-        series2 = new LineGraphSeries<>();
-        series10 = new LineGraphSeries<>();
-        graph.addSeries(series);
-        graph.addSeries(series2);
-        graph.addSeries(series10);
-
-        //LEgend
-        series.setTitle("PM1.0");
-        series2.setTitle("PM2.5");
-        series10.setTitle("PM10");
-        graph.getLegendRenderer().setVisible(true);
-        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-
-        series.setColor(Color.BLUE);
-        series.setDrawDataPoints(true);
-        series.setThickness(7);
-        series.setDataPointsRadius(8);
-
-        series2.setColor(Color.GREEN);
-        series2.setDrawDataPoints(true);
-        series2.setThickness(7);
-        series2.setDataPointsRadius(8);
-
-        series10.setColor(Color.YELLOW);
-        series10.setDrawDataPoints(true);
-        series10.setThickness(7);
-        series10.setDataPointsRadius(8);
-        graph.getGridLabelRenderer().setHumanRounding(false);
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -183,7 +269,9 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
         data.observeForever(new Observer<IntfSensorData>() {
             @Override
             public void onChanged(@Nullable IntfSensorData sensorData) {
-                if(sensorData != null && sensorData.getClass() == IOIOData.class){
+                Log.e("fragment", "onChanged");
+                if (sensorData != null && sensorData.getClass() == IOIOData.class) {
+                    Log.e("fragment", "if statement");
                     IOIOData data = (IOIOData) sensorData;
                     int PM01Value = data.getPM01Value();
                     int PM2_5Value = data.getPM2_5Value();
@@ -191,17 +279,26 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
                     progressPM1.setProgress(PM01Value);
                     progressPM2.setProgress(PM2_5Value);
                     progressPM10.setProgress(PM10Value);
-                    textViewPM1.setText(PM01Value+"");
-                    textViewPM2.setText(PM2_5Value+"");
-                    textViewPM10.setText(PM10Value+"");
-                    Calendar c = Calendar.getInstance();
-                    Date d1 = c.getTime();
-                    int nbPoint = 10 * 60;
-                    series.appendData(new DataPoint(d1,PM01Value),true,nbPoint);
-                    series2.appendData(new DataPoint(d1,PM2_5Value),true,nbPoint);
-                    series10.appendData(new DataPoint(d1,PM10Value),true,nbPoint);
+                    textViewPM1.setText(PM01Value + "");
+                    textViewPM2.setText(PM2_5Value + "");
+                    textViewPM10.setText(PM10Value + "");
+                    int dataToDisplay[] = {PM01Value,PM2_5Value,PM10Value};
+                    addEntry(dataToDisplay);
+
                 }
             }
         });
     }
+
+    @Override
+    public void onValueSelected(Entry e, Highlight h) {
+
+    }
+
+    @Override
+    public void onNothingSelected() {
+
+    }
 }
+
+

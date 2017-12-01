@@ -67,6 +67,7 @@ dependencies {
 
     //GraphView
     implementation 'com.jjoe64:graphview:4.2.1'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 
     //google map
     implementation "com.google.android.gms:play-services-maps:$project.maps"

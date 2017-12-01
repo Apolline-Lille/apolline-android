@@ -2,22 +2,25 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:background="@drawable/bg"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg"
+    android:orientation="vertical"
     android:weightSum="1">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:baselineAligned="false"
         android:gravity="center"
-        android:baselineAligned="false">
+        android:orientation="horizontal">
+
         <RelativeLayout
+            android:layout_width="0dp"
             android:layout_height="120dp"
-            android:orientation="horizontal"
             android:layout_weight="0.5"
-            android:layout_width="0dp">
+            android:orientation="horizontal">
+
             <ProgressBar
                 android:id="@+id/fragment_ioio_progress_pm1"
                 style="?android:attr/progressBarStyleHorizontal"
@@ -27,112 +30,130 @@
                 android:indeterminate="false"
                 android:max="100"
                 android:progressDrawable="@drawable/bar" />
+
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:id="@+id/fragment_ioio_tv_pm1_value"
-                android:textColor="#0000FF"
-                tools:textSize="@android:dimen/app_icon_size"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentTop="true"
-                android:textAlignment="center"
                 android:gravity="center"
-                android:textSize="@android:dimen/notification_large_icon_width"
+                android:text="0"
+                android:textAlignment="center"
                 android:textAllCaps="false"
-                android:text="0" />
+                android:textColor="#0000FF"
+                android:textSize="@android:dimen/notification_large_icon_width"
+                tools:textSize="@android:dimen/app_icon_size" />
         </RelativeLayout>
+
         <RelativeLayout
+            android:layout_width="0dp"
             android:layout_height="120dp"
-            android:orientation="horizontal"
             android:layout_weight="0.5"
-            android:layout_width="0dp">
+            android:orientation="horizontal">
+
             <ProgressBar
-                style="?android:attr/progressBarStyleHorizontal"
                 android:id="@+id/fragment_ioio_progress_pm2"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:max="100"
-                android:progressDrawable="@drawable/bar"
-                android:layout_centerHorizontal="true" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/fragment_ioio_tv_pm2_value"
-                android:textColor="#0000FF"
-                tools:textSize="@android:dimen/app_icon_size"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentTop="true"
-                android:textAlignment="center"
-                android:gravity="center"
-                android:textSize="@android:dimen/notification_large_icon_width"
-                android:textAllCaps="false"
-                android:text="0" />
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_height="120dp"
-            android:orientation="horizontal"
-            android:layout_weight="0.5"
-            android:layout_width="0dp">
-            <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
-                android:id="@+id/fragment_ioio_progress_pm10"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
+                android:layout_centerHorizontal="true"
                 android:max="100"
-                android:progressDrawable="@drawable/bar"
-                android:layout_centerHorizontal="true" />
+                android:progressDrawable="@drawable/bar" />
+
             <TextView
+                android:id="@+id/fragment_ioio_tv_pm2_value"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/fragment_ioio_tv_pm10_value"
-                android:textColor="#0000FF"
-                tools:textSize="@android:dimen/app_icon_size"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentTop="true"
-                android:textAlignment="center"
                 android:gravity="center"
-                android:textSize="@android:dimen/notification_large_icon_width"
+                android:text="0"
+                android:textAlignment="center"
                 android:textAllCaps="false"
-                android:text="0" />
+                android:textColor="#0000FF"
+                android:textSize="@android:dimen/notification_large_icon_width"
+                tools:textSize="@android:dimen/app_icon_size" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="0.5"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                android:id="@+id/fragment_ioio_progress_pm10"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerHorizontal="true"
+                android:max="100"
+                android:progressDrawable="@drawable/bar" />
+
+            <TextView
+                android:id="@+id/fragment_ioio_tv_pm10_value"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentTop="true"
+                android:gravity="center"
+                android:text="0"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="#0000FF"
+                android:textSize="@android:dimen/notification_large_icon_width"
+                tools:textSize="@android:dimen/app_icon_size" />
         </RelativeLayout>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <TextView
-            android:layout_height="wrap_content"
             android:id="@+id/fragment_ioio_tv_pm1_label"
-            tools:textSize="30sp"
-            android:textColor="#0000FF"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="PM1"
-            android:layout_width="0dp"
-            android:layout_weight="1" />
-        <TextView
-            android:layout_height="wrap_content"
-            android:id="@+id/fragment_ioio_tv_pm2_label"
-            tools:textSize="30sp"
             android:textColor="#0000FF"
+            tools:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/fragment_ioio_tv_pm2_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="PM2.5"
-            android:layout_width="0dp"
-            android:layout_weight="1" />
-        <TextView
-            android:layout_height="wrap_content"
-            android:id="@+id/fragment_ioio_tv_pm10_label"
-            tools:textSize="30sp"
             android:textColor="#0000FF"
+            tools:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/fragment_ioio_tv_pm10_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="PM10"
-            android:layout_width="0dp"
-            android:layout_weight="1" />
+            android:textColor="#0000FF"
+            tools:textSize="30sp" />
     </LinearLayout>
-    <com.jjoe64.graphview.GraphView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/fragment_ioio_graph"
-    android:layout_marginEnd="20dp"
-    android:layout_marginStart="20dp"
-    android:soundEffectsEnabled="true" />
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+
+    </RelativeLayout>
+
 </LinearLayout>
