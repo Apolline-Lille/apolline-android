@@ -29,10 +29,10 @@ android {
 }
 
 project.ext {
-    appcompat = "27.0.1"
-    rc = "1.0.0-rc1"
+    appcompat = "27.0.2"
+    rc = "1.0.0"
     ioio ="5.07"
-    maps = "11.4.2"
+    maps = "11.6.0"
     retrofit = "2.3.0"
     constraintLayout = "1.0.2"
 }
@@ -86,8 +86,8 @@ dependencies {
     testImplementation"android.arch.persistence.room:testing:$project.rc"
 
     //LiveData
-    implementation "android.arch.lifecycle:extensions:1.0.0"
-    testImplementation "android.arch.core:core-testing:1.0.0"
+    implementation "android.arch.lifecycle:extensions:$project.rc"
+    testImplementation "android.arch.core:core-testing:$project.rc"
 
 }
 repositories {
