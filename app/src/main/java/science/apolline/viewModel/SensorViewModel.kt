@@ -52,8 +52,6 @@ class SensorViewModel(application: Application) : AndroidViewModel(application){
                                 ,d1.toString()
                                 , position,dataLive.value?.toJson()
                         )
-
-
                         setPersistant(device)
                         //sendData(Device)
                     }
@@ -90,12 +88,12 @@ class SensorViewModel(application: Application) : AndroidViewModel(application){
     private fun setPersistant(device: Device) {
         val sensorModel: SensorDao = AppDatabase.getInstance(getApplication())
         sensorModel.insertOne(device)
-        val list = sensorModel.all.blockingGet()
-        val count = sensorModel.all.blockingGet().size
-        Log.e(this.javaClass.name,"/////////")
-        Log.e(this.javaClass.name,"$count")
-        Log.e(this.javaClass.name,"${ list.last()}")
-        Log.e(this.javaClass.name,"/////////")
+//        val list = sensorModel.all.blockingGet()
+//        val count = sensorModel.all.blockingGet().size
+//        Log.e(this.javaClass.name,"/////////")
+//        Log.e(this.javaClass.name,"$count")
+//        Log.e(this.javaClass.name,"${ list.last()}")
+//        Log.e(this.javaClass.name,"/////////")
     }
 //    BReceiver = new BroadcastReceiver() {
 //        @Override

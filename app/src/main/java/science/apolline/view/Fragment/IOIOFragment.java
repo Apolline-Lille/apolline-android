@@ -66,7 +66,6 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
 
     private LiveData<IOIOData> dataLive;
 
-
     public IOIOFragment() {
 
     }
