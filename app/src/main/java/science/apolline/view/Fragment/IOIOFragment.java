@@ -181,7 +181,7 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
         super.onActivityCreated(savedInstanceState);
         SensorViewModel viewModel = new SensorViewModel(getActivity().getApplication());
         LiveData<IntfSensorData> data = viewModel.getDataLive();
-        data.observe(this, new Observer<IntfSensorData>() {
+        data.observeForever(new Observer<IntfSensorData>() {
             @Override
             public void onChanged(@Nullable IntfSensorData sensorData) {
                 if(sensorData != null && sensorData.getClass() == IOIOData.class){
