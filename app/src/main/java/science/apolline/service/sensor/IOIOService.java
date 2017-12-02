@@ -96,9 +96,14 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
                 
                 Thread.sleep(freq);
                 sendBroadcast(data);
-                Log.e("service","broadcast");
             }
         };
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.e(this.getClass().getName(),"onDestroy");
     }
 
     private void sendBroadcast(IOIOData data){

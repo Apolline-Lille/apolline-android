@@ -4,7 +4,10 @@ package science.apolline.service.database
  * Created by sparow on 11/5/17.
  */
 import android.arch.persistence.room.TypeConverter
+import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.JsonElement
+import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 
 import java.util.Date
@@ -24,9 +27,9 @@ class Converters {
 
     @TypeConverter
     fun fromData(data: String?): JsonObject? {
-        if (data != null) {
+        if( !data.equals("null") && data!=null){
             val gson = Gson()
-            return gson.fromJson(data, JsonObject::class.java)
+            return  gson.fromJson(data, JsonObject::class.java)
         }
         return null
     }

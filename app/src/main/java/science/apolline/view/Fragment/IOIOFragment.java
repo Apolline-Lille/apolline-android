@@ -184,9 +184,7 @@ public class IOIOFragment extends Fragment implements LifecycleOwner{
         data.observe(this, new Observer<IntfSensorData>() {
             @Override
             public void onChanged(@Nullable IntfSensorData sensorData) {
-                Log.e("fragment", "onChanged");
                 if(sensorData != null && sensorData.getClass() == IOIOData.class){
-                    Log.e("fragment","if statement");
                     IOIOData data = (IOIOData) sensorData;
                     int PM01Value = data.getPM01Value();
                     int PM2_5Value = data.getPM2_5Value();
