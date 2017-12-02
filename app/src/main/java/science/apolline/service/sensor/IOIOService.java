@@ -1,8 +1,14 @@
 package science.apolline.service.sensor;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -45,6 +51,14 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
                 uartIn_ = uart_.getInputStream();
                 inputTemp = ioio_.openAnalogInput(44);
                 inputHum = ioio_.openAnalogInput(42);
+                initChannels(getApplicationContext());
+                Notification notification  = new NotificationCompat.Builder(getApplicationContext(),"default")
+                        .setContentTitle("IOIO service is running")
+                        .setTicker("IOIO service is running")
+                        .setContentText("collect of air quality is running")
+                        .setOngoing(true)
+                        .build();
+                startForeground(101,notification);
             }
 
             @Override
@@ -123,5 +137,18 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public void initChannels(Context context) {
+        if (Build.VERSION.SDK_INT < 26) {
+            return;
+        }
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel channel = new NotificationChannel("default",
+                "Channel name",
+                NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription("Channel description");
+        notificationManager.createNotificationChannel(channel);
     }
 }
