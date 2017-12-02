@@ -47,7 +47,14 @@ class SensorViewModel(application: Application) : AndroidViewModel(application){
                     override fun onLocationChanged(location: Location) {
                         position=Position(location.provider,location.longitude,location.latitude,"null")
 
+                        val device: Device = Device(
+                                intent.getStringExtra(application.getString(R.string.serviceBroadCastSensorName))
+                                ,d1.toString()
+                                , position,dataLive.value?.toJson()
+                        )
 
+
+                        setPersistant(device)
                         //sendData(Device)
                     }
                     override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
@@ -55,12 +62,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application){
                     override fun onProviderDisabled(provider: String) {}
                 }
 
-                val device: Device = Device(
-                        intent.getStringExtra(application.getString(R.string.serviceBroadCastSensorName))
-                        ,d1.toString()
-                        , Position("",0.0,0.0,""),dataLive.value?.toJson()
-                )
-                setPersistant(device)
+
                 val singleShotLocationProvider  = SingleShotLocationProvider
                 singleShotLocationProvider.requestSingleUpdate(application,mLocationListener)
             }
@@ -88,9 +90,11 @@ class SensorViewModel(application: Application) : AndroidViewModel(application){
     private fun setPersistant(device: Device) {
         val sensorModel: SensorDao = AppDatabase.getInstance(getApplication())
         sensorModel.insertOne(device)
+        val list = sensorModel.all.blockingGet()
         val count = sensorModel.all.blockingGet().size
         Log.e(this.javaClass.name,"/////////")
         Log.e(this.javaClass.name,"$count")
+        Log.e(this.javaClass.name,"${ list.last()}")
         Log.e(this.javaClass.name,"/////////")
     }
 //    BReceiver = new BroadcastReceiver() {
