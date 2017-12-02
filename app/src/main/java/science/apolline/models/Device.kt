@@ -28,7 +28,7 @@ data class Device(
     @SerializedName("sensorId")
     @Expose
     @PrimaryKey(autoGenerate = true)
-    var sensorId: Int? = 0
+    var sensorId: Int=0
     constructor() : this("", "", null, null)
 
     override fun toString(): String {

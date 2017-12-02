@@ -12,7 +12,7 @@ import science.apolline.models.Device
  * Created by sparow on 11/5/17.
  */
 
-@Database(entities = arrayOf(Device::class), version = 1, exportSchema = true)
+@Database(entities = arrayOf(Device::class), version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
