@@ -49,7 +49,7 @@ import science.apolline.service.sensor.IOIOService;
 
 
 
-public class IOIOFragment extends Fragment implements LifecycleOwner, OnChartValueSelectedListener {
+public class IOIOFragment extends Fragment implements LifecycleOwner,OnChartValueSelectedListener {
 
 
     private ProgressBar progressPM1;
@@ -73,12 +73,12 @@ public class IOIOFragment extends Fragment implements LifecycleOwner, OnChartVal
     private LiveData<IOIOData> dataLive;
     private LineChart mChart;
     private List<ILineDataSet> dataList;
-
+    
     public IOIOFragment() {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
     }
 
@@ -97,22 +97,33 @@ public class IOIOFragment extends Fragment implements LifecycleOwner, OnChartVal
         textViewPM2 = view.findViewById(R.id.fragment_ioio_tv_pm2_value);
         progressPM10 = view.findViewById(R.id.fragment_ioio_progress_pm10);
         textViewPM10 = view.findViewById(R.id.fragment_ioio_tv_pm10_value);
-
         mChart = view.findViewById(R.id.chart1);
-
 //        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_ioio_map);
 //        pieton = view.findViewById(R.id.fragment_ioio_pieton);
 //        velo = view.findViewById(R.id.fragment_ioio_velo);
 //        voiture = view.findViewById(R.id.fragment_ioio_voiture);
 //        other = view.findViewById(R.id.fragment_ioio_other);
-
+        
         dataList = createMultiSet();
+        initGraph();
+    }
 
+
+    //init graph on create view
+    private void initGraph(){
 
         // LineTimeChart
         mChart.setOnChartValueSelectedListener(this);
         // enable description text
-        mChart.getDescription().setEnabled(true);
+        mChart.getDescription().setEnabled(false);
+
+
+        mChart.setDragDecelerationFrictionCoef(0.9f);
+        mChart.setHighlightPerDragEnabled(true);
+        // set an alternative background color
+//        mChart.setBackgroundColor(Color.WHITE);
+//        mChart.setViewPortOffsets(0f, 0f, 0f, 0f);
+
         // enable touch gestures
         mChart.setTouchEnabled(true);
         // enable scaling and dragging
@@ -120,7 +131,7 @@ public class IOIOFragment extends Fragment implements LifecycleOwner, OnChartVal
         mChart.setScaleEnabled(true);
         mChart.setDrawGridBackground(false);
         // if disabled, scaling can be done on x- and y-axis separately
-        mChart.setPinchZoom(true);
+        mChart.setPinchZoom(false);
         // set an alternative background color
         mChart.setBackgroundColor(Color.TRANSPARENT);
 
@@ -130,12 +141,16 @@ public class IOIOFragment extends Fragment implements LifecycleOwner, OnChartVal
         // add empty data
         mChart.setData(data);
 
-        // get the legend (only possible after setting data)
+        mChart.invalidate();
+
+//        // get the legend (only possible after setting data)
         Legend l = mChart.getLegend();
         // modify the legend ...
         l.setForm(Legend.LegendForm.LINE);
         l.setTypeface(Typeface.DEFAULT);
         l.setTextColor(Color.WHITE);
+//        Legend l = mChart.getLegend();
+//        l.setEnabled(false);
 
         XAxis xl = mChart.getXAxis();
         xl.setTypeface(Typeface.DEFAULT);
@@ -146,6 +161,7 @@ public class IOIOFragment extends Fragment implements LifecycleOwner, OnChartVal
         xl.setCenterAxisLabels(true);
         xl.setGranularity(1f); // one hour
         xl.setPosition(XAxis.XAxisPosition.TOP_INSIDE);
+
         xl.setValueFormatter(new IAxisValueFormatter() {
             private SimpleDateFormat mFormat = new SimpleDateFormat("dd MMM HH:mm");
             @Override
@@ -158,8 +174,11 @@ public class IOIOFragment extends Fragment implements LifecycleOwner, OnChartVal
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTypeface(Typeface.DEFAULT);
         leftAxis.setTextColor(Color.BLACK);
-        leftAxis.setAxisMaximum(2000f);
+        leftAxis.setAxisMaximum(2500f);
         leftAxis.setAxisMinimum(0f);
+//        leftAxis.setSpaceTop(80);
+//        leftAxis.setSpaceBottom(20);
+
         leftAxis.setDrawGridLines(true);
 
         YAxis rightAxis = mChart.getAxisRight();
@@ -167,7 +186,7 @@ public class IOIOFragment extends Fragment implements LifecycleOwner, OnChartVal
 
     }
 
-
+    //Add new points to graph
     private void addEntry(int[] dataTosend ) {
         LineData data = mChart.getData();
 
@@ -188,16 +207,20 @@ public class IOIOFragment extends Fragment implements LifecycleOwner, OnChartVal
             // let the chart know it's data has changed
             mChart.notifyDataSetChanged();
             // limit the number of visible entries
-            mChart.setVisibleXRangeMaximum(20);
+            mChart.setVisibleXRangeMaximum(24);
+            // Sets the size of the area (range on the y-axis) that should be maximum visible at once
+            mChart.setVisibleYRangeMaximum(500f, YAxis.AxisDependency.LEFT);
             // mChart.setVisibleYRange(30, AxisDependency.LEFT);
             // move to the latest entry
             mChart.moveViewToX(data.getEntryCount());
             // this automatically refreshes the chart (calls invalidate())
-            // mChart.moveViewTo(data.getXValCount()-7, 55f,
-            // AxisDependency.LEFT);
+//             mChart.moveViewTo(data.getEntryCount() -7, 55f,
+//             YAxis.AxisDependency.LEFT);
 
     }
 
+
+    //Graph init
     private ArrayList<ILineDataSet> createMultiSet() {
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
@@ -283,12 +306,14 @@ public class IOIOFragment extends Fragment implements LifecycleOwner, OnChartVal
                     textViewPM2.setText(PM2_5Value + "");
                     textViewPM10.setText(PM10Value + "");
                     int dataToDisplay[] = {PM01Value,PM2_5Value,PM10Value};
+
                     addEntry(dataToDisplay);
 
                 }
             }
         });
     }
+
 
     @Override
     public void onValueSelected(Entry e, Highlight h) {
