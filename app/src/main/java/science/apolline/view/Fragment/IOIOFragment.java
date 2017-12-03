@@ -21,7 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.IMarker;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -36,17 +36,16 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+
 import science.apolline.R;
 import science.apolline.models.IntfSensorData;
+import science.apolline.utils.HourAxisValueFormatter;
+import science.apolline.utils.CustomMarkerView;
 import science.apolline.viewModel.SensorViewModel;
 import science.apolline.models.IOIOData;
 import science.apolline.service.sensor.IOIOService;
-
 
 
 public class IOIOFragment extends Fragment implements LifecycleOwner,OnChartValueSelectedListener {
@@ -73,6 +72,8 @@ public class IOIOFragment extends Fragment implements LifecycleOwner,OnChartValu
     private LiveData<IOIOData> dataLive;
     private LineChart mChart;
     private List<ILineDataSet> dataList;
+    private IMarker marker;
+    private long referenceTimestamp;  // minimum timestamp in your data set
     
     public IOIOFragment() {
     }
@@ -103,14 +104,17 @@ public class IOIOFragment extends Fragment implements LifecycleOwner,OnChartValu
 //        velo = view.findViewById(R.id.fragment_ioio_velo);
 //        voiture = view.findViewById(R.id.fragment_ioio_voiture);
 //        other = view.findViewById(R.id.fragment_ioio_other);
-        
+
         dataList = createMultiSet();
         initGraph();
     }
 
-
     //init graph on create view
     private void initGraph(){
+
+        referenceTimestamp=System.currentTimeMillis()/1000;
+        IMarker marker = new CustomMarkerView(getContext(), R.layout.custom_marker, referenceTimestamp);
+        mChart.setMarker(marker);
 
         // LineTimeChart
         mChart.setOnChartValueSelectedListener(this);
@@ -162,14 +166,8 @@ public class IOIOFragment extends Fragment implements LifecycleOwner,OnChartValu
         xl.setGranularity(1f); // one hour
         xl.setPosition(XAxis.XAxisPosition.TOP_INSIDE);
 
-        xl.setValueFormatter(new IAxisValueFormatter() {
-            private SimpleDateFormat mFormat = new SimpleDateFormat("dd MMM HH:mm");
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                long millis = TimeUnit.HOURS.toMillis((long) value);
-                return mFormat.format(new Date(millis));
-            }
-        });
+        IAxisValueFormatter xAxisFormatter = new HourAxisValueFormatter(referenceTimestamp);
+        xl.setValueFormatter(xAxisFormatter);
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTypeface(Typeface.DEFAULT);
@@ -196,18 +194,16 @@ public class IOIOFragment extends Fragment implements LifecycleOwner,OnChartValu
                         data.addDataSet(temp);
                     }
             }
-
-            long now = TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis());
-
-            data.addEntry(new Entry(now, (float) dataTosend[0]), 0);
-            data.addEntry(new Entry(now, (float) dataTosend[1]), 1);
-            data.addEntry(new Entry(now, (float) dataTosend[2]), 2);
+            long now = System.currentTimeMillis()/1000;
+            data.addEntry(new Entry(now-referenceTimestamp, (float) dataTosend[0]), 0);
+            data.addEntry(new Entry(now-referenceTimestamp, (float) dataTosend[1]), 1);
+            data.addEntry(new Entry(now-referenceTimestamp, (float) dataTosend[2]), 2);
 
             data.notifyDataChanged();
             // let the chart know it's data has changed
             mChart.notifyDataSetChanged();
             // limit the number of visible entries
-            mChart.setVisibleXRangeMaximum(24);
+            mChart.setVisibleXRangeMaximum(5);
             // Sets the size of the area (range on the y-axis) that should be maximum visible at once
             mChart.setVisibleYRangeMaximum(500f, YAxis.AxisDependency.LEFT);
             // mChart.setVisibleYRange(30, AxisDependency.LEFT);
