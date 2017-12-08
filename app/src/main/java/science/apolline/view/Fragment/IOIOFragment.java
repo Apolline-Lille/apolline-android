@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -84,13 +85,13 @@ public class IOIOFragment extends Fragment implements LifecycleOwner,OnChartValu
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_ioio, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         progressPM1 = view.findViewById(R.id.fragment_ioio_progress_pm1);
         textViewPM1 = view.findViewById(R.id.fragment_ioio_tv_pm1_value);
@@ -205,7 +206,7 @@ public class IOIOFragment extends Fragment implements LifecycleOwner,OnChartValu
             // limit the number of visible entries
             mChart.setVisibleXRangeMaximum(5);
             // Sets the size of the area (range on the y-axis) that should be maximum visible at once
-            mChart.setVisibleYRangeMaximum(500f, YAxis.AxisDependency.LEFT);
+            mChart.setVisibleYRangeMaximum(100f, YAxis.AxisDependency.LEFT);
             // mChart.setVisibleYRange(30, AxisDependency.LEFT);
             // move to the latest entry
             mChart.moveViewToX(data.getEntryCount());
