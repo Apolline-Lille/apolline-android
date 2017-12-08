@@ -28,7 +28,7 @@ class DataExport {
         if (!folder.exists())
            folder.mkdir()
 
-        val filename = folder.toString() + "/" + "Test.json"
+        val filename = folder.toString() + "/" + "data.json"
         
         val sensorDao = AppDatabase.getInstance(context)
         doAsync {
