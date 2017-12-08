@@ -1,16 +1,10 @@
-package science.apolline.sensor.ioio.model;
+package science.apolline.models;
 
 import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 
-import java.util.Arrays;
-
-import science.apolline.sensor.common.sensorData;
-
-public class IOIOData implements sensorData {
+public class IOIOData implements IntfSensorData {
     private int count;
     private int[] buff = new int[64];
 

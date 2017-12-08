@@ -1,18 +1,18 @@
-package science.apolline.database
+package science.apolline.service.database
 
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.Database
 import android.content.Context
-import science.apolline.models.Sensor
+import science.apolline.models.Device
 
 
 /**
  * Created by sparow on 11/5/17.
  */
 
-@Database(entities = arrayOf(Sensor::class), version = 1, exportSchema = true)
+@Database(entities = arrayOf(Device::class), version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
