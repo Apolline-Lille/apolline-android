@@ -6,15 +6,14 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.junit.Assert.*
 import science.apolline.models.Position
-import science.apolline.models.Sensor
-import java.util.*
+import science.apolline.models.Device
 
 
 /**
  * Created by sparow on 10/21/17.
  */
 
-class SensorDataTest {
+class deviceModelDataTest {
 
     /**
      * Test Position class
@@ -28,7 +27,7 @@ class SensorDataTest {
                 "\"provider\":\"GPS\"," +
                 "\"longitude\":152.36," +
                 "\"latitude\":142.36," +
-                "\"location\":\"Train\"" +
+                "\"transport\":\"Train\"" +
                 "}"
         val positionInitObject = Position("GPS", 152.36, 142.36, "Train")
 
@@ -44,8 +43,8 @@ class SensorDataTest {
         assertNotEquals(position.provider, "toto")
         assertNotEquals(position.longitude, 100.0)
         assertNotEquals(position.latitude, 100.0)
-        assertEquals(position.location, "Train")
-        assertNotEquals(position.location, "toto")
+        assertEquals(position.transport, "Train")
+        assertNotEquals(position.transport, "toto")
         assertEquals(position.toString(), positionInitObject.toString())
         assertEquals(jsonPositionFromObject, jsonInit)
 
@@ -53,7 +52,7 @@ class SensorDataTest {
 
 
     /**
-     * Test Sensor class
+     * Test Device class
      */
     @Test
     @Throws(IOException::class)
@@ -69,7 +68,7 @@ class SensorDataTest {
                 "\"provider\":\"GPS\"," +
                 "\"longitude\":152.36," +
                 "\"latitude\":142.36," +
-                "\"location\":\"Train\"" +
+                "\"transport\":\"Train\"" +
                 "}," +
                 "\"data\": {" +
                 "\"CO2\": [100,\"PPM\"]," +
@@ -91,24 +90,22 @@ class SensorDataTest {
         //when
         val gson = Gson()
         val dataListObject = gson.fromJson(dataList, JsonObject::class.java)
-        val sensor = gson.fromJson(jsonInit, Sensor::class.java)
-        val sensorInitObject = Sensor("Arduino", "MQ135", "WedSep2614:23:28EST2017", positionInitObject, dataListObject)
+        val deviceModel = gson.fromJson(jsonInit, Device::class.java)
+        val sensorInitObject = Device("Arduino",  "WedSep2614:23:28EST2017", positionInitObject, dataListObject)
         val jsonSensorFromObject = gson.toJson(sensorInitObject)
 
         //then
-        assertNotNull(sensor)
-        assertEquals(sensor.sensorId, 1)
-        assertNotEquals(sensor.sensorId, 0)
-        assertEquals(sensor.device, "Arduino")
-        assertNotEquals(sensor.device, "toto")
-        assertEquals(sensor.sensor, "MQ135")
-        assertNotEquals(sensor.sensor, "toto")
-        assertEquals(sensor.date, "WedSep2614:23:28EST2017")
-        assertNotEquals(sensor.date, "toto")
-        assertNotNull(sensor.position)
-        assertNotNull(sensor.data)
+        assertNotNull(deviceModel)
+        assertEquals(deviceModel.sensorId, 1)
+        assertNotEquals(deviceModel.sensorId, 0)
+        assertEquals(deviceModel.device, "Arduino")
+        assertNotEquals(deviceModel.device, "toto")
+        assertEquals(deviceModel.date, "WedSep2614:23:28EST2017")
+        assertNotEquals(deviceModel.date, "toto")
+        assertNotNull(deviceModel.position)
+        assertNotNull(deviceModel.data)
 
-        assertEquals(sensor.toString(), sensorInitObject.toString())
+        assertEquals(deviceModel.toString(), sensorInitObject.toString())
         val removedSpace = jsonSensorFromObject.toString().replace("\\s+".toRegex(), " ")
         assertEquals(removedSpace, removedSpace)
 

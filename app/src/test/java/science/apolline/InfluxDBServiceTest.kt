@@ -6,9 +6,9 @@ import com.google.gson.JsonParser
 import org.junit.Assert
 import org.junit.Test
 import junit.framework.Assert.assertTrue
-import science.apolline.networks.*
+import science.apolline.service.networks.*
 import science.apolline.models.Position
-import science.apolline.models.Sensor
+import science.apolline.models.Device
 import science.apolline.utils.RequestParser
 import java.io.IOException
 
@@ -57,7 +57,7 @@ class InfluxDBServiceTest {
         val gson = Gson()
         val dataListObject = gson.fromJson(dataList, JsonObject::class.java)
         val positionInitObject = Position("GPS", 152.36, 142.36, "Train")
-        val sensorInitObject = Sensor("Arduino", "MQ135", "WedSep2614:23:28EST2017", positionInitObject, dataListObject)
+        val sensorInitObject = Device("Arduino", "WedSep2614:23:28EST2017", positionInitObject, dataListObject)
 
         //when
         val dataTosend = RequestParser.createRequestBody(sensorInitObject)

@@ -34,10 +34,10 @@
             android:name="com.google.android.maps"
             android:required="false" />
 
-        <service android:name=".sensor.ioio.service.IOIOService" />
+        <service android:name=".service.sensor.IOIOService" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".view.Activity.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
@@ -47,31 +47,31 @@
         </activity>
 
         <activity
-            android:name=".options"
+            android:name=".view.Activity.OptionsActivity"
             android:label="options"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".view.Activity.MainActivity"
             android:theme="@style/Theme.AppCompat">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="science.apolline.MainActivity" />
+                android:value="science.apolline.view.Activity.MainActivity" />
         </activity>
         <activity
-            android:name=".informations"
+            android:name=".view.Activity.InformationActivity"
             android:label="informations"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".view.Activity.MainActivity"
             android:theme="@style/Theme.AppCompat">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="science.apolline.MainActivity" />
+                android:value="science.apolline.view.Activity.MainActivity" />
         </activity>
         <activity
-            android:name=".contact"
+            android:name=".view.Activity.ContactActivity"
             android:label="contact"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".view.Activity.MainActivity"
             android:theme="@style/Theme.AppCompat">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="science.apolline.MainActivity" />
+                android:value="science.apolline.view.Activity.MainActivity" />
         </activity>
 
 

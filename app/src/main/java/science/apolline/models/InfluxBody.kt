@@ -4,7 +4,7 @@ package science.apolline.models
  * Created by sparow on 13/10/2017.
  */
 
-data class Post(
+data class InfluxBody(
         val dbName: String,
         val dbUserName: String,
         val dbPassword: String,

@@ -133,13 +133,18 @@
             tools:textSize="30sp" />
     </LinearLayout>
 
-    <com.jjoe64.graphview.GraphView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/fragment_ioio_graph"
-    android:layout_marginEnd="20dp"
-    android:layout_marginStart="20dp"
-    android:soundEffectsEnabled="true" />
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </RelativeLayout>
 
 </LinearLayout>
 
