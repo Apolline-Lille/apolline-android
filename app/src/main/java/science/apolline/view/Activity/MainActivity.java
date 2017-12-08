@@ -2,25 +2,31 @@ package science.apolline.view.Activity;
 
 
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import science.apolline.R;
-import science.apolline.service.database.AppDatabase;
 import science.apolline.service.database.SensorDao;
 import science.apolline.service.sensor.IOIOService;
 import science.apolline.view.Fragment.IOIOFragment;
@@ -28,12 +34,10 @@ import science.apolline.view.Fragment.IOIOFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public void toto() throws  SecurityException{
-
-    }
-
     public static final String MY_PREFS_NAME = "MyPrefsFile";
-    private final int REQUEST_CODE_ENABLE_BLUETOOTH = 0;
+    private static final int REQUEST_CODE_ENABLE_BLUETOOTH = 100;
+    private static final int REQUEST_CODE_FINE_LOCATION = 101;
+    private static final int REQUEST_CODE_COARSE_LOCATION = 102;
 
     private Context myContext;
     private SensorDao sensorModel;
@@ -60,14 +64,105 @@ public class MainActivity extends AppCompatActivity
             startActivityForResult(enableBlueTooth, REQUEST_CODE_ENABLE_BLUETOOTH);
         }
 
+        permissionCheck();
+
         Fragment IOIOFragment = new IOIOFragment();
         replaceFragment(IOIOFragment);
-
-        sensorModel = AppDatabase.Companion.getInstance(getApplicationContext());
-        sensorModel.getAll();
-
-
     }
+
+    private void permissionCheck() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    AlertFine();
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_FINE_LOCATION);
+
+            }
+        }
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                AlertCoarse();
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_COARSE_LOCATION);
+
+            }
+        }
+    }
+
+    private void AlertCoarse() {
+        AlertDialog alertdialog = new AlertDialog.Builder(this).create();
+        alertdialog.setTitle("Permission Access_Coarse_Location");
+        alertdialog.setMessage("Cette permission est nécessaire pour prendre la géolocalisation et au bon fonctionnement de l'application");
+        alertdialog.setButton(AlertDialog.BUTTON_NEGATIVE, "non", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        alertdialog.setButton(AlertDialog.BUTTON_POSITIVE,"ok ", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                dialog.dismiss();
+                ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},MainActivity.REQUEST_CODE_COARSE_LOCATION);
+
+            }
+        });
+        alertdialog.show();
+    }
+
+    private void AlertFine() {
+        AlertDialog alertdialog = new AlertDialog.Builder(this).create();
+        alertdialog.setTitle("Permission Access_Fine_Location");
+        alertdialog.setMessage("Cette permission est nécessaire pour prendre la géolocalisation et au bon fonctionnement de l'application");
+        alertdialog.setButton(AlertDialog.BUTTON_NEGATIVE, "non", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        alertdialog.setButton(AlertDialog.BUTTON_POSITIVE,"ok ", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                dialog.dismiss();
+                ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MainActivity.REQUEST_CODE_FINE_LOCATION);
+            }
+        });
+        alertdialog.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_FINE_LOCATION: {
+                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0]);
+                    if (showRationale) {
+                        AlertFine();
+                    } else {
+                        finish();
+                    }
+                }
+            }
+            case REQUEST_CODE_COARSE_LOCATION: {
+                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0]);
+                    if (showRationale) {
+                        AlertCoarse();
+                    } else {
+                        finish();
+                    }
+                }
+            }
+        }
+    }
+
 
     @Override
     public void onBackPressed() {
