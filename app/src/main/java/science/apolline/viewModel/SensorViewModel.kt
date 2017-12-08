@@ -31,6 +31,7 @@ import science.apolline.service.geolocalisation.SingleShotLocationProvider
 
 class SensorViewModel(application: Application) : AndroidViewModel(application){
     init {
+
         val BReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 val data : IntfSensorData = intent.getParcelableExtra(
@@ -125,7 +126,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application){
 //            Device sensor = new Device("IOIO","IOIO",d1.toString(),null,data.toJson());
 //
 //            AppDatabase appDatabase = AppDatabase.Companion.getAppDatabase(getActivity());
-//            appDatabase.SensorModel().insertOne(sensor);
+//            appDatabase.sensorDao().insertOne(sensor);
 //
 //            String requestBody = RequestParser.INSTANCE.createRequestBody(sensor);
 //            ApiService api = ApiUtils.INSTANCE.getApiService();

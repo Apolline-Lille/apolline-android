@@ -32,9 +32,10 @@ project.ext {
     appcompat = "27.0.2"
     rc = "1.0.0"
     ioio ="5.07"
-    maps = "11.6.0"
+    maps = "11.6.2"
     retrofit = "2.3.0"
     constraintLayout = "1.0.2"
+    anko_version = "0.10.3"
 }
 
 dependencies {
@@ -89,6 +90,10 @@ dependencies {
     //LiveData
     implementation "android.arch.lifecycle:extensions:$project.rc"
     testImplementation "android.arch.core:core-testing:$project.rc"
+
+    //anko
+    implementation "org.jetbrains.anko:anko-commons:$anko_version"
+    implementation "org.jetbrains.anko:anko-design:$anko_version"
 
 }
 repositories {

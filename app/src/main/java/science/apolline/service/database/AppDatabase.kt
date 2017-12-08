@@ -16,7 +16,7 @@ import science.apolline.models.Device
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun SensorModel(): SensorDao
+    abstract fun sensorDao(): SensorDao
 
     companion object {
 
@@ -32,12 +32,12 @@ abstract class AppDatabase : RoomDatabase() {
                     db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
                             .allowMainThreadQueries()
                             .build()
-                    dbInstance = db?.SensorModel()
+                    dbInstance = db?.sensorDao()
                 } else {
                     db = Room.databaseBuilder(context, AppDatabase::class.java, databaseName)
                             .allowMainThreadQueries()
                             .build()
-                    dbInstance = db?.SensorModel()
+                    dbInstance = db?.sensorDao()
                 }
             }
             return dbInstance!!

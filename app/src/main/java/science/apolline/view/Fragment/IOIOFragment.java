@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ import java.util.List;
 
 import science.apolline.R;
 import science.apolline.models.IntfSensorData;
+import science.apolline.utils.DataExport;
 import science.apolline.utils.HourAxisValueFormatter;
 import science.apolline.utils.CustomMarkerView;
 import science.apolline.viewModel.SensorViewModel;
@@ -60,6 +62,8 @@ public class IOIOFragment extends Fragment implements LifecycleOwner,OnChartValu
     private TextView textViewPM2;
     private TextView textViewPM10;
 
+    private FloatingActionButton save_fab;
+
     private Button pieton;
     private Button velo;
     private Button voiture;
@@ -75,6 +79,7 @@ public class IOIOFragment extends Fragment implements LifecycleOwner,OnChartValu
     private List<ILineDataSet> dataList;
     private IMarker marker;
     private long referenceTimestamp;  // minimum timestamp in your data set
+    private DataExport export = new DataExport();
     
     public IOIOFragment() {
     }
@@ -100,6 +105,13 @@ public class IOIOFragment extends Fragment implements LifecycleOwner,OnChartValu
         progressPM10 = view.findViewById(R.id.fragment_ioio_progress_pm10);
         textViewPM10 = view.findViewById(R.id.fragment_ioio_tv_pm10_value);
         mChart = view.findViewById(R.id.chart1);
+        save_fab = view.findViewById(R.id.fab_save);
+        save_fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                export.toJson(getActivity().getApplication());
+            }
+        });
 //        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_ioio_map);
 //        pieton = view.findViewById(R.id.fragment_ioio_pieton);
 //        velo = view.findViewById(R.id.fragment_ioio_velo);
@@ -114,7 +126,7 @@ public class IOIOFragment extends Fragment implements LifecycleOwner,OnChartValu
     private void initGraph(){
 
         referenceTimestamp=System.currentTimeMillis()/1000;
-        IMarker marker = new CustomMarkerView(getContext(), R.layout.custom_marker, referenceTimestamp);
+        IMarker marker = new CustomMarkerView(getContext(), R.layout.graph_custom_marker, referenceTimestamp);
         mChart.setMarker(marker);
 
         // LineTimeChart
