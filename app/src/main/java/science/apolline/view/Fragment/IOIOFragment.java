@@ -109,7 +109,9 @@ public class IOIOFragment extends Fragment implements LifecycleOwner,OnChartValu
         save_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                export.toJson(getActivity().getApplication());
+//                export.toJson(getActivity().getApplication());
+//                export.toCsv(getActivity().getApplication());
+                  export.export(getActivity().getApplication());
             }
         });
 //        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_ioio_map);

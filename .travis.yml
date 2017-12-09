@@ -1,6 +1,8 @@
 sudo: required
 notifications:
   email: false
+dist: trusty
+group: edge  # Add this
 services:
   - docker
 language: android
