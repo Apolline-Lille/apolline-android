@@ -4,8 +4,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import org.junit.Assert
+import org.junit.Assert.assertTrue
 import org.junit.Test
-import junit.framework.Assert.assertTrue
 import science.apolline.service.networks.*
 import science.apolline.models.Position
 import science.apolline.models.Device

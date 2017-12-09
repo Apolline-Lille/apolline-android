@@ -29,6 +29,8 @@ data class Device(
     @Expose
     @PrimaryKey(autoGenerate = true)
     var sensorId: Int=0
+
+    @Ignore
     constructor() : this("", "", null, null)
 
     override fun toString(): String {
