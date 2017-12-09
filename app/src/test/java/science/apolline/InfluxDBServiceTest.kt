@@ -18,6 +18,7 @@ import java.io.IOException
 
 class InfluxDBServiceTest {
 
+    private val testUrl = "http://localhost:8086/"
     private var parser = JsonParser()
     private var JSONTOSEND = "{" +
             "\"CO2\":[100,\"PPM\"]," +
@@ -63,6 +64,7 @@ class InfluxDBServiceTest {
         val dataTosend = RequestParser.createRequestBody(sensorInitObject)
 
         print(dataTosend)
+        ApiUtils.setUrl(testUrl)
         val api = ApiUtils.apiService
         val call = api.savePost("test", "toto", "root", dataTosend)
         val response = call.execute()

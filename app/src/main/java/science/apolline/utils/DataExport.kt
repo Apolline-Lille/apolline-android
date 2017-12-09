@@ -93,7 +93,7 @@ class DataExport {
             }
             CSVWriter(FileWriter(filenameCSV)).use { writer -> writer.writeAll(entries) }
             uiThread {
-                context.toast("Data exported to to JSON and CSV")
+                context.toast("Data exported to JSON and CSV")
             }
         }
     }
