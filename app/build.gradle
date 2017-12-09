@@ -4,30 +4,95 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
 
+    def versionCodeValue = 1
+    def versionCodeNameValue = "v1.0.1"
+
+    ext.getMyVersionCodeValue = {
+        return versionCodeValue
+    }
+    ext.getMyVersionCodeNameValue = {
+        return versionCodeNameValue
+    }
+
+    def influxdb_url = hasProperty('INFLUXDB_URL') ? INFLUXDB_URL : System.getenv('INFLUXDB_URL')
+    def influxdb_dbname = hasProperty('INFLUXDB_DBNAME') ? INFLUXDB_DBNAME : System.getenv('INFLUXDB_DBNAME')
+    def influxdb_usr = hasProperty('INFLUXDB_USR') ? INFLUXDB_USR : System.getenv('INFLUXDB_USR')
+    def influxdb_pwd = hasProperty('INFLUXDB_PWD') ? INFLUXDB_PWD : System.getenv('INFLUXDB_PWD')
+
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
+
     defaultConfig {
         applicationId "apoline.science"
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
-        versionName "v1.0"
+        versionName "v1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
-
     }
+
     buildTypes {
+
+
+        debug {
+            debuggable true
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+            buildConfigField "String", "INFLUXDB_URL", '"'+properties.getProperty('influxdb_url')+'"'
+            buildConfigField "String", "INFLUXDB_DBNAME", '"'+properties.getProperty('influxdb_dbname')+'"'
+            buildConfigField "String", "INFLUXDB_USR", '"'+properties.getProperty('influxdb_usr')+'"'
+            buildConfigField "String", "INFLUXDB_PWD", '"'+properties.getProperty('influxdb_pwd')+'"'
+        }
+
         release {
+            debuggable false
+            buildConfigField "String", "INFLUXDB_URL", '"'+influxdb_url+'"'
+            buildConfigField "String", "INFLUXDB_DBNAME", '"'+influxdb_dbname+'"'
+            buildConfigField "String", "INFLUXDB_USR", '"'+influxdb_usr+'"'
+            buildConfigField "String", "INFLUXDB_PWD", '"'+influxdb_pwd+'"'
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+    }
+
+    task debugTask() {
+        doLast {
+            getMyVersionCodeValue()
+            getMyVersionCodeNameValue()
+            dependsOn 'assembleDebug'
+        }
+    }
+
+    task releaseTask() {
+        doLast {
+            getMyVersionCodeValue()
+            getMyVersionCodeNameValue()
+            dependsOn 'assembleRelease'
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
+    defaultConfig {
+        multiDexEnabled true
     }
 
 }
+
 
 project.ext {
     appcompat = "26.1.0"
@@ -103,3 +168,6 @@ dependencies {
 repositories {
     mavenCentral()
 }
+
+
+

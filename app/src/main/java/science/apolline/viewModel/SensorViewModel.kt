@@ -11,7 +11,6 @@ import android.location.Location
 import android.location.LocationListener
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
-import android.widget.Toast
 import retrofit2.Call
 import retrofit2.Response
 import science.apolline.R
@@ -25,11 +24,17 @@ import science.apolline.models.IntfSensorData
 import science.apolline.utils.RequestParser
 import java.util.*
 import android.os.Bundle
+import org.jetbrains.anko.*
 import science.apolline.models.Position
 import science.apolline.service.geolocalisation.SingleShotLocationProvider
+import science.apolline.BuildConfig
+import android.net.NetworkInfo
+import android.net.ConnectivityManager
 
 
-class SensorViewModel(application: Application) : AndroidViewModel(application){
+
+
+class SensorViewModel(application: Application) : AndroidViewModel(application), AnkoLogger {
     init {
 
         val BReceiver = object : BroadcastReceiver() {
@@ -54,7 +59,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application){
                                 , position,dataLive.value?.toJson()
                         )
                         setPersistant(device)
-                        //sendData(Device)
+                        sendData(device)
                     }
                     override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
                     override fun onProviderEnabled(provider: String) {}
@@ -74,16 +79,26 @@ class SensorViewModel(application: Application) : AndroidViewModel(application){
 
 
     private fun sendData(device: Device) {
-        val requestBody: String = RequestParser.createRequestBody(device)
-        val api : ApiService = ApiUtils.apiService
-        val postCall : Call<InfluxBody> = api.savePost("test","toto","root",requestBody)
-        val postResponse: Response<InfluxBody>
-        postResponse = postCall.execute();
-        if (postResponse.isSuccessful()) {
-            Toast.makeText(getApplication(), "Data send: success", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getApplication(), "Data send: Failure, message = " + postResponse.message(), Toast.LENGTH_SHORT).show();
+
+        doAsync {
+            if(isConnectingToInternet(getApplication())){
+                val requestBody: String = RequestParser.createRequestBody(device)
+                val api : ApiService = ApiUtils.apiService
+                val postCall : Call<InfluxBody> = api.savePost(BuildConfig.INFLUXDB_DBNAME,BuildConfig.INFLUXDB_USR,BuildConfig.INFLUXDB_PWD,requestBody)
+                val postResponse: Response<InfluxBody>
+                postResponse = postCall.execute()
+
+                if (postResponse.isSuccessful()) {
+                    info("Data send: success")
+                } else {
+                    info("Data send: Failure, message = " + postResponse.message())
+                }
+            }else{
+                info("Data send: can't establish internet connection")
+            }
+
         }
+
     }
 
     private fun setPersistant(device: Device) {
@@ -146,6 +161,12 @@ class SensorViewModel(application: Application) : AndroidViewModel(application){
 //
 //        }
 
+
+    fun isConnectingToInternet(context: Context): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = cm.activeNetworkInfo
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting
+    }
 
 
 }
