@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+
 import java.util.regex.Pattern
 
 android {
@@ -31,7 +32,6 @@ android {
 
 
         debug {
-            debuggable true
             Properties properties = new Properties()
             properties.load(project.rootProject.file('local.properties').newDataInputStream())
             buildConfigField "String", "INFLUXDB_URL", '"'+properties.getProperty('influxdb_url')+'"'
@@ -41,7 +41,6 @@ android {
         }
 
         release {
-            debuggable false
             buildConfigField "String", "INFLUXDB_URL", '"'+influxdb_url+'"'
             buildConfigField "String", "INFLUXDB_DBNAME", '"'+influxdb_dbname+'"'
             buildConfigField "String", "INFLUXDB_USR", '"'+influxdb_usr+'"'
@@ -53,8 +52,10 @@ android {
 
     }
 
-
-
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 
 
     packagingOptions {
@@ -63,26 +64,24 @@ android {
     }
 
     lintOptions {
-        checkReleaseBuilds false
+        checkReleaseBuilds true
     }
 
     defaultConfig {
         multiDexEnabled true
     }
 
-
     task('increaseVersionCode') {
-        doLast{
+        doLast {
             def manifestFile = file("src/main/AndroidManifest.xml")
             def pattern = Pattern.compile("versionCode=\"(\\d+)\"")
             def manifestText = manifestFile.getText()
             def matcher = pattern.matcher(manifestText)
             matcher.find()
             def versionCode = Integer.parseInt(matcher.group(1))
-            def manifestContent = matcher.replaceAll("versionCode=\"" + +versionCode + "\"")
+            def manifestContent = matcher.replaceAll("versionCode=\"" + ++versionCode + "\"")
             manifestFile.write(manifestContent)
         }
-
     }
 
     task('incrementVersionName') {
@@ -166,7 +165,7 @@ dependencies {
 
     // Room
     implementation "android.arch.persistence.room:runtime:$project.rc"
-    kapt "android.arch.persistence.room:compiler:$project.rc"
+    implementation "android.arch.lifecycle:common-java8:$project.rc"
     implementation "android.arch.persistence.room:rxjava2:$project.rc"
     testImplementation"android.arch.persistence.room:testing:$project.rc"
 
@@ -181,10 +180,18 @@ dependencies {
     // OpenCSV
     implementation 'com.opencsv:opencsv:4.1'
 
+    // MultiDex
+    implementation 'com.android.support:multidex:1.0.2'
+
 }
 repositories {
     mavenCentral()
 }
 
+configurations {
+    all {
+        exclude module: 'commons-logging'
+    }
+}
 
 

@@ -5,6 +5,7 @@ package science.apolline.models
  */
 
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -24,6 +25,7 @@ data class Position(
         var transport: String
 
 ) {
+    @Ignore
     constructor() : this("", 0.0, 0.0, "")
 
     override fun toString(): String {
