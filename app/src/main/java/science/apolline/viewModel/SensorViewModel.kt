@@ -28,7 +28,6 @@ import org.jetbrains.anko.*
 import science.apolline.models.Position
 import science.apolline.service.geolocalisation.SingleShotLocationProvider
 import science.apolline.BuildConfig
-import android.net.NetworkInfo
 import android.net.ConnectivityManager
 
 
@@ -102,8 +101,13 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
     }
 
     private fun setPersistant(device: Device) {
-        val sensorModel: SensorDao = AppDatabase.getInstance(getApplication())
-        sensorModel.insertOne(device)
+        doAsync {
+            val sensorModel: SensorDao = AppDatabase.getInstance(getApplication())
+            sensorModel.insertOne(device)
+        }
+
+
+
 //        val list = sensorModel.all.blockingGet()
 //        val count = sensorModel.all.blockingGet().size
 //        Log.e(this.javaClass.name,"/////////")

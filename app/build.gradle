@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 import java.util.regex.Pattern
 
@@ -38,6 +39,8 @@ android {
             buildConfigField "String", "INFLUXDB_DBNAME", '"'+properties.getProperty('influxdb_dbname')+'"'
             buildConfigField "String", "INFLUXDB_USR", '"'+properties.getProperty('influxdb_usr')+'"'
             buildConfigField "String", "INFLUXDB_PWD", '"'+properties.getProperty('influxdb_pwd')+'"'
+
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         release {
@@ -164,6 +167,8 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxkotlin:2.1.0'
 
     // Room
+
+    kapt "android.arch.persistence.room:compiler:$project.rc"
     implementation "android.arch.persistence.room:runtime:$project.rc"
     implementation "android.arch.lifecycle:common-java8:$project.rc"
     implementation "android.arch.persistence.room:rxjava2:$project.rc"
@@ -184,6 +189,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.2'
 
 }
+
 repositories {
     mavenCentral()
 }

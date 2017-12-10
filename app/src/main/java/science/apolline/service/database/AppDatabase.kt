@@ -35,7 +35,6 @@ abstract class AppDatabase : RoomDatabase() {
                     dbInstance = db?.sensorDao()
                 } else {
                     db = Room.databaseBuilder(context, AppDatabase::class.java, databaseName)
-                            .allowMainThreadQueries()
                             .build()
                     dbInstance = db?.sensorDao()
                 }
