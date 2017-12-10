@@ -40,5 +40,7 @@
     <string name="serviceBroadCastDate">date</string>
     <string name="serviceBroadCastSensorName">sensorName</string>
 
+    <string name="send_to">Share data to ..</string>
+
 
 </resources>

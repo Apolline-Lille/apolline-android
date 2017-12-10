@@ -11,7 +11,9 @@ import java.io.File
 import java.io.FileWriter
 import com.google.gson.GsonBuilder
 import com.opencsv.CSVWriter
-
+import android.content.Intent
+import android.net.Uri
+import science.apolline.R
 
 
 /**
@@ -21,7 +23,7 @@ import com.opencsv.CSVWriter
 class DataExport {
     fun toJson(context:Context) {
 
-        val folder = File(getExternalStorageDirectory().toString()+"/Folder")
+        val folder = File(getExternalStorageDirectory().toString()+"/Apolline")
 
         if (!folder.exists())
             folder.mkdir()
@@ -45,7 +47,7 @@ class DataExport {
 
     fun toCsv(context:Context) {
 
-        val folder = File(getExternalStorageDirectory().toString() + "/Folder")
+        val folder = File(getExternalStorageDirectory().toString() + "/Apolline")
         if (!folder.exists())
             folder.mkdir()
         val filename = folder.toString() + "/" + "data.csv"
@@ -69,7 +71,7 @@ class DataExport {
 
     fun export(context:Context) {
 
-        val folder = File(getExternalStorageDirectory().toString()+"/Folder")
+        val folder = File(getExternalStorageDirectory().toString()+"/Apolline")
         if (!folder.exists())
             folder.mkdir()
         val filenameCSV = folder.toString() + "/" + "data.csv"
@@ -91,8 +93,15 @@ class DataExport {
                 entries.add(it.toArray())
             }
             CSVWriter(FileWriter(filenameCSV)).use { writer -> writer.writeAll(entries) }
+
             uiThread {
-                context.toast("Data exported to JSON and CSV")
+
+                val shareIntent = Intent()
+                shareIntent.action = Intent.ACTION_SEND
+                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(filenameCSV))
+                shareIntent.type = "text/plain"
+                context.toast("Data exported with success")
+                context.startActivity(Intent.createChooser(shareIntent, context.resources.getText(R.string.send_to)))
             }
         }
     }

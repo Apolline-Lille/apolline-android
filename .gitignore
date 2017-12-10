@@ -131,3 +131,5 @@ Temporary Items
 
 #room database shema
 app/schemas/science.apolline.service.database.AppDatabase/
+
+projectFilesBackup1/\.idea/workspace\.xml
