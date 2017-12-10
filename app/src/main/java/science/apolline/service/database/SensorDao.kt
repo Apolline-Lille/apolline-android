@@ -33,6 +33,9 @@ interface SensorDao {
     @Query("DELETE FROM Device")
     fun flushSensorData()
 
+    @Query("SELECT * FROM Device")
+    fun dumpSensor(): List<Device>
+
     @Delete
     fun delete(device: Device)
 }

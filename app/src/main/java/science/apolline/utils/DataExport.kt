@@ -28,11 +28,11 @@ class DataExport {
 
         val filename = folder.toString() + "/" + "data.json"
 
-        val sensorDao = AppDatabase.getInstance(context)
         doAsync {
+
+            val sensorDao = AppDatabase.getInstance(context)
             val fw = FileWriter(filename)
-            val allData = sensorDao.all
-            val dataList = allData.blockingGet()
+            val dataList = sensorDao.dumpSensor()
             Log.e("export",dataList.size.toString())
             val gson = GsonBuilder().setPrettyPrinting().create()
             val jsonFile = gson.toJson(dataList)
@@ -49,12 +49,11 @@ class DataExport {
         if (!folder.exists())
             folder.mkdir()
         val filename = folder.toString() + "/" + "data.csv"
-        val sensorDao = AppDatabase.getInstance(context)
 
         doAsync {
 
-            val allData = sensorDao.all
-            val dataList = allData.blockingGet()
+            val sensorDao = AppDatabase.getInstance(context)
+            val dataList = sensorDao.dumpSensor()
             val entries: MutableList<Array<String>> = mutableListOf()
             entries.add(dataList[0].toHeader())
             dataList.forEach {
@@ -75,12 +74,12 @@ class DataExport {
             folder.mkdir()
         val filenameCSV = folder.toString() + "/" + "data.csv"
         val filenameJSON = folder.toString() + "/" + "data.json"
-        val sensorDao = AppDatabase.getInstance(context)
 
         doAsync {
+
+            val sensorDao = AppDatabase.getInstance(context)
             val fw = FileWriter(filenameJSON)
-            val allData = sensorDao.all
-            val dataList = allData.blockingGet()
+            val dataList = sensorDao.dumpSensor()
             Log.e("export",dataList.size.toString())
             val gson = GsonBuilder().setPrettyPrinting().create()
             val jsonFile = gson.toJson(dataList)
