@@ -72,7 +72,7 @@ data class Device(
         val temp = data!!.entrySet().iterator()
         while (temp.hasNext()) {
             val it = temp.next()
-            val value = it.value.asJsonArray[0].toString()
+            val value = it.value.toString()
             objectArray.add(value)
         }
         return objectArray.toTypedArray()

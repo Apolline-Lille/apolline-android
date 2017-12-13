@@ -58,7 +58,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
                                 , position,dataLive.value?.toJson()
                         )
                         setPersistant(device)
-                        sendData(device)
+//                        sendData(device)
                     }
                     override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
                     override fun onProviderEnabled(provider: String) {}
