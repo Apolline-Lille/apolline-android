@@ -2,7 +2,6 @@ package science.apolline.models;
 
 import android.os.Parcel;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -113,64 +112,52 @@ public class IOIOData implements IntfSensorData {
         return tempKelvin - 273.15f;
     }
 
+
+    public enum Units {
+        CONCENTRATION_UG_M3("ug/m3"),
+        PERCENTAGE("%"),
+        TEMPERATURE_KELVIN("K"),
+
+        ;
+
+        private final String name;
+
+        Units(final String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
+
+    private void addNestedJsonArray(JsonObject obj, String property, double value, Units unit){
+        JsonArray array = new JsonArray();
+        array.add(value);
+        array.add(String.valueOf(unit));
+        obj.add(property,array);
+    }
+
     @Override
     public JsonObject toJson(){
-
-
         JsonObject obj = new JsonObject();
 
-        JsonArray array1 = new JsonArray();
+        addNestedJsonArray(obj, "pm.01.value", PM01Value, Units.CONCENTRATION_UG_M3);
+        addNestedJsonArray(obj, "pm.2.5.value", PM2_5Value, Units.CONCENTRATION_UG_M3);
+        addNestedJsonArray(obj, "pm.10.value", PM10Value, Units.CONCENTRATION_UG_M3);
 
-        array1.add(PM01Value);
-        array1.add("ug/m3");
-        obj.add("PM01Value",array1);
-        JsonArray array2 = new JsonArray();
-        array2.add(PM2_5Value);
-        array2.add("ug/m3");
-        obj.add("PM2_5Value",array2);
-        JsonArray array3 = new JsonArray();
-        array3.add(PM10Value);
-        array3.add("ug/m3");
-        obj.add("PM10Value",array3);
-        JsonArray array4 = new JsonArray();
-        array4.add(PM0_3Above);
-        array4.add("ug/m3");
-        obj.add("PM0_3Above",array4);
-        JsonArray array5 = new JsonArray();
-        array5.add(PM0_5Above);
-        array5.add("ug/m3");
-        obj.add("PM0_5Above",array5);
-        JsonArray array6 = new JsonArray();
-        array6.add(PM1Above);
-        array6.add("ug/m3");
-        obj.add("PM1Above",array6);
-        JsonArray array7 = new JsonArray();
-        array7.add(PM2_5Above);
-        array7.add("ug/m3");
-        obj.add("PM2_5Above",array7);
-        JsonArray array8 = new JsonArray();
-        array8.add(PM5Above);
-        array8.add("ug/m3");
-        obj.add("PM5Above",array8);
-        JsonArray array9 = new JsonArray();
-        array9.add(PM10Above);
-        array9.add("ug/m3");
-        obj.add("PM10Above",array9);
-        JsonArray array10 = new JsonArray();
-        array10.add(tempKelvin);
-        array10.add("kelvin");
-        obj.add("tempKelvin",array10);
-        JsonArray array11 = new JsonArray();
-        array11.add(RH);
-        array11.add("%");
-        obj.add("RH",array11);
-        JsonArray array12 = new JsonArray();
-        array12.add(RHT);
-        array12.add("%");
-        obj.add("RHT",array12);
+        addNestedJsonArray(obj, "pm.0.3.above", PM0_3Above, Units.CONCENTRATION_UG_M3);
+        addNestedJsonArray(obj, "pm.0.5.above", PM0_5Above, Units.CONCENTRATION_UG_M3);
+        addNestedJsonArray(obj, "pm.1.above", PM1Above, Units.CONCENTRATION_UG_M3);
+        addNestedJsonArray(obj, "pm.2.5.above", PM2_5Above, Units.CONCENTRATION_UG_M3);
+        addNestedJsonArray(obj, "pm.5.above", PM5Above, Units.CONCENTRATION_UG_M3);
+        addNestedJsonArray(obj, "pm.10.above", PM10Above, Units.CONCENTRATION_UG_M3);
 
-        Gson gson = new Gson();
-
+        addNestedJsonArray(obj, "temperature", tempKelvin, Units.TEMPERATURE_KELVIN);
+        addNestedJsonArray(obj, "humidity", RH, Units.PERCENTAGE);
+        addNestedJsonArray(obj, "humidity.componsated", RHT, Units.PERCENTAGE);
 
         return obj;
     }

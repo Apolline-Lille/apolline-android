@@ -3,6 +3,8 @@ package science.apolline
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import org.junit.Assert
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -16,7 +18,7 @@ import java.io.IOException
  * Created by sparow on 10/13/17.
  */
 
-class InfluxDBServiceTest {
+class InfluxDBServiceTest : AnkoLogger {
 
     private val testUrl = "http://localhost:8086/"
     private var parser = JsonParser()
@@ -63,8 +65,9 @@ class InfluxDBServiceTest {
         //when
         val dataTosend = RequestParser.createRequestBody(sensorInitObject)
 
-        print(dataTosend)
+        info(dataTosend)
         ApiUtils.setUrl(testUrl)
+        info(ApiUtils.getUrl())
         val api = ApiUtils.apiService
         val call = api.savePost("test", "toto", "root", dataTosend)
         val response = call.execute()

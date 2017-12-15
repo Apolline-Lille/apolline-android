@@ -15,6 +15,9 @@ object ApiUtils {
         return baseUrl
     }
 
+    fun getUrl(): String {
+        return baseUrl
+    }
     val apiService: ApiService
         get() = RetrofitClient.getClient(baseUrl)!!.create(ApiService::class.java)
 

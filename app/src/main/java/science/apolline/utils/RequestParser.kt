@@ -10,7 +10,6 @@ import science.apolline.models.Device
 object RequestParser {
 
     val DEVICE = "device"
-    val SENSOR = "sensor"
     val PROVIDER = "provider"
     val LONGITUDE = "longitude"
     val LATITUDE = "latitude"
@@ -21,30 +20,35 @@ object RequestParser {
 
     fun createRequestBody(device: Device): String {
 
+        val tmpDevice = device.device.replace("\\s".toRegex(), "")
+        val tmpProvider = device.position!!.provider.replace("\\s".toRegex(), "")
+        val tmpTransport = device.position!!.transport.replace("\\s".toRegex(), "")
+        val tmpLongitude = device.position!!.longitude.toString()
+        val tmpLatitude = device.position!!.latitude.toString()
+        val tmpDate = device.date.replace("\\s".toRegex(), "")
+
         val sb = StringBuilder()
 
         try {
 
-            val json = device.data
-            val temp = json!!.entrySet().iterator()
+            device.data!!.entrySet().iterator().forEach {
 
-            while (temp.hasNext()) {
-
-                val it = temp.next()
-                val key = it.key
+                val key = it.key.toString()
                 val value = it.value.asJsonArray
+                val tmpUnit = value[1].asString.replace("\\s".toRegex(), "")
+                val tmpValue = value[0].asDouble.toString()
 
                 sb.append(key).append(",")
 
-                sb.append(DEVICE).append("=").append(device.device).append(",")
-                sb.append(PROVIDER).append("=").append(device.position!!.provider).append(",")
-                sb.append(LOCATION).append("=").append(device.position!!.transport).append(",")
-                sb.append(LONGITUDE).append("=").append(device.position!!.longitude).append(",")
-                sb.append(LATITUDE).append("=").append(device.position!!.latitude).append(",")
-                sb.append(DATE).append("=").append(device.date).append(",")
+                sb.append(DEVICE).append("=").append(tmpDevice).append(",")
+                sb.append(PROVIDER).append("=").append(tmpProvider).append(",")
+                sb.append(LOCATION).append("=").append(tmpTransport).append(",")
+                sb.append(LONGITUDE).append("=").append(tmpLongitude).append(",")
+                sb.append(LATITUDE).append("=").append(tmpLatitude).append(",")
 
-                sb.append(UNIT).append("=").append(value[0]).append(" ")
-                sb.append(VALUE).append("=").append(value[1]).append(" ")
+                sb.append(DATE).append("=").append(tmpDate).append(",")
+                sb.append(UNIT).append("=").append(tmpUnit).append(" ")
+                sb.append(VALUE).append("=").append(tmpValue).append(" ")
 
                 sb.append(System.currentTimeMillis()).append("\n")
             }
