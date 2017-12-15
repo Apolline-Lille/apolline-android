@@ -13,7 +13,7 @@ import science.apolline.models.Device
  * Created by sparow on 10/21/17.
  */
 
-class deviceModelDataTest {
+class DeviceModelDataTest {
 
     /**
      * Test Position class

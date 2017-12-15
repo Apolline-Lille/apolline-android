@@ -18,7 +18,7 @@ import java.io.IOException
  * Created by sparow on 10/13/17.
  */
 
-class InfluxDBServiceTest : AnkoLogger {
+class InfluxDBServiceTest {
 
     private val testUrl = "http://localhost:8086/"
     private var parser = JsonParser()
@@ -64,10 +64,7 @@ class InfluxDBServiceTest : AnkoLogger {
 
         //when
         val dataTosend = RequestParser.createRequestBody(sensorInitObject)
-
-        info(dataTosend)
         ApiUtils.setUrl(testUrl)
-        info(ApiUtils.getUrl())
         val api = ApiUtils.apiService
         val call = api.savePost("test", "toto", "root", dataTosend)
         val response = call.execute()
