@@ -2,6 +2,8 @@ package science.apolline.models;
 
 import android.os.Parcel;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public class IOIOData implements IntfSensorData {
@@ -113,21 +115,62 @@ public class IOIOData implements IntfSensorData {
 
     @Override
     public JsonObject toJson(){
+
+
         JsonObject obj = new JsonObject();
-        obj.addProperty("PM01Value",PM01Value);
-        obj.addProperty("PM2_5Value",PM2_5Value);
-        obj.addProperty("PM10Value",PM10Value);
 
-        obj.addProperty("PM0_3Above",PM0_3Above);
-        obj.addProperty("PM0_5Above",PM0_5Above);
-        obj.addProperty("PM1Above",PM1Above);
-        obj.addProperty("PM2_5Above",PM2_5Above);
-        obj.addProperty("PM5Above",PM5Above);
-        obj.addProperty("PM10Above",PM10Above);
+        JsonArray array1 = new JsonArray();
 
-        obj.addProperty("tempKelvin",tempKelvin);
-        obj.addProperty("RH",RH);
-        obj.addProperty("RHT",RHT);
+        array1.add(PM01Value);
+        array1.add("ug/m3");
+        obj.add("PM01Value",array1);
+        JsonArray array2 = new JsonArray();
+        array2.add(PM2_5Value);
+        array2.add("ug/m3");
+        obj.add("PM2_5Value",array2);
+        JsonArray array3 = new JsonArray();
+        array3.add(PM10Value);
+        array3.add("ug/m3");
+        obj.add("PM10Value",array3);
+        JsonArray array4 = new JsonArray();
+        array4.add(PM0_3Above);
+        array4.add("ug/m3");
+        obj.add("PM0_3Above",array4);
+        JsonArray array5 = new JsonArray();
+        array5.add(PM0_5Above);
+        array5.add("ug/m3");
+        obj.add("PM0_5Above",array5);
+        JsonArray array6 = new JsonArray();
+        array6.add(PM1Above);
+        array6.add("ug/m3");
+        obj.add("PM1Above",array6);
+        JsonArray array7 = new JsonArray();
+        array7.add(PM2_5Above);
+        array7.add("ug/m3");
+        obj.add("PM2_5Above",array7);
+        JsonArray array8 = new JsonArray();
+        array8.add(PM5Above);
+        array8.add("ug/m3");
+        obj.add("PM5Above",array8);
+        JsonArray array9 = new JsonArray();
+        array9.add(PM10Above);
+        array9.add("ug/m3");
+        obj.add("PM10Above",array9);
+        JsonArray array10 = new JsonArray();
+        array10.add(tempKelvin);
+        array10.add("kelvin");
+        obj.add("tempKelvin",array10);
+        JsonArray array11 = new JsonArray();
+        array11.add(RH);
+        array11.add("%");
+        obj.add("RH",array11);
+        JsonArray array12 = new JsonArray();
+        array12.add(RHT);
+        array12.add("%");
+        obj.add("RHT",array12);
+
+        Gson gson = new Gson();
+
 
         return obj;
     }

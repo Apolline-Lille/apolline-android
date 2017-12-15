@@ -13,6 +13,7 @@ import com.google.gson.GsonBuilder
 import com.opencsv.CSVWriter
 import android.content.Intent
 import android.net.Uri
+import com.google.gson.JsonObject
 import science.apolline.R
 
 
@@ -21,6 +22,24 @@ import science.apolline.R
  */
 
 class DataExport {
+
+    fun toHeader(data: JsonObject?): Array<String> {
+        val headerArray = mutableListOf<String>()
+        headerArray.add("SensorID")
+        headerArray.add("Device")
+        headerArray.add("Date")
+        headerArray.add("Latitude")
+        headerArray.add("Longitude")
+        headerArray.add("Provider")
+        headerArray.add("Transport")
+
+        data!!.entrySet().iterator().forEach {
+            headerArray.add(it.key + "_" + it.value.asJsonArray[1].toString().replace("\"", ""))
+        }
+
+        return headerArray.toTypedArray()
+    }
+
     fun toJson(context:Context) {
 
         val folder = File(getExternalStorageDirectory().toString()+"/Apolline")
@@ -57,7 +76,7 @@ class DataExport {
             val sensorDao = AppDatabase.getInstance(context)
             val dataList = sensorDao.dumpSensor()
             val entries: MutableList<Array<String>> = mutableListOf()
-            entries.add(dataList[0].toHeader())
+            entries.add(toHeader(dataList[0].data))
             dataList.forEach {
                 entries.add(it.toArray())
             }
@@ -88,7 +107,7 @@ class DataExport {
             fw.write(jsonFile)
 
             val entries: MutableList<Array<String>> = mutableListOf()
-            entries.add(dataList[0].toHeader())
+            entries.add(toHeader(dataList[0].data))
             dataList.forEach{
                 entries.add(it.toArray())
             }

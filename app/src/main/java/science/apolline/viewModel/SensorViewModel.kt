@@ -103,6 +103,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
     private fun setPersistant(device: Device) {
         doAsync {
             val sensorModel: SensorDao = AppDatabase.getInstance(getApplication())
+            info(device.data?.toString())
             sensorModel.insertOne(device)
         }
 
