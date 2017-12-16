@@ -5,12 +5,18 @@ package science.apolline.models
  */
 
 import android.arch.persistence.room.*
+
 import com.google.gson.JsonObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
+
+
 @Entity
 data class Device(
+        @SerializedName("uuid")
+        @Expose
+        var uuid: String,
         @SerializedName("device")
         @Expose
         var device: String,
@@ -25,16 +31,20 @@ data class Device(
         @Expose
         var data: JsonObject?
 ) {
-    @SerializedName("sensorId")
+    @SerializedName("device_id")
     @Expose
     @PrimaryKey(autoGenerate = true)
-    var sensorId: Int=0
+    var id=0
+
+
 
     @Ignore
-    constructor() : this("", "", null, null)
+    constructor() : this("", "","", null, null)
+
 
     override fun toString(): String {
         return """
+        |AndroidId = $uuid
         |Device = $device
         |Date = $date
         |Position = $position
@@ -44,11 +54,11 @@ data class Device(
 
     fun toArray(): Array<String> {
         val objectArray = mutableListOf<String>()
-        objectArray.add(sensorId.toString())
+        objectArray.add(id.toString())
         objectArray.add(device)
         objectArray.add(date)
         objectArray.add(position?.latitude.toString())
-        objectArray.add( position?.longitude.toString())
+        objectArray.add(position?.longitude.toString())
         objectArray.add(position?.provider.orEmpty())
         objectArray.add(position?.transport.orEmpty())
 
@@ -59,9 +69,4 @@ data class Device(
 
         return objectArray.toTypedArray()
     }
-
-
-
-
-
 }

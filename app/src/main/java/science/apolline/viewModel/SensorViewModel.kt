@@ -22,15 +22,13 @@ import science.apolline.service.networks.ApiService
 import science.apolline.service.networks.ApiUtils
 import science.apolline.models.IntfSensorData
 import science.apolline.utils.RequestParser
-import java.util.*
 import android.os.Bundle
 import org.jetbrains.anko.*
 import science.apolline.models.Position
 import science.apolline.service.geolocalisation.SingleShotLocationProvider
 import science.apolline.BuildConfig
 import android.net.ConnectivityManager
-
-
+import science.apolline.utils.AndroidUuid
 
 
 class SensorViewModel(application: Application) : AndroidViewModel(application), AnkoLogger {
@@ -45,14 +43,14 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
 
                 Log.e("viewModel","${dataLive.hasActiveObservers()}")
 
-                val d1 = intent.getSerializableExtra(application.getString(R.string.serviceBroadCastDate)) as Date
+                val d1 = intent.getSerializableExtra(application.getString(R.string.serviceBroadCastDate)) as Long
 
                 var position: Position
                 mLocationListener = object : LocationListener {
                     override fun onLocationChanged(location: Location) {
                         position=Position(location.provider,location.longitude,location.latitude,"null")
 
-                        val device: Device = Device(
+                        val device = Device(AndroidUuid.getAndroidUuid(),
                                 intent.getStringExtra(application.getString(R.string.serviceBroadCastSensorName))
                                 ,d1.toString()
                                 , position,dataLive.value?.toJson()
@@ -82,6 +80,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
         doAsync {
             if(isConnectingToInternet(getApplication())){
                 val requestBody: String = RequestParser.createRequestBody(device)
+                info(requestBody)
                 val api : ApiService = ApiUtils.apiService
                 val postCall : Call<InfluxBody> = api.savePost(BuildConfig.INFLUXDB_DBNAME,BuildConfig.INFLUXDB_USR,BuildConfig.INFLUXDB_PWD,requestBody)
                 val postResponse: Response<InfluxBody>

@@ -51,7 +51,7 @@ class RoomDatabaseTest {
         val sensor = Device("Arduino", "WedSep2614:23:28EST2017", positionInitObject, dataListObject )
 
         sensorDao?.insertOne(sensor)
-        val sensorTest = getValue(sensorDao?.getSensorById(sensor.sensorId)!!)
+        val sensorTest = getValue(sensorDao?.getSensorById(sensor.id)!!)
         Assert.assertEquals(sensor.device, sensorTest.device)
     }
 

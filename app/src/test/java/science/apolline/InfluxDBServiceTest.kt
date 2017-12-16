@@ -60,10 +60,11 @@ class InfluxDBServiceTest {
         val gson = Gson()
         val dataListObject = gson.fromJson(dataList, JsonObject::class.java)
         val positionInitObject = Position("GPS", 152.36, 142.36, "Train")
-        val sensorInitObject = Device("Arduino", "WedSep2614:23:28EST2017", positionInitObject, dataListObject)
+        val sensorInitObject = Device("ffffffff-c9cf-31db-0000-00006c125b14","Arduino", "1422568543702900257", positionInitObject, dataListObject)
 
         //when
         val dataTosend = RequestParser.createRequestBody(sensorInitObject)
+        println(dataTosend)
         ApiUtils.setUrl(testUrl)
         val api = ApiUtils.apiService
         val call = api.savePost("test", "toto", "root", dataTosend)

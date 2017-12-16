@@ -7,6 +7,7 @@ import com.google.gson.JsonObject
 import org.junit.Assert.*
 import science.apolline.models.Position
 import science.apolline.models.Device
+import science.apolline.utils.AndroidUuid
 
 
 /**
@@ -57,13 +58,13 @@ class DeviceModelDataTest {
     @Test
     @Throws(IOException::class)
     fun testHardcodedSensor() {
-
         //given
         val jsonInit = "{" +
-                "\"sensorId\":1," +
+                "\"id\":1," +
+                "\"uuid\":ffffffff-c9cf-31db-0000-00006c125b14," +
                 "\"device\":\"Arduino\"," +
                 "\"sensor\":\"MQ135\"," +
-                "\"date\": \"WedSep2614:23:28EST2017\"," +
+                "\"date\": \"1422568543702900257\"," +
                 "\"position\": {" +
                 "\"provider\":\"GPS\"," +
                 "\"longitude\":152.36," +
@@ -91,16 +92,16 @@ class DeviceModelDataTest {
         val gson = Gson()
         val dataListObject = gson.fromJson(dataList, JsonObject::class.java)
         val deviceModel = gson.fromJson(jsonInit, Device::class.java)
-        val sensorInitObject = Device("Arduino",  "WedSep2614:23:28EST2017", positionInitObject, dataListObject)
+        val sensorInitObject = Device("ffffffff-c9cf-31db-0000-00006c125b14","Arduino",  "1422568543702900257", positionInitObject, dataListObject)
         val jsonSensorFromObject = gson.toJson(sensorInitObject)
 
         //then
         assertNotNull(deviceModel)
-        assertEquals(deviceModel.sensorId, 1)
-        assertNotEquals(deviceModel.sensorId, 0)
+        assertEquals(deviceModel.id, 1)
+        assertNotEquals(deviceModel.id, 0)
         assertEquals(deviceModel.device, "Arduino")
         assertNotEquals(deviceModel.device, "toto")
-        assertEquals(deviceModel.date, "WedSep2614:23:28EST2017")
+        assertEquals(deviceModel.date, "1422568543702900257")
         assertNotEquals(deviceModel.date, "toto")
         assertNotNull(deviceModel.position)
         assertNotNull(deviceModel.data)

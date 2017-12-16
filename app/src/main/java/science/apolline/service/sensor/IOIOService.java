@@ -124,8 +124,7 @@ public class IOIOService extends ioio.lib.util.android.IOIOService{
 
         Intent intent = new Intent(getString(R.string.sensorBroadCast));
         intent.putExtra(getString(R.string.serviceBroadCastDataSet),data);
-        Calendar calendar = Calendar.getInstance();
-        Date d1 = calendar.getTime();
+        long d1 = System.currentTimeMillis() * 1000000;
         intent.putExtra(getString(R.string.serviceBroadCastDate),d1);
         String sensorName = getString(R.string.loa_ioio_name);
         intent.putExtra(getString(R.string.serviceBroadCastSensorName),sensorName);

@@ -15,14 +15,14 @@ interface SensorDao {
     @get:Query("SELECT * FROM Device")
     val all: Single<List<Device>>
 
-    @Query("SELECT * FROM Device WHERE sensorId IN (:sensorIds)")
+    @Query("SELECT * FROM Device WHERE id IN (:sensorIds)")
     fun loadAllByIds(sensorIds: IntArray): List<Device>
 
     @Query("SELECT count(*) FROM Device")
     fun getSensorCount(): Int
 
-    @Query("SELECT * FROM Device WHERE sensorId=:sensor_id")
-    fun getSensorById(sensor_id: Int?): LiveData<Device>
+    @Query("SELECT * FROM Device WHERE id=:id")
+    fun getSensorById(id: Int?): LiveData<Device>
 
     @Insert(onConflict = REPLACE)
     fun insertOne(device: Device)

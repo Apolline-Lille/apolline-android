@@ -8,6 +8,7 @@ import science.apolline.models.Device
  */
 
 enum class Tags constructor(val value: String) {
+    ANDROID("uuid"),
     DEVICE("device"),
     PROVIDER("provider"),
     LONGITUDE("longitude"),
@@ -21,14 +22,13 @@ enum class Tags constructor(val value: String) {
 object RequestParser {
 
     fun createRequestBody(device: Device): String {
-
-        val tmpDevice = device.device.replace("\\s".toRegex(), "")
-        val tmpProvider = device.position!!.provider.replace("\\s".toRegex(), "")
-        val tmpTransport = device.position!!.transport.replace("\\s".toRegex(), "")
-        val tmpLongitude = device.position!!.longitude.toString()
-        val tmpLatitude = device.position!!.latitude.toString()
-        val tmpDate = device.date.replace("\\s".toRegex(), "")
-
+        val tmpAndroidUuid = device.uuid!!.replace("\\s".toRegex(), "_").toLowerCase()
+        val tmpDevice = device.device.replace("\\s".toRegex(), "_").toLowerCase()
+        val tmpProvider = device.position!!.provider.replace("\\s".toRegex(), "_").toLowerCase()
+        val tmpTransport = device.position!!.transport.replace("\\s".toRegex(), "_").toLowerCase()
+        val tmpLongitude = device.position!!.longitude
+        val tmpLatitude = device.position!!.latitude
+        val tmpDate = device.date
         val sb = StringBuilder()
 
         try {
@@ -41,20 +41,17 @@ object RequestParser {
                 val tmpValue = value[0].asDouble.toString()
 
                 sb.append(key).append(",")
+                sb.append(Tags.ANDROID.value).append("=").append(tmpAndroidUuid).append(",")
+                sb.append(Tags.DEVICE.value).append("=").append(tmpDevice).append(",")
+                sb.append(Tags.PROVIDER.value).append("=").append(tmpProvider).append(",")
+                sb.append(Tags.LOCATION.value).append("=").append(tmpTransport).append(",")
+                sb.append(Tags.UNIT.value).append("=").append(tmpUnit).append(" ")
 
-                sb.append(Tags.DEVICE).append("=").append(tmpDevice).append(",")
-                sb.append(Tags.PROVIDER).append("=").append(tmpProvider).append(",")
-                sb.append(Tags.LOCATION).append("=").append(tmpTransport).append(",")
-                sb.append(Tags.LONGITUDE).append("=").append(tmpLongitude).append(",")
-                sb.append(Tags.LATITUDE).append("=").append(tmpLatitude).append(",")
+                sb.append(Tags.LONGITUDE.value).append("=").append(tmpLongitude).append(",")
+                sb.append(Tags.LATITUDE.value).append("=").append(tmpLatitude).append(",")
+                sb.append(Tags.VALUE.value).append("=").append(tmpValue).append(" ")
 
-                sb.append(Tags.DATE).append("=").append(tmpDate).append(",")
-                sb.append(Tags.UNIT).append("=").append(tmpUnit).append(" ")
-                sb.append(Tags.VALUE).append("=").append(tmpValue).append(" ")
-
-                val tmpTimestamp = System.currentTimeMillis() / 1000
-
-                sb.append(tmpTimestamp.toString()).append("\n")
+                sb.append(tmpDate).append("\n")
             }
 
         } catch (e: JSONException) {
