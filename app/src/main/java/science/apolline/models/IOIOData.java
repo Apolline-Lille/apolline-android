@@ -157,7 +157,7 @@ public class IOIOData implements IntfSensorData {
 
         addNestedJsonArray(obj, "temperature", tempKelvin, Units.TEMPERATURE_KELVIN);
         addNestedJsonArray(obj, "humidity", RH, Units.PERCENTAGE);
-        addNestedJsonArray(obj, "humidity.componsated", RHT, Units.PERCENTAGE);
+        addNestedJsonArray(obj, "humidity.compensated", RHT, Units.PERCENTAGE);
 
         return obj;
     }

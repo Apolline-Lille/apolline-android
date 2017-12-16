@@ -74,6 +74,17 @@ android {
         multiDexEnabled true
     }
 
+    dexOptions{
+        javaMaxHeapSize "4g"
+    }
+
+
+    tasks.whenTaskAdded { task ->
+        if (task.name.equals("lint")) {
+            task.enabled = false
+        }
+    }
+
     task('increaseVersionCode') {
         doLast {
             def manifestFile = file("src/main/AndroidManifest.xml")

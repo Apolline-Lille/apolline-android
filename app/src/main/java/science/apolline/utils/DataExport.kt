@@ -114,11 +114,13 @@ class DataExport {
             CSVWriter(FileWriter(filenameCSV)).use { writer -> writer.writeAll(entries) }
 
             uiThread {
-
+                val file = File(filenameCSV)
+                val uri = Uri.fromFile(file)
                 val shareIntent = Intent()
                 shareIntent.action = Intent.ACTION_SEND
-                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(filenameCSV))
+                shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
                 shareIntent.type = "text/plain"
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 context.toast("Data exported with success")
                 context.startActivity(Intent.createChooser(shareIntent, context.resources.getText(R.string.send_to)))
             }

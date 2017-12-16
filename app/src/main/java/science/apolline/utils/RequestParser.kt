@@ -7,16 +7,18 @@ import science.apolline.models.Device
  * Created by sparow on 10/20/17.
  */
 
-object RequestParser {
+enum class Tags constructor(val value: String) {
+    DEVICE("device"),
+    PROVIDER("provider"),
+    LONGITUDE("longitude"),
+    LATITUDE("latitude"),
+    LOCATION("transport"),
+    UNIT("unit"),
+    VALUE("value"),
+    DATE("date")
+}
 
-    val DEVICE = "device"
-    val PROVIDER = "provider"
-    val LONGITUDE = "longitude"
-    val LATITUDE = "latitude"
-    val LOCATION = "transport"
-    val UNIT = "unit"
-    val VALUE = "value"
-    val DATE = "date"
+object RequestParser {
 
     fun createRequestBody(device: Device): String {
 
@@ -40,17 +42,19 @@ object RequestParser {
 
                 sb.append(key).append(",")
 
-                sb.append(DEVICE).append("=").append(tmpDevice).append(",")
-                sb.append(PROVIDER).append("=").append(tmpProvider).append(",")
-                sb.append(LOCATION).append("=").append(tmpTransport).append(",")
-                sb.append(LONGITUDE).append("=").append(tmpLongitude).append(",")
-                sb.append(LATITUDE).append("=").append(tmpLatitude).append(",")
+                sb.append(Tags.DEVICE).append("=").append(tmpDevice).append(",")
+                sb.append(Tags.PROVIDER).append("=").append(tmpProvider).append(",")
+                sb.append(Tags.LOCATION).append("=").append(tmpTransport).append(",")
+                sb.append(Tags.LONGITUDE).append("=").append(tmpLongitude).append(",")
+                sb.append(Tags.LATITUDE).append("=").append(tmpLatitude).append(",")
 
-                sb.append(DATE).append("=").append(tmpDate).append(",")
-                sb.append(UNIT).append("=").append(tmpUnit).append(" ")
-                sb.append(VALUE).append("=").append(tmpValue).append(" ")
+                sb.append(Tags.DATE).append("=").append(tmpDate).append(",")
+                sb.append(Tags.UNIT).append("=").append(tmpUnit).append(" ")
+                sb.append(Tags.VALUE).append("=").append(tmpValue).append(" ")
 
-                sb.append(System.currentTimeMillis()).append("\n")
+                val tmpTimestamp = System.currentTimeMillis() / 1000
+
+                sb.append(tmpTimestamp.toString()).append("\n")
             }
 
         } catch (e: JSONException) {

@@ -43,9 +43,9 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
                 )
                 dataLive.postValue(data)
 
-                Log.e("viewModel","${dataLive.hasActiveObservers()}");
+                Log.e("viewModel","${dataLive.hasActiveObservers()}")
 
-                val d1 = intent.getSerializableExtra(application.getString(R.string.serviceBroadCastDate)) as Date;
+                val d1 = intent.getSerializableExtra(application.getString(R.string.serviceBroadCastDate)) as Date
 
                 var position: Position
                 mLocationListener = object : LocationListener {
