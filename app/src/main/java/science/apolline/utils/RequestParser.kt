@@ -22,7 +22,7 @@ enum class Tags constructor(val value: String) {
 object RequestParser {
 
     fun createRequestBody(device: Device): String {
-        val tmpAndroidUuid = device.uuid!!.replace("\\s".toRegex(), "_").toLowerCase()
+        val tmpAndroidUuid = device.uuid.replace("\\s".toRegex(), "_").toLowerCase()
         val tmpDevice = device.device.replace("\\s".toRegex(), "_").toLowerCase()
         val tmpProvider = device.position!!.provider.replace("\\s".toRegex(), "_").toLowerCase()
         val tmpTransport = device.position!!.transport.replace("\\s".toRegex(), "_").toLowerCase()
