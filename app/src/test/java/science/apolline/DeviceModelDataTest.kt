@@ -60,7 +60,7 @@ class DeviceModelDataTest {
     fun testHardcodedSensor() {
         //given
         val jsonInit = "{" +
-                "\"id\":1," +
+                "\"id\":0," +
                 "\"uuid\":ffffffff-c9cf-31db-0000-00006c125b14," +
                 "\"device\":\"Arduino\"," +
                 "\"sensor\":\"MQ135\"," +
@@ -97,8 +97,8 @@ class DeviceModelDataTest {
 
         //then
         assertNotNull(deviceModel)
-        assertEquals(deviceModel.id, 1)
-        assertNotEquals(deviceModel.id, 0)
+        assertEquals(deviceModel.id, 0)
+        assertNotEquals(deviceModel.id, 1)
         assertEquals(deviceModel.device, "Arduino")
         assertNotEquals(deviceModel.device, "toto")
         assertEquals(deviceModel.date, "1422568543702900257")
