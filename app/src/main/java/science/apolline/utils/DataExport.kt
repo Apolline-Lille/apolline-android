@@ -40,7 +40,7 @@ class DataExport {
         return headerArray.toTypedArray()
     }
 
-    fun toJson(context:Context) {
+    fun exportToJson(context:Context) {
 
         val folder = File(getExternalStorageDirectory().toString()+"/Apolline")
 
@@ -54,7 +54,7 @@ class DataExport {
             val sensorDao = AppDatabase.getInstance(context)
             val fw = FileWriter(filename)
             val dataList = sensorDao.dumpSensor()
-            Log.e("export",dataList.size.toString())
+            Log.e("exportToCsv",dataList.size.toString())
             val gson = GsonBuilder().setPrettyPrinting().create()
             val jsonFile = gson.toJson(dataList)
             fw.write(jsonFile)
@@ -64,47 +64,19 @@ class DataExport {
         }
     }
 
-    fun toCsv(context:Context) {
 
-        val folder = File(getExternalStorageDirectory().toString() + "/Apolline")
-        if (!folder.exists())
-            folder.mkdir()
-        val filename = folder.toString() + "/" + "data.csv"
-
-        doAsync {
-
-            val sensorDao = AppDatabase.getInstance(context)
-            val dataList = sensorDao.dumpSensor()
-            val entries: MutableList<Array<String>> = mutableListOf()
-            entries.add(toHeader(dataList[0].data))
-            dataList.forEach {
-                entries.add(it.toArray())
-            }
-
-            CSVWriter(FileWriter(filename)).use { writer -> writer.writeAll(entries) }
-            uiThread {
-                context.toast("data exported to CSV")
-            }
-        }
-    }
-
-    fun export(context:Context) {
+    fun exportToCsv(context:Context) {
 
         val folder = File(getExternalStorageDirectory().toString()+"/Apolline")
         if (!folder.exists())
             folder.mkdir()
         val filenameCSV = folder.toString() + "/" + "data.csv"
-        val filenameJSON = folder.toString() + "/" + "data.json"
 
         doAsync {
 
             val sensorDao = AppDatabase.getInstance(context)
-            val fw = FileWriter(filenameJSON)
             val dataList = sensorDao.dumpSensor()
-            Log.e("export",dataList.size.toString())
-            val gson = GsonBuilder().setPrettyPrinting().create()
-            val jsonFile = gson.toJson(dataList)
-            fw.write(jsonFile)
+            Log.e("exportToCsv",dataList.size.toString())
 
             val entries: MutableList<Array<String>> = mutableListOf()
             entries.add(toHeader(dataList[0].data))

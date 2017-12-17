@@ -34,7 +34,7 @@ data class Device(
     @SerializedName("device_id")
     @Expose
     @PrimaryKey(autoGenerate = true)
-    var id=0
+    var id: Long = 0
 
 
 

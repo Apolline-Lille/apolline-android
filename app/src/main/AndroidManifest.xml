@@ -26,6 +26,7 @@
         android:icon="@drawable/logoandroidpng"
         android:label="@string/app_name"
         android:roundIcon="@drawable/logoandroidpng"
+        android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <uses-library

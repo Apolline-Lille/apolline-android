@@ -21,8 +21,8 @@ interface SensorDao {
     @Query("SELECT count(*) FROM Device")
     fun getSensorCount(): Int
 
-    @Query("SELECT * FROM Device WHERE id=:id")
-    fun getSensorById(id: Int?): LiveData<Device>
+    @Query("SELECT * FROM Device WHERE id=:idDevice")
+    fun getSensorById(idDevice: Long): LiveData<Device>
 
     @Insert(onConflict = REPLACE)
     fun insertOne(device: Device)
