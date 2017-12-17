@@ -25,3 +25,6 @@
 #-renamesourcefileattribute SourceFile
 -keep class javax.** { *; }
 -keep class org.** { *; }
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
+#-dontoptimize
