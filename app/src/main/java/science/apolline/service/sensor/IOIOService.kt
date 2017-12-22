@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
-import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import ioio.lib.api.AnalogInput
 import ioio.lib.api.DigitalOutput
@@ -15,15 +14,25 @@ import ioio.lib.api.Uart
 import ioio.lib.api.exception.ConnectionLostException
 import ioio.lib.util.BaseIOIOLooper
 import ioio.lib.util.IOIOLooper
-import science.apolline.R
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.doAsync
+import science.apolline.models.Device
 import science.apolline.models.IOIOData
+import science.apolline.models.Position
+import science.apolline.service.database.AppDatabase
+import science.apolline.service.database.SensorDao
+import science.apolline.utils.AndroidUuid
 import java.io.IOException
 import java.io.InputStream
+import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
+import science.apolline.utils.CheckPermission
 
-class IOIOService : ioio.lib.util.android.IOIOService() {
+
+class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     internal var led = true
-
+    private val sensorModel: SensorDao = AppDatabase.getInstance(application)
+    private val locationProvider = ReactiveLocationProvider(this)
 
     override fun createIOIOLooper(): IOIOLooper {
         return object : BaseIOIOLooper() {
@@ -99,7 +108,7 @@ class IOIOService : ioio.lib.util.android.IOIOService() {
 
 
                 Thread.sleep(freq.toLong())
-                sendBroadcast(data)
+                persistData(data)
             }
         }
     }
@@ -109,15 +118,25 @@ class IOIOService : ioio.lib.util.android.IOIOService() {
         Log.e(this.javaClass.name, "onDestroy")
     }
 
-    private fun sendBroadcast(data: IOIOData) {
-
-        val intent = Intent(getString(R.string.sensorBroadCast))
-        intent.putExtra(getString(R.string.serviceBroadCastDataSet), data)
+    private fun persistData(data: IOIOData) {
         val d1 = System.currentTimeMillis() * 1000000
-        intent.putExtra(getString(R.string.serviceBroadCastDate), d1)
-        val sensorName = getString(R.string.loa_ioio_name)
-        intent.putExtra(getString(R.string.serviceBroadCastSensorName), sensorName)
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+        var position: Position? = null
+        val device = Device(AndroidUuid.getAndroidUuid(), "LOA", d1.toString(), position, data.toJson())
+
+        doAsync {
+            sensorModel.insertOne(device)
+        }
+
+        if (CheckPermission.checkCoarseLocationPermission(this)) {
+            val location = locationProvider.lastKnownLocation.blockingSingle()
+            position = Position(location.provider, location.longitude, location.latitude, "")
+            device.position = position
+            doAsync {
+                sensorModel.update(device)
+            }
+
+        }
+
 
     }
 
