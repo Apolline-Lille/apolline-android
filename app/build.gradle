@@ -123,7 +123,7 @@ project.ext {
     appcompat = "26.1.0"
     rc = "1.0.0"
     ioio ="5.07"
-    maps = "11.6.2"
+    maps = "11.8.0"
     retrofit = "2.3.0"
     constraintLayout = "1.0.2"
     anko_version = "0.10.3"
@@ -169,8 +169,8 @@ dependencies {
 
     // RxJaVa
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
-    implementation 'io.reactivex.rxjava2:rxkotlin:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
 
     // Room
 
@@ -193,6 +193,9 @@ dependencies {
 
     // MultiDex
     implementation 'com.android.support:multidex:1.0.2'
+
+    //RxLocation
+    implementation 'pl.charmas.android:android-reactive-location2:2.1@aar'
 
 }
 

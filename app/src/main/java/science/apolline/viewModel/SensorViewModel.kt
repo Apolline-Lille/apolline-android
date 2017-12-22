@@ -28,51 +28,15 @@ import science.apolline.models.Position
 import science.apolline.service.geolocalisation.SingleShotLocationProvider
 import science.apolline.BuildConfig
 import android.net.ConnectivityManager
+import io.reactivex.Single
 import science.apolline.utils.AndroidUuid
 
 
 class SensorViewModel(application: Application) : AndroidViewModel(application), AnkoLogger {
-    init {
-
-        val BReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                val data : IntfSensorData = intent.getParcelableExtra(
-                        application.getString(R.string.serviceBroadCastDataSet)
-                )
-                dataLive.postValue(data)
-
-                Log.e("viewModel","${dataLive.hasActiveObservers()}")
-
-                val d1 = intent.getSerializableExtra(application.getString(R.string.serviceBroadCastDate)) as Long
-
-                var position: Position
-                mLocationListener = object : LocationListener {
-                    override fun onLocationChanged(location: Location) {
-                        position=Position(location.provider,location.longitude,location.latitude,"null")
-
-                        val device = Device(AndroidUuid.getAndroidUuid(),
-                                intent.getStringExtra(application.getString(R.string.serviceBroadCastSensorName))
-                                ,d1.toString()
-                                , position,dataLive.value?.toJson()
-                        )
-                        setPersistant(device)
-                        sendData(device)
-                    }
-                    override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-                    override fun onProviderEnabled(provider: String) {}
-                    override fun onProviderDisabled(provider: String) {}
-                }
 
 
-                val singleShotLocationProvider  = SingleShotLocationProvider
-                singleShotLocationProvider.requestSingleUpdate(application,mLocationListener)
-            }
-        }
-        LocalBroadcastManager.getInstance(application).registerReceiver(BReceiver, IntentFilter(application.getString(R.string.sensorBroadCast)))
-    }
-
-    var dataLive : MutableLiveData<IntfSensorData> = MutableLiveData()
-    lateinit var mLocationListener: LocationListener
+    val sensorModel: SensorDao = AppDatabase.getInstance(getApplication())
+    var dataLive : Single<List<Device>> = sensorModel.all
 
 
     private fun sendData(device: Device) {
@@ -101,7 +65,6 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
 
     private fun setPersistant(device: Device) {
         doAsync {
-            val sensorModel: SensorDao = AppDatabase.getInstance(getApplication())
             info(device.data?.toString())
             sensorModel.insertOne(device)
         }
