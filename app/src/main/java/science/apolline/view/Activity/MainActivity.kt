@@ -21,12 +21,14 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 
 import science.apolline.R
 import science.apolline.service.sensor.IOIOService
 import science.apolline.view.Fragment.IOIOFragment
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -216,11 +218,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+
+
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //        getMenuInflater().inflate(R.menu.menu_main, menu);
+           menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        info("Synchronisation button clicked")
+        return true
+    }
+
+
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -280,10 +293,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     companion object {
 
-        val MY_PREFS_NAME = "MyPrefsFile"
-        private val REQUEST_CODE_ENABLE_BLUETOOTH = 100
-        private val REQUEST_CODE_FINE_LOCATION = 101
-        private val REQUEST_CODE_COARSE_LOCATION = 102
-        private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 103
+        const val MY_PREFS_NAME = "MyPrefsFile"
+        private const val REQUEST_CODE_ENABLE_BLUETOOTH = 100
+        private const val REQUEST_CODE_FINE_LOCATION = 101
+        private const val REQUEST_CODE_COARSE_LOCATION = 102
+        private const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 103
     }
 }

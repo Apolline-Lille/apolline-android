@@ -31,7 +31,7 @@ import java.io.InputStream
 class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     internal var led = true
-    private val sensorModel: SensorDao = AppDatabase.getInstance(application).sensorDao()
+    private val sensorModel: SensorDao = AppDatabase.getInstance(this).sensorDao()
     private val locationProvider = ReactiveLocationProvider(this)
 
     override fun createIOIOLooper(): IOIOLooper {
