@@ -40,9 +40,9 @@ class DataExport {
         return headerArray.toTypedArray()
     }
 
-    fun exportToJson(context:Context) {
+    fun exportToJson(context: Context) {
 
-        val folder = File(getExternalStorageDirectory().toString()+"/Apolline")
+        val folder = File(getExternalStorageDirectory().toString() + "/Apolline")
 
         if (!folder.exists())
             folder.mkdir()
@@ -54,7 +54,7 @@ class DataExport {
             val sensorDao = AppDatabase.getInstance(context)
             val fw = FileWriter(filename)
             val dataList = sensorDao.dumpSensor()
-            Log.e("exportToCsv",dataList.size.toString())
+            Log.e("exportToCsv", dataList.size.toString())
             val gson = GsonBuilder().setPrettyPrinting().create()
             val jsonFile = gson.toJson(dataList)
             fw.write(jsonFile)
@@ -65,9 +65,9 @@ class DataExport {
     }
 
 
-    fun exportToCsv(context:Context) {
+    fun exportToCsv(context: Context) {
 
-        val folder = File(getExternalStorageDirectory().toString()+"/Apolline")
+        val folder = File(getExternalStorageDirectory().toString() + "/Apolline")
         if (!folder.exists())
             folder.mkdir()
         val filenameCSV = folder.toString() + "/" + "data.csv"
@@ -76,11 +76,11 @@ class DataExport {
 
             val sensorDao = AppDatabase.getInstance(context)
             val dataList = sensorDao.dumpSensor()
-            Log.e("exportToCsv",dataList.size.toString())
+            Log.e("exportToCsv", dataList.size.toString())
 
             val entries: MutableList<Array<String>> = mutableListOf()
             entries.add(toHeader(dataList[0].data))
-            dataList.forEach{
+            dataList.forEach {
                 entries.add(it.toArray())
             }
             CSVWriter(FileWriter(filenameCSV)).use { writer -> writer.writeAll(entries) }
@@ -98,9 +98,6 @@ class DataExport {
             }
         }
     }
-
-
-
 
 
 }

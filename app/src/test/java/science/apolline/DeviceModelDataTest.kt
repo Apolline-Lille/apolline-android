@@ -92,7 +92,7 @@ class DeviceModelDataTest {
         val gson = Gson()
         val dataListObject = gson.fromJson(dataList, JsonObject::class.java)
         val deviceModel = gson.fromJson(jsonInit, Device::class.java)
-        val sensorInitObject = Device("ffffffff-c9cf-31db-0000-00006c125b14","Arduino",  "1422568543702900257", positionInitObject, dataListObject)
+        val sensorInitObject = Device("ffffffff-c9cf-31db-0000-00006c125b14","Arduino",  1422568543702900257, positionInitObject, dataListObject,0)
         val jsonSensorFromObject = gson.toJson(sensorInitObject)
 
         //then

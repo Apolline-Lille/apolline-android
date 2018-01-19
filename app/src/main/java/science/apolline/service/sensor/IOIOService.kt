@@ -16,16 +16,16 @@ import ioio.lib.util.BaseIOIOLooper
 import ioio.lib.util.IOIOLooper
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.doAsync
+import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 import science.apolline.models.Device
 import science.apolline.models.IOIOData
 import science.apolline.models.Position
 import science.apolline.service.database.AppDatabase
 import science.apolline.service.database.SensorDao
 import science.apolline.utils.AndroidUuid
+import science.apolline.utils.CheckPermission
 import java.io.IOException
 import java.io.InputStream
-import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
-import science.apolline.utils.CheckPermission
 
 
 class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
@@ -120,6 +120,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     private fun persistData(data: IOIOData) {
         val d1 = System.currentTimeMillis() * 1000000
+
         var position: Position? = null
         val device = Device(AndroidUuid.getAndroidUuid(), "LOA", d1, position, data.toJson(),0)
 

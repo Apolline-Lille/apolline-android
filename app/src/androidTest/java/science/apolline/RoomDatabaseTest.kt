@@ -48,7 +48,7 @@ class RoomDatabaseTest {
         val gson = Gson()
         val dataListObject = gson.fromJson(dataList, JsonObject::class.java)
         val positionInitObject = Position("GPS", 152.36, 142.36, "Train")
-        val sensor =Device("ffffffff-c9cf-31db-0000-00006c125b14","Arduino",  "1422568543702900257", positionInitObject, dataListObject )
+        val sensor =Device("ffffffff-c9cf-31db-0000-00006c125b14","Arduino",  1422568543702900257, positionInitObject, dataListObject ,0)
 
         sensorDao?.insertOne(sensor)
         val sensorTest = getValue(sensorDao?.getSensorById(sensor.id)!!)

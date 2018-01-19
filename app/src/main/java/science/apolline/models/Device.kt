@@ -11,7 +11,6 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 
-
 @Entity
 data class Device(
         @SerializedName("uuid")
@@ -41,7 +40,6 @@ data class Device(
     @Expose
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
-
 
 
     @Ignore

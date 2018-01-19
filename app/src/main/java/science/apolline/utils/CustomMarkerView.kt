@@ -7,6 +7,7 @@ import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
+import kotlinx.android.synthetic.main.graph_custom_marker.view.*
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -19,7 +20,6 @@ import science.apolline.R
 class CustomMarkerView(context: Context, layoutResource: Int, private val referenceTimestamp: Long  // minimum timestamp in your data set
 ) : MarkerView(context, layoutResource) {
 
-    private val tvContent: TextView
     private val mDataFormat: DateFormat
     private val mDate: Date
 
@@ -28,7 +28,6 @@ class CustomMarkerView(context: Context, layoutResource: Int, private val refere
     init {
 
         // find your layout components
-        tvContent = findViewById(R.id.tvContent)
         this.mDataFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
         this.mDate = Date()
     }

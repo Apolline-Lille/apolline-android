@@ -42,11 +42,11 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
     private fun sendData(device: Device) {
 
         doAsync {
-            if(isConnectingToInternet(getApplication())){
+            if (isConnectingToInternet(getApplication())) {
                 val requestBody: String = RequestParser.createRequestBody(device)
 //                info(requestBody)
-                val api : ApiService = ApiUtils.apiService
-                val postCall : Call<InfluxBody> = api.savePost(BuildConfig.INFLUXDB_DBNAME,BuildConfig.INFLUXDB_USR,BuildConfig.INFLUXDB_PWD,requestBody)
+                val api: ApiService = ApiUtils.apiService
+                val postCall: Call<InfluxBody> = api.savePost(BuildConfig.INFLUXDB_DBNAME, BuildConfig.INFLUXDB_USR, BuildConfig.INFLUXDB_PWD, requestBody)
                 val postResponse: Response<InfluxBody>
                 postResponse = postCall.execute()
 
@@ -55,7 +55,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
                 } else {
                     info("Data send: Failure, message = " + postResponse.message())
                 }
-            }else{
+            } else {
                 info("Data send: can't establish internet connection")
             }
 
@@ -68,66 +68,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
             info(device.data?.toString())
             sensorModel.insertOne(device)
         }
-
-
-
-//        val list = sensorModel.all.blockingGet()
-//        val count = sensorModel.all.blockingGet().size
-//        Log.e(this.javaClass.name,"/////////")
-//        Log.e(this.javaClass.name,"$count")
-//        Log.e(this.javaClass.name,"${ list.last()}")
-//        Log.e(this.javaClass.name,"/////////")
     }
-//    BReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//
-//            IOIOData data = intent.getParcelableExtra("IOIOData");
-//            int PM01Value = data.getPM01Value();
-//            int PM2_5Value = data.getPM2_5Value();
-//            int PM10Value = data.getPM10Value();
-//
-//            progressPM1.setProgress(PM01Value);
-//            progressPM2.setProgress(PM2_5Value);
-//            progressPM10.setProgress(PM10Value);
-//
-//            textViewPM1.setText(PM01Value+"");
-//            textViewPM2.setText(PM2_5Value+"");
-//            textViewPM10.setText(PM10Value+"");
-//            Calendar c = Calendar.getInstance();
-//            Date d1 = c.getTime();
-//
-//            int nbPoint = 10 * 60;
-//
-//            series.appendData(new DataPoint(d1,PM01Value),true,nbPoint);
-//            series2.appendData(new DataPoint(d1,PM2_5Value),true,nbPoint);
-//            series10.appendData(new DataPoint(d1,PM10Value),true,nbPoint);
-//
-//
-////TODO localisation
-//            Device sensor = new Device("IOIO","IOIO",d1.toString(),null,data.toJson());
-//
-//            AppDatabase appDatabase = AppDatabase.Companion.getAppDatabase(getActivity());
-//            appDatabase.sensorDao().insertOne(sensor);
-//
-//            String requestBody = RequestParser.INSTANCE.createRequestBody(sensor);
-//            ApiService api = ApiUtils.INSTANCE.getApiService();
-//            Call<InfluxBody> postCall = api.savePost("test", "toto", "root", requestBody);
-//            Response<InfluxBody> postResponse;
-//            try {
-//                postResponse= postCall.execute();
-//                if (postResponse.isSuccessful()){
-//                    Toast.makeText(getActivity(),"Data send: success",Toast.LENGTH_SHORT).show();
-//                }
-//                else{
-//                    Toast.makeText(getActivity(),"Data send: Failure, message = "+postResponse.message(),Toast.LENGTH_SHORT).show();
-//                }
-//            } catch (IOException e) {
-//                Toast.makeText(getActivity(),"Unable to send data",Toast.LENGTH_SHORT).show();
-//            }
-//
-//        }
-
 
     fun isConnectingToInternet(context: Context): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
