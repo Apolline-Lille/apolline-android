@@ -24,23 +24,20 @@ abstract class AppDatabase : RoomDatabase() {
         private val databaseName = "sensors-database"
 
         private var db: AppDatabase? = null
-        private var dbInstance: SensorDao? = null
 
-        fun getInstance(context: Context): SensorDao {
-            if (dbInstance == null) {
+        fun getInstance(context: Context): AppDatabase {
+            if (db == null) {
                 if (TEST_MODE) {
                     db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
                             .allowMainThreadQueries()
                             .fallbackToDestructiveMigration()
                             .build()
-                    dbInstance = db?.sensorDao()
                 } else {
                     db = Room.databaseBuilder(context, AppDatabase::class.java, databaseName)
                             .build()
-                    dbInstance = db?.sensorDao()
                 }
             }
-            return dbInstance!!
+            return db!!
         }
 
         private fun close() {

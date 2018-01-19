@@ -35,7 +35,7 @@ import science.apolline.utils.AndroidUuid
 class SensorViewModel(application: Application) : AndroidViewModel(application), AnkoLogger {
 
 
-    val sensorModel: SensorDao = AppDatabase.getInstance(getApplication())
+    val sensorModel: SensorDao = AppDatabase.getInstance(getApplication()).sensorDao()
     var deviceListObserver: Single<List<Device>> = sensorModel.all
 
 
