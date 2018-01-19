@@ -101,7 +101,7 @@ class DeviceModelDataTest {
         assertNotEquals(deviceModel.id, 1)
         assertEquals(deviceModel.device, "Arduino")
         assertNotEquals(deviceModel.device, "toto")
-        assertEquals(deviceModel.date, "1422568543702900257")
+        assertEquals(deviceModel.date, 1422568543702900257)
         assertNotEquals(deviceModel.date, "toto")
         assertNotNull(deviceModel.position)
         assertNotNull(deviceModel.data)
