@@ -42,5 +42,7 @@
 
     <string name="send_to">Share data to ..</string>
 
+    <string name="btn_sync">Sync</string>
+
 
 </resources>
