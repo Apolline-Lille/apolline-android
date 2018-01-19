@@ -12,15 +12,24 @@ import io.reactivex.Single
 
 @Dao
 interface SensorDao {
-    @get:Query("SELECT * FROM Device ORDER BY date asc")
-    val all: Single<List<Device>>
 
+    @Transaction
+    @Query("SELECT * FROM Device ORDER BY date asc")
+    fun all(): Single<List<Device>>
+
+    @Transaction
     @Query("SELECT * FROM Device WHERE id IN (:sensorIds)")
     fun loadAllByIds(sensorIds: IntArray): List<Device>
 
+    @Transaction
+    @Query("SELECT * FROM Device WHERE isSync=0")
+    fun getUnSync(): List<Device>
+
+    @Transaction
     @Query("SELECT count(*) FROM Device")
     fun getSensorCount(): Int
 
+    @Transaction
     @Query("SELECT * FROM Device WHERE id=:idDevice")
     fun getSensorById(idDevice: Long): LiveData<Device>
 
@@ -30,9 +39,11 @@ interface SensorDao {
     @Update(onConflict = REPLACE)
     fun update(device: Device)
 
+    @Transaction
     @Query("DELETE FROM Device")
     fun flushSensorData()
 
+    @Transaction
     @Query("SELECT * FROM Device")
     fun dumpSensor(): List<Device>
 
