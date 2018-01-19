@@ -37,14 +37,19 @@ import com.google.android.gms.maps.MapFragment
 
 import java.util.ArrayList
 
+import com.google.gson.Gson
 import science.apolline.R
 import science.apolline.models.IntfSensorData
+import science.apolline.models.IOIOData
+import science.apolline.service.sensor.IOIOService
+import science.apolline.utils.CustomMarkerView
 import science.apolline.utils.DataExport
 import science.apolline.utils.HourAxisValueFormatter
 import science.apolline.utils.CustomMarkerView
 import science.apolline.viewModel.SensorViewModel
 import science.apolline.models.IOIOData
 import science.apolline.service.sensor.IOIOService
+import java.util.*
 
 
 class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
@@ -76,6 +81,12 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
     private val marker: IMarker? = null
     private var referenceTimestamp: Long = 0  // minimum timestamp in your data set
     private val export = DataExport()
+
+    private lateinit var dataList: List<ILineDataSet>
+
+    //TODO : allow user to change that value
+    private val maxEntryCount: Int = 20
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,7 +126,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
     private fun initGraph() {
 
         referenceTimestamp = System.currentTimeMillis() / 1000
-        val marker = CustomMarkerView(this!!.context!!, R.layout.graph_custom_marker, referenceTimestamp)
+        val marker = CustomMarkerView(context!!, R.layout.graph_custom_marker, referenceTimestamp)
         mChart!!.marker = marker
 
         // LineTimeChart
@@ -192,7 +203,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
 
         if (data != null) {
             if (data.dataSetCount != 3)
-                for (temp in dataList!!) {
+                for (temp in dataList) {
                     data.addDataSet(temp)
                 }
         }
@@ -201,9 +212,19 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
         data.addEntry(Entry((now - referenceTimestamp).toFloat(), dataTosend[1].toFloat()), 1)
         data.addEntry(Entry((now - referenceTimestamp).toFloat(), dataTosend[2].toFloat()), 2)
 
+
+        data.dataSets.forEach {
+
+            if (it.entryCount >= maxEntryCount) {
+                it.removeFirst()
+            }
+        }
+
         data.notifyDataChanged()
         // let the chart know it's data has changed
         mChart!!.notifyDataSetChanged()
+        // invalidate data in case of data removal du to max entryCount value
+        mChart!!.invalidate()
         // limit the number of visible entries
         mChart!!.setVisibleXRangeMaximum(5f)
         // Sets the size of the area (range on the y-axis) that should be maximum visible at once
