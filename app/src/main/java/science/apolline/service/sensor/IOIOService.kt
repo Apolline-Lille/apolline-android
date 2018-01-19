@@ -32,8 +32,6 @@ import science.apolline.utils.CheckUtility
 import science.apolline.utils.CheckUtility.canGetLocation
 import java.io.IOException
 import java.io.InputStream
-import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
-import science.apolline.utils.CheckPermission
 
 
 class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
