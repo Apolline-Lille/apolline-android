@@ -133,3 +133,5 @@ Temporary Items
 app/schemas/science.apolline.service.database.AppDatabase/
 
 projectFilesBackup1/\.idea/workspace\.xml
+
+\.idea/codeStyleSettings\.xml
