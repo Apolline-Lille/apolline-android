@@ -193,8 +193,16 @@ dependencies {
     // MultiDex
     implementation 'com.android.support:multidex:1.0.2'
 
-    //RxLocation
+    // RxLocation
     implementation 'pl.charmas.android:android-reactive-location2:2.1@aar'
+
+    // Android Priority Job Queue
+    implementation 'com.birbit:android-priority-jobqueue:2.0.1'
+
+    // Green Robot Event Bus.
+    implementation 'org.greenrobot:eventbus:3.0.0'
+
+
 
 }
 

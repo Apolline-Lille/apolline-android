@@ -12,7 +12,7 @@ import science.apolline.models.Device
  * Created by sparow on 11/5/17.
  */
 
-@Database(entities = arrayOf(Device::class), version = 1, exportSchema = false)
+@Database(entities = [(Device::class)], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -21,7 +21,7 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
 
         var TEST_MODE = false
-        private val databaseName = "sensors-database"
+        private const val databaseName = "sensors-database"
 
         private var db: AppDatabase? = null
 
