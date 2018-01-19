@@ -1,9 +1,6 @@
 package science.apolline.view.Fragment
 
 import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -11,44 +8,32 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
-
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.IMarker
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
-
-import java.util.ArrayList
-
 import com.google.gson.Gson
 import science.apolline.R
-import science.apolline.models.IntfSensorData
 import science.apolline.models.IOIOData
 import science.apolline.service.sensor.IOIOService
 import science.apolline.utils.CustomMarkerView
 import science.apolline.utils.DataExport
 import science.apolline.utils.HourAxisValueFormatter
-import science.apolline.utils.CustomMarkerView
 import science.apolline.viewModel.SensorViewModel
-import science.apolline.models.IOIOData
-import science.apolline.service.sensor.IOIOService
 import java.util.*
 
 
@@ -73,12 +58,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
     private val mapFragment: MapFragment? = null
     private val map: GoogleMap? = null
 
-    private val BReceiver: BroadcastReceiver? = null
-
-    private val dataLive: LiveData<IOIOData>? = null
     private var mChart: LineChart? = null
-    private var dataList: List<ILineDataSet>? = null
-    private val marker: IMarker? = null
     private var referenceTimestamp: Long = 0  // minimum timestamp in your data set
     private val export = DataExport()
 
@@ -108,8 +88,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
         mChart = view.findViewById(R.id.chart1)
         save_fab = view.findViewById(R.id.fab_save)
         save_fab!!.setOnClickListener {
-            //                exportToCsv.toJson(getActivity().getApplication());
-            //                exportToCsv.toCsv(getActivity().getApplication());
             export.exportToCsv(activity!!.application)
         }
         //        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_ioio_map);
@@ -236,6 +214,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
         //             mChart.moveViewTo(data.getEntryCount() -7, 55f,
         //             YAxis.AxisDependency.LEFT);
 
+
     }
 
 
@@ -256,6 +235,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
         setPM1.valueTextColor = Color.BLUE
         setPM1.valueTextSize = 9f
         setPM1.setDrawValues(false)
+
 
         val setPM2 = LineDataSet(null, "PM2")
         setPM2.axisDependency = YAxis.AxisDependency.LEFT
@@ -304,27 +284,25 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val viewModel = SensorViewModel(activity!!.application)
-        val data = viewModel.dataLive
-//        data.observeForever { sensorData ->
-//            Log.e("fragment", "onChanged")
-//            if (sensorData != null && sensorData.javaClass == IOIOData::class.java) {
-//                Log.e("fragment", "if statement")
-//                val data = sensorData as IOIOData?
-//                val PM01Value = data!!.pM01Value
-//                val PM2_5Value = data.pM2_5Value
-//                val PM10Value = data.pM10Value
-//                progressPM1!!.progress = PM01Value
-//                progressPM2!!.progress = PM2_5Value
-//                progressPM10!!.progress = PM10Value
-//                textViewPM1!!.text = PM01Value.toString() + ""
-//                textViewPM2!!.text = PM2_5Value.toString() + ""
-//                textViewPM10!!.text = PM10Value.toString() + ""
-//                val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
-//
-//                addEntry(dataToDisplay)
-//
-//            }
-//        }
+        val deviceListObserver = viewModel.deviceListObserver
+        deviceListObserver.doOnSuccess {
+            val device = it.last()
+            val gson = Gson()
+            val data = gson.fromJson(device.data, IOIOData::class.java)
+            val PM01Value = data!!.pM01Value
+            val PM2_5Value = data.pM2_5Value
+            val PM10Value = data.pM10Value
+            progressPM1!!.progress = PM01Value
+            progressPM2!!.progress = PM2_5Value
+            progressPM10!!.progress = PM10Value
+            textViewPM1!!.text = "$PM01Value"
+            textViewPM2!!.text = "$PM2_5Value"
+            textViewPM10!!.text = "$PM10Value"
+            val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
+
+            addEntry(dataToDisplay)
+
+        }
     }
 
 
