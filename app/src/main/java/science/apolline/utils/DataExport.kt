@@ -51,7 +51,7 @@ class DataExport {
 
         doAsync {
 
-            val sensorDao = AppDatabase.getInstance(context)
+            val sensorDao = AppDatabase.getInstance(context).sensorDao()
             val fw = FileWriter(filename)
             val dataList = sensorDao.dumpSensor()
             Log.e("exportToCsv", dataList.size.toString())
@@ -74,7 +74,7 @@ class DataExport {
 
         doAsync {
 
-            val sensorDao = AppDatabase.getInstance(context)
+            val sensorDao = AppDatabase.getInstance(context).sensorDao()
             val dataList = sensorDao.dumpSensor()
             Log.e("exportToCsv", dataList.size.toString())
 
