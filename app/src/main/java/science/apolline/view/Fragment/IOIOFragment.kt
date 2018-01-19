@@ -99,7 +99,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
         save_fab!!.setOnClickListener {
             //                exportToCsv.toJson(getActivity().getApplication());
             //                exportToCsv.toCsv(getActivity().getApplication());
-            export.exportToCsv(activity.application)
+            export.exportToCsv(activity!!.application)
         }
         //        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_ioio_map);
         //        pieton = view.findViewById(R.id.fragment_ioio_pieton);
@@ -115,7 +115,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
     private fun initGraph() {
 
         referenceTimestamp = System.currentTimeMillis() / 1000
-        val marker = CustomMarkerView(context, R.layout.graph_custom_marker, referenceTimestamp)
+        val marker = CustomMarkerView(this!!.context!!, R.layout.graph_custom_marker, referenceTimestamp)
         mChart!!.marker = marker
 
         // LineTimeChart
@@ -271,7 +271,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        activity.startService(Intent(activity, IOIOService::class.java))
+        activity!!.startService(Intent(activity, IOIOService::class.java))
     }
 
     override fun onDetach() {
@@ -282,7 +282,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val viewModel = SensorViewModel(activity.application)
+        val viewModel = SensorViewModel(activity!!.application)
         val data = viewModel.dataLive
 //        data.observeForever { sensorData ->
 //            Log.e("fragment", "onChanged")
