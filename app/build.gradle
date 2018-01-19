@@ -12,14 +12,14 @@ android {
     def influxdb_usr = hasProperty('INFLUXDB_USR') ? INFLUXDB_USR : System.getenv('INFLUXDB_USR')
     def influxdb_pwd = hasProperty('INFLUXDB_PWD') ? INFLUXDB_PWD : System.getenv('INFLUXDB_PWD')
 
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
 
     defaultConfig {
-        applicationId "apoline.science"
+        applicationId "apolline.science"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -120,7 +120,7 @@ android {
 
 
 project.ext {
-    appcompat = "26.1.0"
+    appcompat = "27.0.2"
     rc = "1.0.0"
     ioio ="5.07"
     maps = "11.8.0"

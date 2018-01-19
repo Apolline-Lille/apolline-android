@@ -284,26 +284,26 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
         super.onActivityCreated(savedInstanceState)
         val viewModel = SensorViewModel(activity.application)
         val data = viewModel.dataLive
-        data.observeForever { sensorData ->
-            Log.e("fragment", "onChanged")
-            if (sensorData != null && sensorData.javaClass == IOIOData::class.java) {
-                Log.e("fragment", "if statement")
-                val data = sensorData as IOIOData?
-                val PM01Value = data!!.pM01Value
-                val PM2_5Value = data.pM2_5Value
-                val PM10Value = data.pM10Value
-                progressPM1!!.progress = PM01Value
-                progressPM2!!.progress = PM2_5Value
-                progressPM10!!.progress = PM10Value
-                textViewPM1!!.text = PM01Value.toString() + ""
-                textViewPM2!!.text = PM2_5Value.toString() + ""
-                textViewPM10!!.text = PM10Value.toString() + ""
-                val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
-
-                addEntry(dataToDisplay)
-
-            }
-        }
+//        data.observeForever { sensorData ->
+//            Log.e("fragment", "onChanged")
+//            if (sensorData != null && sensorData.javaClass == IOIOData::class.java) {
+//                Log.e("fragment", "if statement")
+//                val data = sensorData as IOIOData?
+//                val PM01Value = data!!.pM01Value
+//                val PM2_5Value = data.pM2_5Value
+//                val PM10Value = data.pM10Value
+//                progressPM1!!.progress = PM01Value
+//                progressPM2!!.progress = PM2_5Value
+//                progressPM10!!.progress = PM10Value
+//                textViewPM1!!.text = PM01Value.toString() + ""
+//                textViewPM2!!.text = PM2_5Value.toString() + ""
+//                textViewPM10!!.text = PM10Value.toString() + ""
+//                val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
+//
+//                addEntry(dataToDisplay)
+//
+//            }
+//        }
     }
 
 
