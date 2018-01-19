@@ -12,7 +12,7 @@ import io.reactivex.Single
 
 @Dao
 interface SensorDao {
-    @get:Query("SELECT * FROM Device")
+    @get:Query("SELECT * FROM Device ORDER BY date asc")
     val all: Single<List<Device>>
 
     @Query("SELECT * FROM Device WHERE id IN (:sensorIds)")
