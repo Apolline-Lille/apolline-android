@@ -3,14 +3,12 @@ package science.apolline.view.Activity
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
@@ -21,14 +19,21 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import com.birbit.android.jobqueue.JobManager
+import com.birbit.android.jobqueue.config.Configuration
+import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
 import science.apolline.R
 import science.apolline.service.sensor.IOIOService
+import science.apolline.service.synchronisation.SyncInfluxDBJob
 import science.apolline.view.Fragment.IOIOFragment
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, AnkoLogger {
+
+    lateinit var jobManager: JobManager
+    lateinit var eventBus: EventBus
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +60,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val IOIOFragment = IOIOFragment()
         replaceFragment(IOIOFragment)
+
+
+        //Setup JobManager
+        val builder = Configuration.Builder(this)
+        jobManager = JobManager(builder.build())
+
+        //Setup EventBus
+        eventBus = EventBus.getDefault()
     }
 
     private fun permissionCheck() {
@@ -229,8 +242,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         info("Synchronisation button clicked")
+
+        // jobManager.addJobInBackground(SyncInfluxDBJob(this))
+
         return true
     }
+
 
 
 
