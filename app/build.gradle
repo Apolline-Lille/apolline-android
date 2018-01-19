@@ -157,8 +157,7 @@ dependencies {
     implementation "com.github.ytai.ioio:IOIOLibAndroidAccessory:$project.ioio"
     implementation "com.github.ytai.ioio:IOIOLibAndroidDevice:$project.ioio"
 
-    // GraphView
-    implementation 'com.jjoe64:graphview:4.2.1'
+    // MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 
     // Google map
