@@ -27,17 +27,24 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import science.apolline.R
 import science.apolline.models.IOIOData
 import science.apolline.service.sensor.IOIOService
 import science.apolline.utils.CustomMarkerView
+import science.apolline.utils.DataDeserializer
 import science.apolline.utils.DataExport
 import science.apolline.utils.HourAxisValueFormatter
 import science.apolline.viewModel.SensorViewModel
 import java.util.*
 
 
-class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
+class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, AnkoLogger {
 
 
     private var progressPM1: ProgressBar? = null
@@ -66,6 +73,8 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
 
     //TODO : allow user to change that value
     private val maxEntryCount: Int = 20
+
+    private lateinit var disposable: CompositeDisposable
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -285,13 +294,16 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
         super.onActivityCreated(savedInstanceState)
         val viewModel = SensorViewModel(activity!!.application)
         val deviceListObserver = viewModel.deviceListObserver
-        deviceListObserver.doOnSuccess {
+        disposable = CompositeDisposable()
+
+        deviceListObserver.doOnNext {
             val device = it.last()
+            info(device.toString())
             val gson = Gson()
             val data = gson.fromJson(device.data, IOIOData::class.java)
-            val PM01Value = data!!.pM01Value
-            val PM2_5Value = data.pM2_5Value
-            val PM10Value = data.pM10Value
+            val PM01Value = data!!.pm01Value
+            val PM2_5Value = data.pm2_5Value
+            val PM10Value = data.pm10Value
             progressPM1!!.progress = PM01Value
             progressPM2!!.progress = PM2_5Value
             progressPM10!!.progress = PM10Value
@@ -312,6 +324,57 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener {
 
     override fun onNothingSelected() {
 
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        val viewModel = SensorViewModel(activity!!.application)
+
+        disposable.add(viewModel.deviceListObserver
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+
+                    if (it.isNotEmpty()) {
+
+                        val device = it.last()
+
+                        info(device.toString())
+
+                        val gson = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
+                        val data = gson.fromJson(device.data, IOIOData::class.java)
+
+                        val PM01Value = data!!.pm01Value
+                        val PM2_5Value = data.pm2_5Value
+                        val PM10Value = data.pm10Value
+
+                        progressPM1!!.progress = PM01Value
+                        progressPM2!!.progress = PM2_5Value
+                        progressPM10!!.progress = PM10Value
+                        textViewPM1!!.text = "$PM01Value"
+                        textViewPM2!!.text = "$PM2_5Value"
+                        textViewPM10!!.text = "$PM10Value"
+                        val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
+
+                        addEntry(dataToDisplay)
+                    }
+                })
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (!disposable.isDisposed) {
+            disposable.dispose()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!disposable.isDisposed) {
+            disposable.dispose()
+        }
     }
 }
 

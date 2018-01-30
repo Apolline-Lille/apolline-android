@@ -3,6 +3,7 @@ package science.apolline.service.database
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
+import io.reactivex.Flowable
 import science.apolline.models.Device
 import io.reactivex.Single
 
@@ -15,7 +16,7 @@ interface SensorDao {
 
     @Transaction
     @Query("SELECT * FROM Device ORDER BY date asc")
-    fun all(): Single<List<Device>>
+    fun all(): Flowable<List<Device>>
 
     @Transaction
     @Query("SELECT * FROM Device WHERE id IN (:sensorIds)")

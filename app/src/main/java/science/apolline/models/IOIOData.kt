@@ -13,16 +13,16 @@ class IOIOData : IntfSensorData {
     var count: Int = 0
     val buff = IntArray(64)
 
-    var pM01Value = 0          //define PM1.0 value of the air detector module
-    var pM2_5Value = 0         //define PM2.5 value of the air detector module
-    var pM10Value = 0         //define PM10 value of the air detector module
+    var pm01Value = 0          //define PM1.0 value of the air detector module
+    var pm2_5Value = 0         //define PM2.5 value of the air detector module
+    var pm10Value = 0         //define PM10 value of the air detector module
 
-    var pM0_3Above = 0
-    var pM0_5Above = 0
-    var pM1Above = 0
-    var pM2_5Above = 0
-    var pM5Above = 0
-    var pM10Above = 0
+    var pm0_3Above = 0
+    var pm0_5Above = 0
+    var pm1Above = 0
+    var pm2_5Above = 0
+    var pm5Above = 0
+    var pm10Above = 0
 
     var tempKelvin = 0f
     var rh = 0f
@@ -36,15 +36,15 @@ class IOIOData : IntfSensorData {
     constructor() {}
 
     protected constructor(`in`: Parcel) {
-        pM01Value = `in`.readInt()
-        pM2_5Value = `in`.readInt()
-        pM10Value = `in`.readInt()
-        pM0_3Above = `in`.readInt()
-        pM0_5Above = `in`.readInt()
-        pM1Above = `in`.readInt()
-        pM2_5Above = `in`.readInt()
-        pM5Above = `in`.readInt()
-        pM10Above = `in`.readInt()
+        pm01Value = `in`.readInt()
+        pm2_5Value = `in`.readInt()
+        pm10Value = `in`.readInt()
+        pm0_3Above = `in`.readInt()
+        pm0_5Above = `in`.readInt()
+        pm1Above = `in`.readInt()
+        pm2_5Above = `in`.readInt()
+        pm5Above = `in`.readInt()
+        pm10Above = `in`.readInt()
         tempKelvin = `in`.readFloat()
         rh = `in`.readFloat()
         rht = `in`.readDouble()
@@ -55,16 +55,16 @@ class IOIOData : IntfSensorData {
     }
 
     override fun writeToParcel(parcel: Parcel, i: Int) {
-        parcel.writeInt(pM01Value)
-        parcel.writeInt(pM2_5Value)
-        parcel.writeInt(pM10Value)
+        parcel.writeInt(pm01Value)
+        parcel.writeInt(pm2_5Value)
+        parcel.writeInt(pm10Value)
 
-        parcel.writeInt(pM0_3Above)
-        parcel.writeInt(pM0_5Above)
-        parcel.writeInt(pM1Above)
-        parcel.writeInt(pM2_5Above)
-        parcel.writeInt(pM5Above)
-        parcel.writeInt(pM10Above)
+        parcel.writeInt(pm0_3Above)
+        parcel.writeInt(pm0_5Above)
+        parcel.writeInt(pm1Above)
+        parcel.writeInt(pm2_5Above)
+        parcel.writeInt(pm5Above)
+        parcel.writeInt(pm10Above)
 
         parcel.writeFloat(tempKelvin)
         parcel.writeFloat(rh)
@@ -90,15 +90,15 @@ class IOIOData : IntfSensorData {
     }
 
     fun parse() {
-        pM01Value = (buff[3] shl 8) + buff[4]
-        pM2_5Value = (buff[5] shl 8) + buff[6]
-        pM10Value = (buff[7] shl 8) + buff[8]
-        pM0_3Above = (buff[15] shl 8) + buff[16]
-        pM0_5Above = (buff[17] shl 8) + buff[18]
-        pM1Above = (buff[19] shl 8) + buff[20]
-        pM2_5Above = (buff[21] shl 8) + buff[22]
-        pM5Above = (buff[23] shl 8) + buff[24]
-        pM10Above = (buff[25] shl 8) + buff[26]
+        pm01Value = (buff[3] shl 8) + buff[4]
+        pm2_5Value = (buff[5] shl 8) + buff[6]
+        pm10Value = (buff[7] shl 8) + buff[8]
+        pm0_3Above = (buff[15] shl 8) + buff[16]
+        pm0_5Above = (buff[17] shl 8) + buff[18]
+        pm1Above = (buff[19] shl 8) + buff[20]
+        pm2_5Above = (buff[21] shl 8) + buff[22]
+        pm5Above = (buff[23] shl 8) + buff[24]
+        pm10Above = (buff[25] shl 8) + buff[26]
     }
 
 
@@ -119,16 +119,16 @@ class IOIOData : IntfSensorData {
     override fun toJson(): JsonObject {
         val obj = JsonObject()
 
-        addNestedJsonArray(obj, "pm.01.value", pM01Value.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.2.5.value", pM2_5Value.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.10.value", pM10Value.toDouble(), Units.CONCENTRATION_UG_M3)
+        addNestedJsonArray(obj, "pm.01.value", pm01Value.toDouble(), Units.CONCENTRATION_UG_M3)
+        addNestedJsonArray(obj, "pm.2_5.value", pm2_5Value.toDouble(), Units.CONCENTRATION_UG_M3)
+        addNestedJsonArray(obj, "pm.10.value", pm10Value.toDouble(), Units.CONCENTRATION_UG_M3)
 
-        addNestedJsonArray(obj, "pm.0.3.above", pM0_3Above.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.0.5.above", pM0_5Above.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.1.above", pM1Above.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.2.5.above", pM2_5Above.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.5.above", pM5Above.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.10.above", pM10Above.toDouble(), Units.CONCENTRATION_UG_M3)
+        addNestedJsonArray(obj, "pm.0_3.above", pm0_3Above.toDouble(), Units.CONCENTRATION_UG_M3)
+        addNestedJsonArray(obj, "pm.0_5.above", pm0_5Above.toDouble(), Units.CONCENTRATION_UG_M3)
+        addNestedJsonArray(obj, "pm.1.above", pm1Above.toDouble(), Units.CONCENTRATION_UG_M3)
+        addNestedJsonArray(obj, "pm.2_5.above", pm2_5Above.toDouble(), Units.CONCENTRATION_UG_M3)
+        addNestedJsonArray(obj, "pm.5.above", pm5Above.toDouble(), Units.CONCENTRATION_UG_M3)
+        addNestedJsonArray(obj, "pm.10.above", pm10Above.toDouble(), Units.CONCENTRATION_UG_M3)
 
         addNestedJsonArray(obj, "temperature", tempKelvin.toDouble(), Units.TEMPERATURE_KELVIN)
         addNestedJsonArray(obj, "humidity", rh.toDouble(), Units.PERCENTAGE)
@@ -150,6 +150,8 @@ class IOIOData : IntfSensorData {
             return arrayOfNulls(size)
         }
     }
+
+
 
 
 }
