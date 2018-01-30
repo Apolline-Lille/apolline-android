@@ -162,6 +162,7 @@ dependencies {
 
     // Google map
     implementation "com.google.android.gms:play-services-maps:$project.maps"
+    implementation "com.google.android.gms:play-services-location:$project.maps"
 
     // Logger
     implementation 'com.orhanobut:logger:2.1.1'

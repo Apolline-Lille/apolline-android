@@ -15,6 +15,7 @@ import science.apolline.utils.RequestParser
 import org.jetbrains.anko.*
 import science.apolline.BuildConfig
 import android.net.ConnectivityManager
+import io.reactivex.Flowable
 import io.reactivex.Single
 
 
@@ -22,7 +23,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
 
 
     val sensorModel: SensorDao = AppDatabase.getInstance(getApplication()).sensorDao()
-    var deviceListObserver: Single<List<Device>> = sensorModel.all()
+    var deviceListObserver: Flowable<List<Device>> = sensorModel.all()
 
 
     private fun sendData(device: Device) {

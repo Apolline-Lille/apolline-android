@@ -64,7 +64,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
             @Throws(ConnectionLostException::class, InterruptedException::class)
             override fun loop() {
-                //Log.e("ioioService","loop");
+                Log.e("ioioService","loop");
                 try {
                     val availableCount = this.uartIn_!!.available()
                     if (availableCount > 0) {
@@ -129,7 +129,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
         }
 
         if (CheckPermission.checkCoarseLocationPermission(this)) {
-            val location = locationProvider.lastKnownLocation.blockingSingle()
+            val location = locationProvider.lastKnownLocation.blockingLast()
             position = Position(location.provider, location.longitude, location.latitude, "")
             device.position = position
             doAsync {
