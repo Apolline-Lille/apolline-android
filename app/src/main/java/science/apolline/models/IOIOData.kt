@@ -109,30 +109,30 @@ class IOIOData : IntfSensorData {
     }
 
 
-    private fun addNestedJsonArray(obj: JsonObject, property: String, value: Double, unit: Units) {
+    private fun addNestedJsonArray(obj: JsonObject, property: String, value: Double, unit: String) {
         val array = JsonArray()
         array.add(value)
-        array.add(unit.toString())
+        array.add(unit)
         obj.add(property, array)
     }
 
     override fun toJson(): JsonObject {
         val obj = JsonObject()
 
-        addNestedJsonArray(obj, "pm.01.value", pm01Value.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.2_5.value", pm2_5Value.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.10.value", pm10Value.toDouble(), Units.CONCENTRATION_UG_M3)
+        addNestedJsonArray(obj, "pm.01.value", pm01Value.toDouble(), Units.CONCENTRATION_UG_M3.value)
+        addNestedJsonArray(obj, "pm.2_5.value", pm2_5Value.toDouble(), Units.CONCENTRATION_UG_M3.value)
+        addNestedJsonArray(obj, "pm.10.value", pm10Value.toDouble(), Units.CONCENTRATION_UG_M3.value)
 
-        addNestedJsonArray(obj, "pm.0_3.above", pm0_3Above.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.0_5.above", pm0_5Above.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.1.above", pm1Above.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.2_5.above", pm2_5Above.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.5.above", pm5Above.toDouble(), Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.10.above", pm10Above.toDouble(), Units.CONCENTRATION_UG_M3)
+        addNestedJsonArray(obj, "pm.0_3.above", pm0_3Above.toDouble(), Units.CONCENTRATION_UG_M3.value)
+        addNestedJsonArray(obj, "pm.0_5.above", pm0_5Above.toDouble(), Units.CONCENTRATION_UG_M3.value)
+        addNestedJsonArray(obj, "pm.1.above", pm1Above.toDouble(), Units.CONCENTRATION_UG_M3.value)
+        addNestedJsonArray(obj, "pm.2_5.above", pm2_5Above.toDouble(), Units.CONCENTRATION_UG_M3.value)
+        addNestedJsonArray(obj, "pm.5.above", pm5Above.toDouble(), Units.CONCENTRATION_UG_M3.value)
+        addNestedJsonArray(obj, "pm.10.above", pm10Above.toDouble(), Units.CONCENTRATION_UG_M3.value)
 
-        addNestedJsonArray(obj, "temperature", tempKelvin.toDouble(), Units.TEMPERATURE_KELVIN)
-        addNestedJsonArray(obj, "humidity", rh.toDouble(), Units.PERCENTAGE)
-        addNestedJsonArray(obj, "humidity.compensated", rht, Units.PERCENTAGE)
+        addNestedJsonArray(obj, "temperature", tempKelvin.toDouble(), Units.TEMPERATURE_KELVIN.value)
+        addNestedJsonArray(obj, "humidity", rh.toDouble(), Units.PERCENTAGE.value)
+        addNestedJsonArray(obj, "humidity.compensated", rht, Units.PERCENTAGE.value)
 
         return obj
     }
