@@ -345,38 +345,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
     override fun onStart() {
         super.onStart()
-        val viewModel = SensorViewModel(activity!!.application)
-
-        disposable.add(viewModel.deviceListObserver
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-
-                    if (it.isNotEmpty()) {
-
-                        val device = it.last()
-
-                        info(device.toString())
-
-                        val gson = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
-                        val data = gson.fromJson(device.data, IOIOData::class.java)
-
-                        val PM01Value = data!!.pm01Value
-                        val PM2_5Value = data.pm2_5Value
-                        val PM10Value = data.pm10Value
-
-                        progressPM1!!.progress = PM01Value
-                        progressPM2!!.progress = PM2_5Value
-                        progressPM10!!.progress = PM10Value
-                        textViewPM1!!.text = "$PM01Value"
-                        textViewPM2!!.text = "$PM2_5Value"
-                        textViewPM10!!.text = "$PM10Value"
-                        val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
-
-                        addEntry(dataToDisplay)
-                    }
-                })
-
     }
 
     override fun onStop() {
