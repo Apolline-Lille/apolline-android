@@ -1,5 +1,9 @@
 package science.apolline.service.synchronisation
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.graphics.Color
+import android.os.Build
 import com.birbit.android.jobqueue.*
 import org.jetbrains.anko.*
 
@@ -118,10 +122,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
         info("onCancel: ")
     }
 
-
-
     companion object {
-
         private const val PRIORITY = 1
         private const val MAXLENGH = 8000 //Hardcoded in SensorDao
     }
