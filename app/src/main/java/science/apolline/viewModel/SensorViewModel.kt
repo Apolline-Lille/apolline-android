@@ -16,7 +16,6 @@ import org.jetbrains.anko.*
 import science.apolline.BuildConfig
 import android.net.ConnectivityManager
 import io.reactivex.Flowable
-import io.reactivex.Single
 
 
 class SensorViewModel(application: Application) : AndroidViewModel(application), AnkoLogger {
@@ -30,7 +29,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
 
         doAsync {
             if (isConnectingToInternet(getApplication())) {
-                val requestBody: String = RequestParser.createRequestBody(device)
+                val requestBody: String = RequestParser.createSingleRequestBody(device)
 //                info(requestBody)
                 val api: ApiService = ApiUtils.apiService
                 val postCall: Call<InfluxBody> = api.savePost(BuildConfig.INFLUXDB_DBNAME, BuildConfig.INFLUXDB_USR, BuildConfig.INFLUXDB_PWD, requestBody)
