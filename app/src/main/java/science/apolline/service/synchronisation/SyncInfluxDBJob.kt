@@ -118,7 +118,10 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
         info("onCancel: ")
     }
 
+
+
     companion object {
+
         private const val PRIORITY = 1
         private const val MAXLENGH = 8000 //Hardcoded in SensorDao
     }
