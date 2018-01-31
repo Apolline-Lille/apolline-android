@@ -1,37 +1,96 @@
 package science.apolline.service.synchronisation
 
-import android.content.Context
-import android.util.Log
+import com.birbit.android.jobqueue.*
 
-import com.birbit.android.jobqueue.CancelReason
-import com.birbit.android.jobqueue.Job
-import com.birbit.android.jobqueue.Params
-import com.birbit.android.jobqueue.RetryConstraint
-
-import org.greenrobot.eventbus.EventBus.TAG
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.info
+import org.jetbrains.anko.toast
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import science.apolline.service.database.AppDatabase
+import science.apolline.service.database.SensorDao
+import science.apolline.service.networks.ApiUtils
+import science.apolline.utils.RequestParser
+import science.apolline.BuildConfig
+import science.apolline.models.InfluxBody
 
 /**
  * Created by sparow on 19/01/2018.
  */
 
-// A job to send a tweet
-class SyncInfluxDBJob(context: Context)// This job requires network connectivity,
-// and should be persisted in case the application exits before job is completed.
-    : Job(Params(PRIORITY).requireNetwork().persist()) {
+class SyncInfluxDBJob : Job(Params(PRIORITY).requireNetwork().persist()), AnkoLogger {
+
+    private lateinit var sensorModel: SensorDao
+
+
     override fun onAdded() {
-        // Job has been saved to disk.
-        // This is a good place to dispatch a UI event to indicate the job will eventually run.
-        // In this example, it would be good to update the UI with the newly posted tweet.
-        Log.d(TAG, "onAdded: ")
+        info("onAdded: ")
     }
 
     @Throws(Throwable::class)
     override fun onRun() {
-        // Job logic goes here. In this example, the network call to post to Twitter is done here.
-        // All work done here should be synchronous, a job is removed from the queue once
-        // onRun() finishes.
-        Log.d(TAG, "onRun: ")
 
+        ApiUtils.setUrl(BuildConfig.INFLUXDB_URL)
+        val api = ApiUtils.apiService
+
+
+        if (super.getApplicationContext() != null) {
+
+                sensorModel = AppDatabase.getInstance(super.getApplicationContext()).sensorDao()
+                val nbUnSyncked: Int = sensorModel.getSensorNotSyncCount()
+
+                info("number of unsyncked is : $nbUnSyncked")
+
+                var attempt: Int = nbUnSyncked/MAXLENGH
+
+                if (nbUnSyncked % MAXLENGH != 0) {
+                    attempt++
+                }
+
+                info("Attempts " + attempt)
+                for (i in 1..attempt) {
+
+                    val dataNotSync = sensorModel.getUnSync()
+
+                    if (dataNotSync.isNotEmpty()) {
+                        val dataToSend = RequestParser.createRequestBody(dataNotSync)
+                        info(dataToSend)
+                        val call = api.savePost(BuildConfig.INFLUXDB_DBNAME, BuildConfig.INFLUXDB_USR, BuildConfig.INFLUXDB_PWD, dataToSend)
+
+                        call.enqueue(object : Callback<InfluxBody> {
+
+                                override fun onResponse(call: Call<InfluxBody>?, response: Response<InfluxBody>?) {
+
+                                if (response != null && response.isSuccessful) {
+                                    info("response success" + response)
+
+                                    doAsync {
+
+                                        dataNotSync.forEach{
+                                            it.isSync = 1
+                                            sensorModel.update(it)
+                                        }
+                                    }
+
+                                } else {
+                                    info("response failed " + response)
+                                }
+                            }
+
+                            override fun onFailure(call: Call<InfluxBody>?, t: Throwable?) {
+
+                            }
+                        })
+                    }
+
+
+
+            }
+        }
+        
+        info("onRun: ")
     }
 
     override fun shouldReRunOnThrowable(throwable: Throwable, runCount: Int,
@@ -45,10 +104,14 @@ class SyncInfluxDBJob(context: Context)// This job requires network connectivity
 
     override fun onCancel(@CancelReason cancelReason: Int, throwable: Throwable?) {
         // Job has exceeded retry attempts or shouldReRunOnThrowable() has decided to cancel.
-        Log.d(TAG, "onCancel: ")
+        info("onCancel: ")
     }
 
+
+
     companion object {
+
         private const val PRIORITY = 1
+        private const val MAXLENGH = 80000 //Hardcoded in SensorDao
     }
 }

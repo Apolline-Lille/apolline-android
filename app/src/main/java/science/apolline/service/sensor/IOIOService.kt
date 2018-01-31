@@ -16,6 +16,7 @@ import ioio.lib.util.BaseIOIOLooper
 import ioio.lib.util.IOIOLooper
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.info
 import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 import science.apolline.models.Device
 import science.apolline.models.IOIOData
@@ -121,26 +122,26 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
     private fun persistData(data: IOIOData) {
         val d1 = System.currentTimeMillis() * 1000000
 
-        var position: Position? = null
+        var position: Position? = Position()
         val device = Device(AndroidUuid.getAndroidUuid(), "LOA", d1, position, data.toJson(),0)
+
+        if (CheckPermission.checkCoarseLocationPermission(this)) {
+
+            if (locationProvider.lastKnownLocation != null) {
+                val location = locationProvider.lastKnownLocation.blockingFirst()
+                //info(location.toString())
+                position = Position(location.provider, location.longitude, location.latitude, "no")
+                device.position = position
+            }
+//            doAsync {
+//                sensorModel.update(device)
+//            }
+        }
 
         doAsync {
             sensorModel.insertOne(device)
         }
-
-        if (CheckPermission.checkCoarseLocationPermission(this)) {
-            val location = locationProvider.lastKnownLocation.blockingLast()
-            position = Position(location.provider, location.longitude, location.latitude, "")
-            device.position = position
-            doAsync {
-                sensorModel.update(device)
-            }
-
-        }
-
-
     }
-
 
     override fun onBind(intent: Intent): IBinder? {
         return null

@@ -23,8 +23,12 @@ interface SensorDao {
     fun loadAllByIds(sensorIds: IntArray): List<Device>
 
     @Transaction
-    @Query("SELECT * FROM Device WHERE isSync=0")
+    @Query("SELECT * FROM Device WHERE isSync=0 ORDER BY date ASC LIMIT 8000")
     fun getUnSync(): List<Device>
+
+    @Transaction
+    @Query("SELECT count(*) FROM Device WHERE isSync=0")
+    fun getSensorNotSyncCount(): Int
 
     @Transaction
     @Query("SELECT count(*) FROM Device")

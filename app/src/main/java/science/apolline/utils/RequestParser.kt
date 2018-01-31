@@ -1,5 +1,6 @@
 package science.apolline.utils
 
+import org.jetbrains.anko.AnkoLogger
 import org.json.JSONException
 import science.apolline.models.Device
 
@@ -21,13 +22,26 @@ enum class Tags constructor(val value: String) {
 
 object RequestParser {
 
-    fun createRequestBody(device: Device): String {
+    fun createRequestBody(devices: List<Device>): String {
+        val requestBody = StringBuilder()
+        if (devices.isNotEmpty()) {
+            devices.forEach {
+                requestBody.append(createSingleRequestBody(it))
+            }
+        }
+        return requestBody.toString()
+    }
+
+
+    fun createSingleRequestBody(device: Device): String {
         val tmpAndroidUuid = device.uuid.replace("\\s".toRegex(), "_").toLowerCase()
         val tmpDevice = device.device.replace("\\s".toRegex(), "_").toLowerCase()
-        val tmpProvider = device.position!!.provider.replace("\\s".toRegex(), "_").toLowerCase()
-        val tmpTransport = device.position!!.transport.replace("\\s".toRegex(), "_").toLowerCase()
-        val tmpLongitude = device.position!!.longitude
-        val tmpLatitude = device.position!!.latitude
+
+        val tmpProvider = device.position?.provider?.replace("\\s".toRegex(), "_")?.toLowerCase()
+        val tmpTransport = device.position?.transport?.replace("\\s".toRegex(), "_")?.toLowerCase()
+        val tmpLongitude = device.position?.longitude
+        val tmpLatitude = device.position?.latitude
+
         val tmpDate = device.date
         val sb = StringBuilder()
 
