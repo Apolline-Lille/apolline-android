@@ -350,7 +350,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
     override fun onStop() {
         super.onStop()
         if (!disposable.isDisposed) {
-            disposable.dispose()
+            disposable.clear()
         }
     }
 
