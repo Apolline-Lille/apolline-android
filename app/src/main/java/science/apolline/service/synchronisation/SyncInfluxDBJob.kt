@@ -1,11 +1,12 @@
 package science.apolline.service.synchronisation
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.graphics.Color
+import android.os.Build
 import com.birbit.android.jobqueue.*
+import org.jetbrains.anko.*
 
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -50,6 +51,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY).requireNetwork().persist()), AnkoLo
                 }
 
                 info("Attempts " + attempt)
+
                 for (i in 1..attempt) {
 
                     val dataNotSync = sensorModel.getUnSync()
@@ -64,6 +66,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY).requireNetwork().persist()), AnkoLo
                                 override fun onResponse(call: Call<InfluxBody>?, response: Response<InfluxBody>?) {
 
                                 if (response != null && response.isSuccessful) {
+
                                     info("response success" + response)
 
                                     doAsync {
@@ -71,6 +74,10 @@ class SyncInfluxDBJob : Job(Params(PRIORITY).requireNetwork().persist()), AnkoLo
                                         dataNotSync.forEach{
                                             it.isSync = 1
                                             sensorModel.update(it)
+                                        }
+
+                                        uiThread {
+                                            applicationContext.toast("Synchronisation finished")
                                         }
                                     }
 
@@ -84,9 +91,6 @@ class SyncInfluxDBJob : Job(Params(PRIORITY).requireNetwork().persist()), AnkoLo
                             }
                         })
                     }
-
-
-
             }
         }
         
@@ -107,10 +111,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY).requireNetwork().persist()), AnkoLo
         info("onCancel: ")
     }
 
-
-
     companion object {
-
         private const val PRIORITY = 1
         private const val MAXLENGH = 80000 //Hardcoded in SensorDao
     }

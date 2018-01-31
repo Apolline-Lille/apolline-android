@@ -22,8 +22,7 @@ import android.view.MenuItem
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.config.Configuration
 import org.greenrobot.eventbus.EventBus
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
+import org.jetbrains.anko.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.OnShowRationale
 import permissions.dispatcher.PermissionRequest
@@ -146,13 +145,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-           menuInflater.inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         info("Synchronisation button clicked")
         jobManager.addJobInBackground(SyncInfluxDBJob())
+        toast("Database synchronisatin launched")
         return true
     }
 
