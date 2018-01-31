@@ -76,6 +76,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
     private lateinit var disposable: CompositeDisposable
 
+    private lateinit var viewModel: SensorViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +89,8 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        disposable = CompositeDisposable()
+        viewModel = SensorViewModel(activity!!.application)
         progressPM1 = view.findViewById(R.id.fragment_ioio_progress_pm1)
         textViewPM1 = view.findViewById(R.id.fragment_ioio_tv_pm1_value)
         progressPM2 = view.findViewById(R.id.fragment_ioio_progress_pm2)
@@ -284,64 +287,48 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         activity!!.startService(Intent(activity, IOIOService::class.java))
     }
 
-    override fun onDetach() {
-        super.onDetach()
-
-    }
-
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        val viewModel = SensorViewModel(activity!!.application)
-        disposable.add(viewModel.deviceListObserver
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {
-
-                            if (it.isNotEmpty()) {
-
-                                val device = it.last()
-
-                                info(device.toString())
-
-                                val gson = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
-                                val data = gson.fromJson(device.data, IOIOData::class.java)
-
-                                val PM01Value = data!!.pm01Value
-                                val PM2_5Value = data.pm2_5Value
-                                val PM10Value = data.pm10Value
-
-                                progressPM1!!.progress = PM01Value
-                                progressPM2!!.progress = PM2_5Value
-                                progressPM10!!.progress = PM10Value
-                                textViewPM1!!.text = "$PM01Value"
-                                textViewPM2!!.text = "$PM2_5Value"
-                                textViewPM10!!.text = "$PM10Value"
-                                val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
-
-                                addEntry(dataToDisplay)
-                            }
-                        })
-    }
-
-
     override fun onValueSelected(e: Entry, h: Highlight) {
-
     }
 
     override fun onNothingSelected() {
-
     }
 
 
     override fun onStart() {
         super.onStart()
+        disposable.add(viewModel.deviceListObserver
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+
+                    if (it.isNotEmpty()) {
+
+                        val device = it.last()
+                        //info(device.toString())
+                        val gson = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
+                        val data = gson.fromJson(device.data, IOIOData::class.java)
+
+                        val PM01Value = data!!.pm01Value
+                        val PM2_5Value = data.pm2_5Value
+                        val PM10Value = data.pm10Value
+
+                        progressPM1!!.progress = PM01Value
+                        progressPM2!!.progress = PM2_5Value
+                        progressPM10!!.progress = PM10Value
+                        textViewPM1!!.text = "$PM01Value"
+                        textViewPM2!!.text = "$PM2_5Value"
+                        textViewPM10!!.text = "$PM10Value"
+                        val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
+
+                        addEntry(dataToDisplay)
+                    }
+                })
     }
 
     override fun onStop() {
         super.onStop()
         if (!disposable.isDisposed) {
-            disposable.dispose()
+            disposable.clear()
         }
     }
 
