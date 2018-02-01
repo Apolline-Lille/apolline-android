@@ -28,8 +28,8 @@ import science.apolline.models.Position
 import science.apolline.service.database.AppDatabase
 import science.apolline.service.database.SensorDao
 import science.apolline.utils.AndroidUuid
-import science.apolline.utils.CheckPermission
-import science.apolline.utils.CheckPermission.canGetLocation
+import science.apolline.utils.CheckUtility
+import science.apolline.utils.CheckUtility.canGetLocation
 import java.io.IOException
 import java.io.InputStream
 
@@ -82,7 +82,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                 Log.e("ioioService", "loop")
                 try {
 
-                    if (CheckPermission.checkFineLocationPermission(applicationContext) && canGetLocation(applicationContext)) {
+                    if (CheckUtility.checkFineLocationPermission(applicationContext) && canGetLocation(applicationContext)) {
                         info("checked")
                         disposable.add(locationProvider.getUpdatedLocation(request)
                                 .subscribe { t ->

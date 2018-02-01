@@ -80,7 +80,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY).requireNetwork().persist().addTags(
                                         sensorModel.update(*dataNotSync.toTypedArray())
 
                                         uiThread {
-                                            applicationContext.toast("Synchronisation finished")
+                                            applicationContext.longToast("Synced")
                                         }
                                     }
 

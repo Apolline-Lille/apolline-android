@@ -23,7 +23,7 @@ import org.jetbrains.anko.*
 
 class DataExport : AnkoLogger {
 
-    fun toHeader(data: JsonObject?): Array<String> {
+    private fun toHeader(data: JsonObject?): Array<String> {
         val headerArray = mutableListOf<String>()
         headerArray.add("SensorID")
         headerArray.add("Device")
