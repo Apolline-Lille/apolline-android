@@ -65,6 +65,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                 uartIn_ = uart_!!.inputStream
                 inputTemp = ioio_.openAnalogInput(44)
                 inputHum = ioio_.openAnalogInput(42)
+                disposable =CompositeDisposable()
                 initChannels(applicationContext)
                 val notification = NotificationCompat.Builder(applicationContext, "default")
                         .setContentTitle("IOIO service is running")
