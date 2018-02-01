@@ -33,13 +33,12 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import org.jetbrains.anko.toast
 import science.apolline.R
 import science.apolline.models.IOIOData
 import science.apolline.service.sensor.IOIOService
-import science.apolline.utils.CustomMarkerView
-import science.apolline.utils.DataDeserializer
-import science.apolline.utils.DataExport
-import science.apolline.utils.HourAxisValueFormatter
+import science.apolline.utils.*
+import science.apolline.utils.CheckPermission.canGetLocation
 import science.apolline.viewModel.SensorViewModel
 import java.util.*
 
@@ -110,6 +109,11 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
         dataList = createMultiSet()
         initGraph()
+
+        if(!canGetLocation(activity!!.applicationContext)){
+            context!!.toast("Veuillez activer votre géolocalisation svp")
+        }
+
     }
 
     //init graph on create view
