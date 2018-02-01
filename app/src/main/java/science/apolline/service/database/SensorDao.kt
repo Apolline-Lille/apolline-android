@@ -26,15 +26,12 @@ interface SensorDao {
     @Query("SELECT * FROM Device WHERE isSync=0 ORDER BY date ASC LIMIT 8000")
     fun getUnSync(): List<Device>
 
-    @Transaction
     @Query("SELECT count(*) FROM Device WHERE isSync=0")
     fun getSensorNotSyncCount(): Int
 
-    @Transaction
     @Query("SELECT count(*) FROM Device")
     fun getSensorCount(): Int
 
-    @Transaction
     @Query("SELECT * FROM Device WHERE id=:idDevice")
     fun getSensorById(idDevice: Long): LiveData<Device>
 
