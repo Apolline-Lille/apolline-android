@@ -26,23 +26,22 @@ interface SensorDao {
     @Query("SELECT * FROM Device WHERE isSync=0 ORDER BY date ASC LIMIT 8000")
     fun getUnSync(): List<Device>
 
-    @Transaction
     @Query("SELECT count(*) FROM Device WHERE isSync=0")
     fun getSensorNotSyncCount(): Int
 
-    @Transaction
     @Query("SELECT count(*) FROM Device")
     fun getSensorCount(): Int
 
-    @Transaction
     @Query("SELECT * FROM Device WHERE id=:idDevice")
     fun getSensorById(idDevice: Long): LiveData<Device>
 
+    @Transaction
     @Insert(onConflict = REPLACE)
-    fun insertOne(device: Device)
+    fun insertOne(vararg device: Device)
 
+    @Transaction
     @Update(onConflict = REPLACE)
-    fun update(device: Device)
+    fun update(vararg device: Device)
 
     @Transaction
     @Query("DELETE FROM Device")
@@ -53,5 +52,5 @@ interface SensorDao {
     fun dumpSensor(): List<Device>
 
     @Delete
-    fun delete(device: Device)
+    fun delete(vararg device: Device)
 }
