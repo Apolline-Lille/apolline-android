@@ -40,8 +40,8 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
     private val sensorModel: SensorDao = AppDatabase.getInstance(this).sensorDao()
     private val locationProvider = ReactiveLocationProvider(this)
 
-    private lateinit var disposable: CompositeDisposable
-
+    private val disposable = CompositeDisposable()
+    
     private var location: Location? = null
 
     override fun createIOIOLooper(): IOIOLooper {
@@ -65,7 +65,6 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                 uartIn_ = uart_!!.inputStream
                 inputTemp = ioio_.openAnalogInput(44)
                 inputHum = ioio_.openAnalogInput(42)
-                disposable =CompositeDisposable()
                 initChannels(applicationContext)
                 val notification = NotificationCompat.Builder(applicationContext, "default")
                         .setContentTitle("IOIO service is running")

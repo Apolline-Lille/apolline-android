@@ -113,6 +113,6 @@ class SyncInfluxDBJob : Job(Params(PRIORITY).requireNetwork().persist()), AnkoLo
 
     companion object {
         private const val PRIORITY = 1
-        private const val MAXLENGH = 80000 //Hardcoded in SensorDao
+        private const val MAXLENGH = 8000 //Hardcoded in SensorDao
     }
 }
