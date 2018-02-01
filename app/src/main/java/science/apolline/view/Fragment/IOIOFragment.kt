@@ -26,19 +26,18 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import science.apolline.R
 import science.apolline.models.IOIOData
 import science.apolline.service.sensor.IOIOService
 import science.apolline.utils.*
-import science.apolline.utils.CheckPermission.canGetLocation
+import science.apolline.utils.CheckUtility.canGetLocation
 import science.apolline.viewModel.SensorViewModel
 import java.util.*
 
@@ -111,7 +110,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         initGraph()
 
         if(!canGetLocation(activity!!.applicationContext)){
-            context!!.toast("Veuillez activer votre géolocalisation svp")
+            context!!.longToast("Veuillez activer la géolocalisation !")
         }
 
     }

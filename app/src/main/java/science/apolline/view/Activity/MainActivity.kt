@@ -26,6 +26,9 @@ import permissions.dispatcher.*
 import science.apolline.R
 import science.apolline.service.sensor.IOIOService
 import science.apolline.service.synchronisation.SyncInfluxDBJob
+import science.apolline.utils.CheckUtility
+import science.apolline.utils.CheckUtility.getNetworkType
+import science.apolline.utils.CheckUtility.isNetworkConnected
 import science.apolline.view.Fragment.IOIOFragment
 
 @RuntimePermissions
@@ -91,9 +94,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        info("Synchronisation button clicked")
-        jobManager.addJobInBackground(SyncInfluxDBJob())
-        toast("Synchronisation launched")
+
+        if(isNetworkConnected(this)) {
+            jobManager.addJobInBackground(SyncInfluxDBJob())
+            toast("Synchronisation...")
+        }else{
+            toast("No internet connection !")
+        }
         return true
     }
 
@@ -106,8 +113,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         when (groupId) {
             R.id.grp_capteur -> if (itemId == R.id.nav_ioio) {
-                val IOIOFragment = IOIOFragment()
-                replaceFragment(IOIOFragment)
+                val ioioFragment = IOIOFragment()
+                replaceFragment(ioioFragment)
             }
             R.id.grp_fonction -> if (itemId == R.id.nav_setting) {
                 val intent = Intent(this, OptionsActivity::class.java)
@@ -154,33 +161,33 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     @OnShowRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    fun AlertWriteExternalStorage(request: PermissionRequest) {
-        val alertdialog = AlertDialog.Builder(this).create()
-        alertdialog.setTitle("Permission Write_External_Storage")
-        alertdialog.setMessage("Cette permission est nécessaire pour exporter les données dans un fichier")
-        alertdialog.setButton(AlertDialog.BUTTON_NEGATIVE, "non") { dialog, which ->
+    fun alertWriteExternalStorage(request: PermissionRequest) {
+        val alertDialog = AlertDialog.Builder(this).create()
+        alertDialog.setTitle("Permission Write_External_Storage")
+        alertDialog.setMessage("Cette permission est nécessaire pour exporter les données dans un fichier")
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NON") { _, _ ->
             request.cancel()
             finish()
         }
-        alertdialog.setButton(AlertDialog.BUTTON_POSITIVE, "ok ") { dialog, which ->
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK ") { _, _ ->
             request.proceed()
         }
-        alertdialog.show()
+        alertDialog.show()
     }
 
     @OnShowRationale(Manifest.permission.ACCESS_FINE_LOCATION)
-    fun AlertFine(request: PermissionRequest) {
-        val alertdialog = AlertDialog.Builder(this).create()
-        alertdialog.setTitle("Permission Access_Fine_Location")
-        alertdialog.setMessage("Cette permission est nécessaire pour prendre la géolocalisation et au bon fonctionnement de l'application")
-        alertdialog.setButton(AlertDialog.BUTTON_NEGATIVE, "non") { dialog, which ->
+    fun alertFine(request: PermissionRequest) {
+        val alertDialog = AlertDialog.Builder(this).create()
+        alertDialog.setTitle("Permission Access_Fine_Location")
+        alertDialog.setMessage("Cette permission est nécessaire pour prendre la géolocalisation et au bon fonctionnement de l'application")
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NON") { _, _ ->
             request.cancel()
             finish()
         }
-        alertdialog.setButton(AlertDialog.BUTTON_POSITIVE, "ok ") { dialog, which ->
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK ") { _, _ ->
             request.proceed()
         }
-        alertdialog.show()
+        alertDialog.show()
 
     }
 
@@ -197,5 +204,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         private const val REQUEST_CODE_FINE_LOCATION = 101
         private const val REQUEST_CODE_COARSE_LOCATION = 102
         private const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 103
+
     }
 }
