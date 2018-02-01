@@ -4,10 +4,14 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.util.Log
+import com.google.android.gms.location.LocationRequest
+import io.reactivex.disposables.CompositeDisposable
+
 import ioio.lib.api.AnalogInput
 import ioio.lib.api.DigitalOutput
 import ioio.lib.api.Uart
@@ -25,6 +29,7 @@ import science.apolline.service.database.AppDatabase
 import science.apolline.service.database.SensorDao
 import science.apolline.utils.AndroidUuid
 import science.apolline.utils.CheckPermission
+import science.apolline.utils.CheckPermission.canGetLocation
 import java.io.IOException
 import java.io.InputStream
 
@@ -35,6 +40,10 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
     private val sensorModel: SensorDao = AppDatabase.getInstance(this).sensorDao()
     private val locationProvider = ReactiveLocationProvider(this)
 
+    private lateinit var disposable: CompositeDisposable
+
+    private var location: Location? = null
+
     override fun createIOIOLooper(): IOIOLooper {
         return object : BaseIOIOLooper() {
             private val data = IOIOData()
@@ -44,7 +53,10 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
             private var inputTemp: AnalogInput? = null
             private var inputHum: AnalogInput? = null
             private val freq = 1000
-
+            private val request = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                    .setNumUpdates(5)
+                    .setInterval(100)
+            private var position = Position()
 
             @Throws(ConnectionLostException::class, InterruptedException::class)
             override fun setup() {
@@ -53,6 +65,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                 uartIn_ = uart_!!.inputStream
                 inputTemp = ioio_.openAnalogInput(44)
                 inputHum = ioio_.openAnalogInput(42)
+                disposable =CompositeDisposable()
                 initChannels(applicationContext)
                 val notification = NotificationCompat.Builder(applicationContext, "default")
                         .setContentTitle("IOIO service is running")
@@ -63,10 +76,25 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                 startForeground(101, notification)
             }
 
+
+
             @Throws(ConnectionLostException::class, InterruptedException::class)
             override fun loop() {
-                Log.e("ioioService","loop");
+                Log.e("ioioService", "loop")
                 try {
+
+                    if (CheckPermission.checkFineLocationPermission(applicationContext) && canGetLocation(applicationContext)) {
+                        info("checked")
+                        disposable.add(locationProvider.getUpdatedLocation(request)
+                                .subscribe { t ->
+                                    location = t
+                                    position = Position(location!!.provider, location!!.longitude, location!!.latitude, "no")
+                                }
+                        )
+                    }else{
+                        position = Position()
+                    }
+
                     val availableCount = this.uartIn_!!.available()
                     if (availableCount > 0) {
                         val buffer = ByteArray(availableCount)
@@ -96,8 +124,6 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                                         val RHT = RH / (1.0546 - 0.00216 * (tensionTemp * 100 - 273.15)) * 10 //compensé en t°
                                         data.rh = RH
                                         data.rht = RHT
-
-
                                     }
                                 }
                             }
@@ -107,44 +133,39 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                     e.printStackTrace()
                 }
 
-
                 Thread.sleep(freq.toLong())
-                persistData(data)
+                persistData(data,position)
             }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.e(this.javaClass.name, "onDestroy")
-    }
 
-    private fun persistData(data: IOIOData) {
+    private fun persistData(data: IOIOData, pos:Position?) {
         val d1 = System.currentTimeMillis() * 1000000
-
-        var position: Position? = Position()
-        val device = Device(AndroidUuid.getAndroidUuid(), "LOA", d1, position, data.toJson(),0)
-
-        if (CheckPermission.checkCoarseLocationPermission(this)) {
-
-            if (locationProvider.lastKnownLocation != null) {
-                val location = locationProvider.lastKnownLocation.blockingFirst()
-                //info(location.toString())
-                position = Position(location.provider, location.longitude, location.latitude, "no")
-                device.position = position
-            }
-//            doAsync {
-//                sensorModel.update(device)
-//            }
-        }
-
+        val device = Device(AndroidUuid.getAndroidUuid(), "LOA", d1, pos, data.toJson(), 0)
         doAsync {
             sensorModel.insertOne(device)
+            location = null
         }
     }
 
     override fun onBind(intent: Intent): IBinder? {
         return null
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        if (!disposable.isDisposed) {
+            disposable.clear()
+        }
+        return super.onUnbind(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!disposable.isDisposed) {
+            disposable.dispose()
+        }
+        Log.e(this.javaClass.name, "onDestroy")
     }
 
     fun initChannels(context: Context) {
