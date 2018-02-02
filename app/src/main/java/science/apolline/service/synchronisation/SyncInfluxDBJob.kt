@@ -1,10 +1,5 @@
 package science.apolline.service.synchronisation
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.graphics.Color
-import android.hardware.Sensor
-import android.os.Build
 import com.birbit.android.jobqueue.*
 import org.jetbrains.anko.*
 
@@ -16,7 +11,6 @@ import science.apolline.service.database.SensorDao
 import science.apolline.service.networks.ApiUtils
 import science.apolline.utils.RequestParser
 import science.apolline.BuildConfig
-import science.apolline.models.Device
 import science.apolline.models.InfluxBody
 import java.util.concurrent.TimeUnit
 
