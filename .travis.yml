@@ -57,7 +57,7 @@ before_deploy:
     -in ApollineKeyStore.jks.enc -out ApollineKeyStore.jks -d
   - cd app/build/outputs/apk/release
   - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ${TRAVIS_BUILD_DIR}/ApollineKeyStore.jks
-    -storepass $storepass -keypass $keypass app-release-unsigned.apk apolline
+    -storepass $storepass -keypass $keypass app-release-unsigned.apk apolline-upload
   - jarsigner -verify app-release-unsigned.apk
   - "${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/zipalign -v 4 app-release-unsigned.apk
     Apolline.apk"
