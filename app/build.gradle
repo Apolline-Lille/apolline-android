@@ -12,14 +12,14 @@ android {
     def influxdb_usr = hasProperty('INFLUXDB_USR') ? INFLUXDB_USR : System.getenv('INFLUXDB_USR')
     def influxdb_pwd = hasProperty('INFLUXDB_PWD') ? INFLUXDB_PWD : System.getenv('INFLUXDB_PWD')
 
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
 
     defaultConfig {
-        applicationId "apoline.science"
+        applicationId "apolline.science"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -120,10 +120,10 @@ android {
 
 
 project.ext {
-    appcompat = "26.1.0"
+    appcompat = "27.0.2"
     rc = "1.0.0"
     ioio ="5.07"
-    maps = "11.6.2"
+    maps = "11.8.0"
     retrofit = "2.3.0"
     constraintLayout = "1.0.2"
     anko_version = "0.10.3"
@@ -157,20 +157,20 @@ dependencies {
     implementation "com.github.ytai.ioio:IOIOLibAndroidAccessory:$project.ioio"
     implementation "com.github.ytai.ioio:IOIOLibAndroidDevice:$project.ioio"
 
-    // GraphView
-    implementation 'com.jjoe64:graphview:4.2.1'
+    // MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 
     // Google map
     implementation "com.google.android.gms:play-services-maps:$project.maps"
+    implementation "com.google.android.gms:play-services-location:$project.maps"
 
     // Logger
     implementation 'com.orhanobut:logger:2.1.1'
 
     // RxJaVa
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
-    implementation 'io.reactivex.rxjava2:rxkotlin:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
 
     // Room
 
@@ -193,6 +193,24 @@ dependencies {
 
     // MultiDex
     implementation 'com.android.support:multidex:1.0.2'
+
+    // RxLocation
+    implementation 'pl.charmas.android:android-reactive-location2:2.1@aar'
+
+    // Android Priority Job Queue
+    implementation 'com.birbit:android-priority-jobqueue:2.0.1'
+
+    // Green Robot Event Bus.
+    implementation 'org.greenrobot:eventbus:3.0.0'
+
+    // Runtime permissions
+    implementation("com.github.hotchemi:permissionsdispatcher:3.1.0") {
+        // if you don't use android.app.Fragment you can exclude support for them
+        exclude module: "support-v13"
+    }
+    kapt "com.github.hotchemi:permissionsdispatcher-processor:3.1.0"
+
+
 
 }
 

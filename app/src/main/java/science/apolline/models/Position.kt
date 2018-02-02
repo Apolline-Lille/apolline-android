@@ -26,7 +26,7 @@ data class Position(
 
 ) {
     @Ignore
-    constructor() : this("", 0.0, 0.0, "")
+    constructor() : this("no", -1.0, -1.0, "no")
 
     override fun toString(): String {
         return """

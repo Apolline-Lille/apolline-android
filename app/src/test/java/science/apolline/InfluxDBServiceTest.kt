@@ -3,8 +3,6 @@ package science.apolline
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
 import org.junit.Assert
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -60,10 +58,10 @@ class InfluxDBServiceTest {
         val gson = Gson()
         val dataListObject = gson.fromJson(dataList, JsonObject::class.java)
         val positionInitObject = Position("GPS", 152.36, 142.36, "Train")
-        val sensorInitObject = Device("ffffffff-c9cf-31db-0000-00006c125b14","Arduino", "1422568543702900257", positionInitObject, dataListObject)
+        val sensorInitObject = Device("ffffffff-c9cf-31db-0000-00006c125b14","Arduino", 1422568543702900257, positionInitObject, dataListObject,0)
 
         //when
-        val dataTosend = RequestParser.createRequestBody(sensorInitObject)
+        val dataTosend = RequestParser.createSingleRequestBody(sensorInitObject)
         println(dataTosend)
         ApiUtils.setUrl(testUrl)
         val api = ApiUtils.apiService

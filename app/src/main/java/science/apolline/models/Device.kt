@@ -11,7 +11,6 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 
-
 @Entity
 data class Device(
         @SerializedName("uuid")
@@ -22,14 +21,20 @@ data class Device(
         var device: String,
         @SerializedName("date")
         @Expose
-        var date: String,
+        var date: Long,
         @SerializedName("position")
         @Expose
         @Embedded
         var position: Position?,
         @SerializedName("data")
         @Expose
-        var data: JsonObject?
+        var data: JsonObject?,
+        /**
+         *  0 if not sync, 1 if sync
+         */
+        @SerializedName("isSync")
+        @Expose
+        var isSync: Int
 ) {
     @SerializedName("device_id")
     @Expose
@@ -37,9 +42,8 @@ data class Device(
     var id: Long = 0
 
 
-
     @Ignore
-    constructor() : this("", "","", null, null)
+    constructor() : this("", "", 0, null, null, 0)
 
 
     override fun toString(): String {
@@ -56,7 +60,7 @@ data class Device(
         val objectArray = mutableListOf<String>()
         objectArray.add(id.toString())
         objectArray.add(device)
-        objectArray.add(date)
+        objectArray.add(date.toString())
         objectArray.add(position?.latitude.toString())
         objectArray.add(position?.longitude.toString())
         objectArray.add(position?.provider.orEmpty())

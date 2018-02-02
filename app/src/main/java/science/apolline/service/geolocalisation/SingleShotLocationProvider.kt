@@ -1,13 +1,11 @@
 package science.apolline.service.geolocalisation
 
-import android.Manifest
 import android.content.Context
 import android.location.Criteria
 import android.location.LocationManager
-import android.content.pm.PackageManager
-import android.location.Location
 import android.location.LocationListener
-import android.support.v4.content.ContextCompat
+import science.apolline.utils.CheckUtility.checkCoarseLocationPermission
+import science.apolline.utils.CheckUtility.checkFineLocationPermission
 
 
 /**
@@ -36,22 +34,6 @@ object SingleShotLocationProvider {
         }
     }
 
-    fun checkCoarseLocationPermission(context: Context) : Boolean {
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            return false
-        }
-        return true
-    }
 
-    fun checkFineLocationPermission(context: Context) : Boolean{
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            return false
-        }
-        return true
-    }
 
 }

@@ -30,6 +30,12 @@
             android:layout_height="88dp"
             app:srcCompat="@drawable/logo_cnrs" />
 
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="104dp"
+            android:layout_height="88dp"
+            app:srcCompat="@drawable/logo_apolline" />
+
     </LinearLayout>
 
 </LinearLayout>

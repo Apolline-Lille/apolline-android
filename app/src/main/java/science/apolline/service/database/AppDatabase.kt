@@ -12,7 +12,7 @@ import science.apolline.models.Device
  * Created by sparow on 11/5/17.
  */
 
-@Database(entities = arrayOf(Device::class), version = 1, exportSchema = false)
+@Database(entities = [(Device::class)], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -21,26 +21,23 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
 
         var TEST_MODE = false
-        private val databaseName = "sensors-database"
+        private const val databaseName = "sensors-database"
 
         private var db: AppDatabase? = null
-        private var dbInstance: SensorDao? = null
 
-        fun getInstance(context: Context): SensorDao {
-            if (dbInstance == null) {
+        fun getInstance(context: Context): AppDatabase {
+            if (db == null) {
                 if (TEST_MODE) {
                     db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
                             .allowMainThreadQueries()
                             .fallbackToDestructiveMigration()
                             .build()
-                    dbInstance = db?.sensorDao()
                 } else {
                     db = Room.databaseBuilder(context, AppDatabase::class.java, databaseName)
                             .build()
-                    dbInstance = db?.sensorDao()
                 }
             }
-            return dbInstance!!
+            return db!!
         }
 
         private fun close() {
