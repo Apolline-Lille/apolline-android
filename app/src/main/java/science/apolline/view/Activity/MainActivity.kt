@@ -99,7 +99,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             jobManager.addJobInBackground(SyncInfluxDBJob())
             toast("Synchronisation...")
         }else{
-            toast("No internet connection !")
+            jobManager.addJobInBackground(SyncInfluxDBJob())
+            toast("No internet connection ! Job added to queue")
         }
         return true
     }
