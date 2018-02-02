@@ -17,7 +17,7 @@ android {
 
 
     defaultConfig {
-        applicationId "apoline.science"
+        applicationId "science.apolline"
         minSdkVersion 21
         targetSdkVersion 27
 
