@@ -341,25 +341,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
             disposable.dispose()
         }
     }
-
-
-    override fun onStart() {
-        super.onStart()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (!disposable.isDisposed) {
-            disposable.clear()
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (!disposable.isDisposed) {
-            disposable.dispose()
-        }
-    }
 }
 
 
