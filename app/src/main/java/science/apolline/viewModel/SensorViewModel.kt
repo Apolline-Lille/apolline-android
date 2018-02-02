@@ -52,7 +52,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
     private fun setPersistant(device: Device) {
         doAsync {
             info(device.data?.toString())
-            sensorModel.insertOne(device)
+            sensorModel.insert(device)
         }
     }
 
