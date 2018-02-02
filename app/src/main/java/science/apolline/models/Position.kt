@@ -8,31 +8,28 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import ch.hsr.geohash.GeoHash
 
 @Entity
 data class Position(
         @SerializedName("provider")
         @Expose
         var provider: String,
-        @SerializedName("longitude")
+        @SerializedName("geohash")
         @Expose
-        var longitude: Double,
-        @SerializedName("latitude")
-        @Expose
-        var latitude: Double,
+        var geohash: String,
         @SerializedName("transport")
         @Expose
         var transport: String
 
 ) {
     @Ignore
-    constructor() : this("no", -1.0, -1.0, "no")
+    constructor() : this("no", "no", "no")
 
     override fun toString(): String {
         return """
         |Provider = $provider
-        |Longitude = $longitude
-        |Latitude = $latitude
+        |Geohash = $geohash
         |Location = $transport
         """.trimMargin()
     }

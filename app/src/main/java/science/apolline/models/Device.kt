@@ -61,8 +61,7 @@ data class Device(
         objectArray.add(id.toString())
         objectArray.add(device)
         objectArray.add(date.toString())
-        objectArray.add(position?.latitude.toString())
-        objectArray.add(position?.longitude.toString())
+        objectArray.add(position?.geohash.orEmpty())
         objectArray.add(position?.provider.orEmpty())
         objectArray.add(position?.transport.orEmpty())
 

@@ -28,8 +28,7 @@ class DataExport : AnkoLogger {
         headerArray.add("SensorID")
         headerArray.add("Device")
         headerArray.add("Date")
-        headerArray.add("Latitude")
-        headerArray.add("Longitude")
+        headerArray.add("geohash")
         headerArray.add("Provider")
         headerArray.add("Transport")
 

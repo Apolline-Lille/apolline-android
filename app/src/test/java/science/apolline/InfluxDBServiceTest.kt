@@ -11,6 +11,7 @@ import science.apolline.models.Position
 import science.apolline.models.Device
 import science.apolline.utils.RequestParser
 import java.io.IOException
+import science.apolline.utils.GeoHashHelper
 
 /**
  * Created by sparow on 10/13/17.
@@ -57,7 +58,8 @@ class InfluxDBServiceTest {
 
         val gson = Gson()
         val dataListObject = gson.fromJson(dataList, JsonObject::class.java)
-        val positionInitObject = Position("GPS", 152.36, 142.36, "Train")
+        val geohash = GeoHashHelper.encode(80.36,142.36)
+        val positionInitObject = Position("GPS", geohash, "Train")
         val sensorInitObject = Device("ffffffff-c9cf-31db-0000-00006c125b14","Arduino", 1422568543702900257, positionInitObject, dataListObject,0)
 
         //when

@@ -32,6 +32,7 @@ import science.apolline.utils.CheckUtility
 import science.apolline.utils.CheckUtility.canGetLocation
 import java.io.IOException
 import java.io.InputStream
+import science.apolline.utils.GeoHashHelper
 
 
 class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
@@ -87,7 +88,9 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                         disposable.add(locationProvider.getUpdatedLocation(request)
                                 .subscribe { t ->
                                     location = t
-                                    position = Position(location!!.provider, location!!.longitude, location!!.latitude, "no")
+
+                                    val geohash = GeoHashHelper.encode(location!!.latitude,location!!.longitude)
+                                    position = Position(location!!.provider, geohash, "no")
                                 }
                         )
                     }else{

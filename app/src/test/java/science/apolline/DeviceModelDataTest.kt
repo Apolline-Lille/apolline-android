@@ -7,7 +7,7 @@ import com.google.gson.JsonObject
 import org.junit.Assert.*
 import science.apolline.models.Position
 import science.apolline.models.Device
-import science.apolline.utils.AndroidUuid
+import science.apolline.utils.GeoHashHelper
 
 
 /**
@@ -23,14 +23,15 @@ class DeviceModelDataTest {
     @Throws(IOException::class)
     fun testHardcodedPosition() {
 
+        val geohash = GeoHashHelper.encode(80.36,142.36)
+
         //given
         val jsonInit = "{" +
                 "\"provider\":\"GPS\"," +
-                "\"longitude\":152.36," +
-                "\"latitude\":142.36," +
+                "\"geohash\":\"$geohash\"," +
                 "\"transport\":\"Train\"" +
                 "}"
-        val positionInitObject = Position("GPS", 152.36, 142.36, "Train")
+        val positionInitObject = Position("GPS", geohash, "Train")
 
         //when
         val gson = Gson()
@@ -42,8 +43,8 @@ class DeviceModelDataTest {
         assertNotEquals(position.provider, 0)
         assertEquals(position.provider, "GPS")
         assertNotEquals(position.provider, "toto")
-        assertNotEquals(position.longitude, 100.0)
-        assertNotEquals(position.latitude, 100.0)
+        assertNotEquals(GeoHashHelper.getLongitude(geohash), 100.0)
+        assertNotEquals(GeoHashHelper.getLatitude(geohash), 100.0)
         assertEquals(position.transport, "Train")
         assertNotEquals(position.transport, "toto")
         assertEquals(position.toString(), positionInitObject.toString())
@@ -59,6 +60,8 @@ class DeviceModelDataTest {
     @Throws(IOException::class)
     fun testHardcodedSensor() {
         //given
+        val geohash = GeoHashHelper.encode(80.36,142.36)
+
         val jsonInit = "{" +
                 "\"id\":0," +
                 "\"uuid\":ffffffff-c9cf-31db-0000-00006c125b14," +
@@ -67,8 +70,7 @@ class DeviceModelDataTest {
                 "\"date\": \"1422568543702900257\"," +
                 "\"position\": {" +
                 "\"provider\":\"GPS\"," +
-                "\"longitude\":152.36," +
-                "\"latitude\":142.36," +
+                "\"geohash\":$geohash," +
                 "\"transport\":\"Train\"" +
                 "}," +
                 "\"data\": {" +
@@ -86,7 +88,7 @@ class DeviceModelDataTest {
                 "\"O3\":[400,\"PPM\"]" +
                 "}"
 
-        val positionInitObject = Position("GPS", 152.36, 142.36, "Train")
+        val positionInitObject = Position("GPS", geohash, "Train")
 
         //when
         val gson = Gson()
