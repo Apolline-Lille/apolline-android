@@ -74,6 +74,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
 
                                         dataNotSync.forEach{
                                             it.isSync = 1
+                                            sensorModel.update(it)
                                         }
 
                                         // sensorModel.update(*dataNotSync.toTypedArray())
