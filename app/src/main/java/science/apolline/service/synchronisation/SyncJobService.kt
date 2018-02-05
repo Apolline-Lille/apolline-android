@@ -10,6 +10,6 @@ import science.apolline.ApollineApplication
 
 class SyncJobService: FrameworkJobSchedulerService() {
     public override fun getJobManager(): JobManager{
-        return SyncJobManager.getJobManager()
+        return SyncJobManager.jobManager!!
     }
 }
