@@ -77,7 +77,7 @@ class OptionsActivity : AppCompatActivity(), CompoundButton.OnCheckedChangeListe
         })
 
         // getting the id sensor value (EditText)
-        etSensorId!!.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+        etSensorId!!.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val editor = prefs!!.edit()
                 val imm = applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

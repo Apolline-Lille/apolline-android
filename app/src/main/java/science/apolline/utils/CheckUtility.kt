@@ -1,14 +1,26 @@
 package science.apolline.utils
 
 import android.Manifest
+import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
 import android.location.LocationManager
 import android.content.Context.LOCATION_SERVICE
+import android.content.Intent
 import android.net.NetworkInfo
 import android.net.ConnectivityManager
+import android.net.Uri
+import android.os.Build
+import android.os.PowerManager
+import android.provider.Settings
+import android.support.v4.app.ActivityCompat.startActivityForResult
+import android.support.v4.content.ContextCompat.startActivity
+import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.toast
+import science.apolline.view.Activity.MainActivity
 
 
 /**
@@ -16,7 +28,7 @@ import android.telephony.TelephonyManager
  */
 
 
-object CheckUtility {
+object CheckUtility : AnkoLogger{
 
     /**
      * To get device consuming netowork type is 2g,3g,4g
@@ -102,6 +114,34 @@ object CheckUtility {
         }
 
         return !(!gpsEnabled && !networkEnabled)
+    }
+
+    fun requestLocation(context: Context) {
+        if (!canGetLocation(context)) {
+            val alertDialog = AlertDialog.Builder(context).create()
+            alertDialog.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No") { _, _ ->
+                context.toast("You haven't enabled your GPS")
+            }
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes") { _, _ ->
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                context.startActivity(intent)
+            }
+            alertDialog.show()
+        }
+    }
+
+    fun requestDozeMode(context: Context){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val intent = Intent()
+            val packageName =  context.packageName
+            val pm =  context.getSystemService(Context.POWER_SERVICE) as PowerManager
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                intent.data = Uri.parse("package:" + packageName)
+                context.startActivity(intent)
+            }
+        }
     }
 
 }

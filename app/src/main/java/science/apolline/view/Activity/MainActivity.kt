@@ -35,6 +35,7 @@ import science.apolline.service.sensor.IOIOService
 import science.apolline.service.synchronisation.SyncInfluxDBJob
 import science.apolline.utils.CheckUtility.canGetLocation
 import science.apolline.utils.CheckUtility.isNetworkConnected
+import science.apolline.utils.CheckUtility.requestLocation
 import science.apolline.view.Fragment.IOIOFragment
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks,AnkoLogger {
@@ -199,26 +200,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             startActivityForResult(enableBlueTooth, REQUEST_CODE_ENABLE_BLUETOOTH)
         }
     }
-
-    private fun requestLocation(context: Context) {
-        if (!canGetLocation(context)) {
-        val alertDialog = AlertDialog.Builder(context).create()
-        alertDialog.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No") { _, _ ->
-            toast("You haven't enabled your GPS")
-        }
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes") { _, _ ->
-            val intent = Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-            startActivity(intent)
-        }
-        alertDialog.show()
-        }
-    }
-
-
-
-
-
 
     override fun onDestroy() {
         super.onDestroy()

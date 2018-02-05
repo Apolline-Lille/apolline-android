@@ -21,7 +21,7 @@ import io.reactivex.Flowable
 class SensorViewModel(application: Application) : AndroidViewModel(application), AnkoLogger {
 
 
-    val sensorModel: SensorDao = AppDatabase.getInstance(getApplication()).sensorDao()
+    private val sensorModel: SensorDao = AppDatabase.getInstance(getApplication()).sensorDao()
     var deviceListObserver: Flowable<List<Device>> = sensorModel.all()
 
 
@@ -36,7 +36,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
                 val postResponse: Response<InfluxBody>
                 postResponse = postCall.execute()
 
-                if (postResponse.isSuccessful()) {
+                if (postResponse.isSuccessful) {
                     info("Data send: success")
                 } else {
                     info("Data send: Failure, message = " + postResponse.message())
@@ -56,7 +56,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
         }
     }
 
-    fun isConnectingToInternet(context: Context): Boolean {
+    private fun isConnectingToInternet(context: Context): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = cm.activeNetworkInfo
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting
