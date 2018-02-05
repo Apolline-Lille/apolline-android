@@ -5,9 +5,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
@@ -15,6 +20,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
@@ -27,6 +33,7 @@ import pub.devrel.easypermissions.EasyPermissions
 import science.apolline.R
 import science.apolline.service.sensor.IOIOService
 import science.apolline.service.synchronisation.SyncInfluxDBJob
+import science.apolline.utils.CheckUtility.canGetLocation
 import science.apolline.utils.CheckUtility.isNetworkConnected
 import science.apolline.view.Fragment.IOIOFragment
 
@@ -50,18 +57,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navigationView = findViewById<NavigationView>(R.id.nav_drawer)
         navigationView.setNavigationItemSelectedListener(this)
 
-        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        if (!bluetoothAdapter.isEnabled) {
-            val enableBlueTooth = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableBlueTooth, REQUEST_CODE_ENABLE_BLUETOOTH)
-        }
-
         // Setup JobManager
         val builder = Configuration.Builder(this)
         jobManager = JobManager(builder.build())
 
         // Check permissions
         checkPermissions()
+
+        // Request enable Bluetooth
+        requestBluetooth()
+        // Request disable Doze Mode
+        requestDozeMode()
+        // Request enable location
+        requestLocation(this)
+
+        fragmentIOIO = IOIOFragment()
+        replaceFragment(fragmentIOIO)
 
     }
 
@@ -147,7 +158,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun checkPermissions(): Boolean {
         if (!EasyPermissions.hasPermissions(this, *PERMISSIONS_ARRAY)){
-                EasyPermissions.requestPermissions(this, "Les permissions de géolocalisation et d'écriture sont nécessaires au bon fonctionnement de l'application", REQUEST_CODE_PERMISSIONS_ARRAY ,
+                EasyPermissions.requestPermissions(this,"Geolocation and writing permissions are necessary for the proper functioning of the application", REQUEST_CODE_PERMISSIONS_ARRAY ,
                     Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE)
             return false
         }
@@ -167,11 +178,46 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>?) {
     }
 
-    @AfterPermissionGranted(REQUEST_CODE_PERMISSIONS_ARRAY)
-    fun launcher(){
-        fragmentIOIO = IOIOFragment()
-        replaceFragment(fragmentIOIO)
+
+    private fun requestDozeMode(){
+         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    val intent = Intent()
+                    val packageName = packageName
+                    val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+                    if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                        intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                        intent.data = Uri.parse("package:" + packageName)
+                        startActivity(intent)
+                    }
+                }
     }
+
+    private fun requestBluetooth() {
+        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        if (!bluetoothAdapter.isEnabled) {
+            val enableBlueTooth = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivityForResult(enableBlueTooth, REQUEST_CODE_ENABLE_BLUETOOTH)
+        }
+    }
+
+    private fun requestLocation(context: Context) {
+        if (!canGetLocation(context)) {
+        val alertDialog = AlertDialog.Builder(context).create()
+        alertDialog.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No") { _, _ ->
+            toast("You haven't enabled your GPS")
+        }
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes") { _, _ ->
+            val intent = Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            startActivity(intent)
+        }
+        alertDialog.show()
+        }
+    }
+
+
+
+
 
 
     override fun onDestroy() {

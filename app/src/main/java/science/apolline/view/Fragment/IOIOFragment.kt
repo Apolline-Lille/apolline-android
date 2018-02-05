@@ -104,11 +104,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
         dataList = createMultiSet()
         initGraph()
-
-        if(!canGetLocation(activity!!.applicationContext)){
-            context!!.longToast("Veuillez activer la géolocalisation !")
-        }
-
     }
 
     //init graph on create view
