@@ -5,7 +5,6 @@ import android.Manifest
 
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
-import android.net.wifi.WifiManager
 import android.net.wifi.WifiManager.WifiLock
 import android.os.Bundle
 import android.os.PowerManager.WakeLock
@@ -26,6 +25,7 @@ import pub.devrel.easypermissions.EasyPermissions
 import science.apolline.R
 import science.apolline.service.sensor.IOIOService
 import science.apolline.service.synchronisation.SyncInfluxDBJob
+import science.apolline.service.synchronisation.SyncJobService
 import science.apolline.utils.CheckUtility.isNetworkConnected
 import science.apolline.utils.CheckUtility.requestDozeMode
 import science.apolline.utils.CheckUtility.requestLocation
@@ -33,7 +33,7 @@ import science.apolline.utils.CheckUtility.requestPartialWakeUp
 import science.apolline.utils.CheckUtility.requestWifiFullMode
 import science.apolline.view.Fragment.IOIOFragment
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks,AnkoLogger {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks, AnkoLogger {
 
     private lateinit var jobManager: JobManager
     private lateinit var fragmentIOIO: IOIOFragment
@@ -77,6 +77,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Request Wifi full mode
         wifiLock = requestWifiFullMode(this)
 
+        // Init sync service
+        jobManager = SyncJobService().jobManager
+
         fragmentIOIO = IOIOFragment()
         replaceFragment(fragmentIOIO)
 
@@ -100,10 +103,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
-        if(isNetworkConnected(this)) {
+
+        if (isNetworkConnected(this)) {
             jobManager.addJobInBackground(SyncInfluxDBJob())
             toast("Synchronisation...")
-        }else{
+        } else {
             jobManager.addJobInBackground(SyncInfluxDBJob())
             toast("No internet connection ! Job added to queue")
         }
@@ -163,9 +167,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun checkPermissions(): Boolean {
-        if (!EasyPermissions.hasPermissions(this, *PERMISSIONS_ARRAY)){
-                EasyPermissions.requestPermissions(this,"Geolocation and writing permissions are necessary for the proper functioning of the application", REQUEST_CODE_PERMISSIONS_ARRAY ,
-                    Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (!EasyPermissions.hasPermissions(this, *PERMISSIONS_ARRAY)) {
+            EasyPermissions.requestPermissions(this, "Geolocation and writing permissions are necessary for the proper functioning of the application", REQUEST_CODE_PERMISSIONS_ARRAY,
+                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
             return false
         }
         return true
@@ -194,10 +198,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onDestroy() {
-        if (wakeLock.isHeld){
+        if (wakeLock.isHeld) {
             wakeLock.release()
             info("wakeLock released")
-        } else if (wifiLock.isHeld){
+        } else if (wifiLock.isHeld) {
             wifiLock.release()
             info("wifiLock released")
         }
@@ -215,7 +219,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         private const val REQUEST_CODE_FINE_LOCATION = 102
         private const val REQUEST_CODE_COARSE_LOCATION = 103
         private const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 104
-        private const val REQUEST_WAKE_UP_TIMEOUT:Long = 86400 // 24h
+        private const val REQUEST_WAKE_UP_TIMEOUT: Long = 86400 // 24h
+
+        private const val INFLUXDB_SYNC_JOB_ID = "influxDBJobId"
 
     }
 }

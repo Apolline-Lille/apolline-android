@@ -297,7 +297,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
                     if (it.isNotEmpty()) {
 
-                        val device = it.last()
+                        val device = it.first()
                         //info(device.toString())
                         val gson = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
                         val data = gson.fromJson(device.data, IOIOData::class.java)

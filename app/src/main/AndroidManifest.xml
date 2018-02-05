@@ -11,9 +11,10 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="com.example.androidmapsv2.permission.MAPS_RECEIVE"/>
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
-    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
 
     <uses-feature
@@ -27,7 +28,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:largeHeap="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".ApollineApplication">
         <uses-library
             android:name="com.android.future.usb.accessory"
             android:required="false" />
@@ -36,6 +38,7 @@
             android:required="false" />
 
         <service android:name=".service.sensor.IOIOService" />
+        <service android:name=".service.synchronisation.SyncJobService" android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity
             android:name=".view.Activity.MainActivity"

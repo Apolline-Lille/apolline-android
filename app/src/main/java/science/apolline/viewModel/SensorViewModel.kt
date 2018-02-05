@@ -22,7 +22,7 @@ class SensorViewModel(application: Application) : AndroidViewModel(application),
 
 
     private val sensorModel: SensorDao = AppDatabase.getInstance(getApplication()).sensorDao()
-    var deviceListObserver: Flowable<List<Device>> = sensorModel.all()
+    var deviceListObserver: Flowable<List<Device>> = sensorModel.getLastEntries()
 
 
     private fun sendData(device: Device) {

@@ -78,7 +78,12 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
                                         it.isSync = 1
                                         //sensorModel.update(it)
                                     }
-
+//                                            uiThread {
+//                                                nbUnSynced -= MAX_LENGTH
+//                                                info("number of pending unsyncked is : $nbUnSynced")
+//                                                applicationContext.longToast("Synced")
+//                                            }
+//
                                     uiThread {
                                         doAsync {
                                             sensorModel.update(*dataNotSync.toTypedArray())

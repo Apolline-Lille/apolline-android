@@ -16,7 +16,11 @@ interface SensorDao {
 
     @Transaction
     @Query("SELECT * FROM Device ORDER BY date asc")
-    fun all(): Flowable<List<Device>>
+    fun getAll(): Flowable<List<Device>>
+
+    @Transaction
+    @Query("SELECT * FROM Device ORDER BY date desc LIMIT 10")
+    fun getLastEntries(): Flowable<List<Device>>
 
     @Query("SELECT * FROM Device WHERE id IN (:sensorIds)")
     fun loadAllByIds(sensorIds: IntArray): List<Device>
