@@ -10,7 +10,9 @@ import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.google.android.gms.location.LocationRequest
+import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 import ioio.lib.api.AnalogInput
 import ioio.lib.api.DigitalOutput
@@ -86,11 +88,11 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                     if (CheckUtility.checkFineLocationPermission(applicationContext) && canGetLocation(applicationContext)) {
                         info("checked")
                         disposable.add(locationProvider.getUpdatedLocation(request)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.io())
                                 .subscribe { t ->
-                                    location = t
-
-                                    val geohash = GeoHashHelper.encode(location!!.latitude,location!!.longitude)
-                                    position = Position(location!!.provider, geohash, "no")
+                                    position = Position(t!!.provider, GeoHashHelper.encode(t.latitude,t.longitude), "no")
+                                    //info("Position in observer" + position.toString())
                                 }
                         )
                     }else{
@@ -136,6 +138,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                 }
 
                 Thread.sleep(freq.toLong())
+                info("Position Hash :" + position.geohash)
                 persistData(data,position)
             }
         }
