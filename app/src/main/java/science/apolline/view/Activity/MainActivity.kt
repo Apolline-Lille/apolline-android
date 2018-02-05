@@ -31,6 +31,8 @@ import science.apolline.utils.CheckUtility.requestDozeMode
 import science.apolline.utils.CheckUtility.requestLocation
 import science.apolline.utils.CheckUtility.requestPartialWakeUp
 import science.apolline.utils.CheckUtility.requestWifiFullMode
+import science.apolline.utils.SyncJobScheduler.cancelAutoSync
+import science.apolline.utils.SyncJobScheduler.setAutoSync
 import science.apolline.view.Fragment.IOIOFragment
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks, AnkoLogger {
@@ -79,6 +81,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         // Init sync service
         jobManager = SyncJobService().jobManager
+
+        // Launch AutoSync
+        setAutoSync(INFLUXDB_SYNC_FREQ, this)
 
         fragmentIOIO = IOIOFragment()
         replaceFragment(fragmentIOIO)
@@ -216,6 +221,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             wifiLock.release()
             info("wifiLock released")
         }
+        cancelAutoSync(false)
         super.onDestroy()
         stopService(Intent(this, IOIOService::class.java))
     }
@@ -233,6 +239,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         private const val REQUEST_WAKE_UP_TIMEOUT: Long = 86400 // 24h
 
         private const val INFLUXDB_SYNC_JOB_ID = "influxDBJobId"
+
+        private const val INFLUXDB_SYNC_FREQ: Long = 60 // Minutes
 
     }
 }
