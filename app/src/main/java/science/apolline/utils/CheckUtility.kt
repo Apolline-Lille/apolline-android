@@ -1,6 +1,7 @@
 package science.apolline.utils
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.pm.PackageManager
@@ -19,6 +20,7 @@ import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
 import science.apolline.view.Activity.MainActivity
 
@@ -131,6 +133,7 @@ object CheckUtility : AnkoLogger{
         }
     }
 
+    @SuppressLint("BatteryLife")
     fun requestDozeMode(context: Context){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val intent = Intent()
@@ -144,4 +147,12 @@ object CheckUtility : AnkoLogger{
         }
     }
 
+    fun requestPartialWakeUp(context: Context, timeout: Long):PowerManager.WakeLock {
+            val packageName =  context.packageName
+            val pm =  context.getSystemService(Context.POWER_SERVICE) as PowerManager
+            val  wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, packageName)
+            wl.acquire(timeout)
+            info("Partial wake up is :"+wl.isHeld)
+        return wl
+    }
 }

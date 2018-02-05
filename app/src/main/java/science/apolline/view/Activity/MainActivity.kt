@@ -2,25 +2,17 @@ package science.apolline.view.Activity
 
 
 import android.Manifest
-import android.annotation.SuppressLint
+
 import android.bluetooth.BluetoothAdapter
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
-import android.provider.Settings
+import android.os.PowerManager.WakeLock
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
-import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
@@ -28,20 +20,21 @@ import android.view.MenuItem
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.config.Configuration
 import org.jetbrains.anko.*
-import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import science.apolline.R
 import science.apolline.service.sensor.IOIOService
 import science.apolline.service.synchronisation.SyncInfluxDBJob
-import science.apolline.utils.CheckUtility.canGetLocation
 import science.apolline.utils.CheckUtility.isNetworkConnected
+import science.apolline.utils.CheckUtility.requestDozeMode
 import science.apolline.utils.CheckUtility.requestLocation
+import science.apolline.utils.CheckUtility.requestPartialWakeUp
 import science.apolline.view.Fragment.IOIOFragment
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks,AnkoLogger {
 
     private lateinit var jobManager: JobManager
     private lateinit var fragmentIOIO: IOIOFragment
+    private lateinit var wakeLock: WakeLock
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,9 +61,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Request enable Bluetooth
         requestBluetooth()
         // Request disable Doze Mode
-        requestDozeMode()
+        requestDozeMode(this)
         // Request enable location
         requestLocation(this)
+        // Request partial wake up
+        wakeLock = requestPartialWakeUp(this, REQUEST_WAKE_UP_TIMEOUT)
 
         fragmentIOIO = IOIOFragment()
         replaceFragment(fragmentIOIO)
@@ -180,19 +175,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-    private fun requestDozeMode(){
-         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    val intent = Intent()
-                    val packageName = packageName
-                    val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-                    if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                        intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                        intent.data = Uri.parse("package:" + packageName)
-                        startActivity(intent)
-                    }
-                }
-    }
-
     private fun requestBluetooth() {
         val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (!bluetoothAdapter.isEnabled) {
@@ -202,6 +184,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onDestroy() {
+        if (wakeLock.isHeld){
+            wakeLock.release()
+            info("wakeLock released")
+        }
         super.onDestroy()
         stopService(Intent(this, IOIOService::class.java))
     }
@@ -216,6 +202,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         private const val REQUEST_CODE_FINE_LOCATION = 102
         private const val REQUEST_CODE_COARSE_LOCATION = 103
         private const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 104
+        private const val REQUEST_WAKE_UP_TIMEOUT:Long = 86400 // 24h
 
     }
 }
