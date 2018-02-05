@@ -76,10 +76,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
     private lateinit var viewModel: SensorViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_ioio, container, false)
@@ -324,6 +320,13 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
                         val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
 
                         addEntry(dataToDisplay)
+                    }else{
+                        progressPM1!!.progress = 0
+                        progressPM2!!.progress = 0
+                        progressPM10!!.progress = 0
+                        textViewPM1!!.text = "-1"
+                        textViewPM2!!.text = "-1"
+                        textViewPM10!!.text = "-1"
                     }
                 })
     }
