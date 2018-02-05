@@ -129,8 +129,8 @@ Temporary Items
 # .nfs files are created when an open file is removed but is still being accessed
 .nfs*
 
-#room database shema
-app/schemas/science.apolline.service.database.AppDatabase/
+# room database shema
+# app/schemas/science.apolline.service.database.AppDatabase/
 
 projectFilesBackup1/\.idea/workspace\.xml
 

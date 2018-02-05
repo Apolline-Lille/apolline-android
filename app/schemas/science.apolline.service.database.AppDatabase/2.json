@@ -1,18 +1,24 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 1,
-    "identityHash": "97ce9dfe8a2a6160ca03ad68d4ec3f68",
+    "version": 2,
+    "identityHash": "194aa63f0ffff8675b345f2e92a5521e",
     "entities": [
       {
-        "tableName": "Sensor",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sensorId` INTEGER PRIMARY KEY AUTOINCREMENT, `device` TEXT NOT NULL, `sensor` TEXT NOT NULL, `date` TEXT NOT NULL, `data` TEXT, `provider` TEXT, `longitude` REAL, `latitude` REAL, `location` TEXT)",
+        "tableName": "Device",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uuid` TEXT NOT NULL, `device` TEXT NOT NULL, `date` INTEGER NOT NULL, `data` TEXT, `isSync` INTEGER NOT NULL, `provider` TEXT, `geohash` TEXT, `transport` TEXT)",
         "fields": [
           {
-            "fieldPath": "sensorId",
-            "columnName": "sensorId",
+            "fieldPath": "id",
+            "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
+          },
+          {
+            "fieldPath": "uuid",
+            "columnName": "uuid",
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "device",
@@ -21,15 +27,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "sensor",
-            "columnName": "sensor",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
             "fieldPath": "date",
             "columnName": "date",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -39,33 +39,33 @@
             "notNull": false
           },
           {
+            "fieldPath": "isSync",
+            "columnName": "isSync",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "position.provider",
             "columnName": "provider",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "position.longitude",
-            "columnName": "longitude",
-            "affinity": "REAL",
+            "fieldPath": "position.geohash",
+            "columnName": "geohash",
+            "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "position.latitude",
-            "columnName": "latitude",
-            "affinity": "REAL",
-            "notNull": false
-          },
-          {
-            "fieldPath": "position.location",
-            "columnName": "location",
+            "fieldPath": "position.transport",
+            "columnName": "transport",
             "affinity": "TEXT",
             "notNull": false
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "sensorId"
+            "id"
           ],
           "autoGenerate": true
         },
@@ -75,7 +75,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"97ce9dfe8a2a6160ca03ad68d4ec3f68\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"194aa63f0ffff8675b345f2e92a5521e\")"
     ]
   }
 }

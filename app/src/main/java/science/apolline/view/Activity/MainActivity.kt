@@ -91,7 +91,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
-            super.onBackPressed()
+            val backStackEntryCount = supportFragmentManager.backStackEntryCount
+            if (backStackEntryCount == 1) {
+                finish()
+            } else {
+                if (backStackEntryCount > 1) {
+                    supportFragmentManager.popBackStack()
+                } else {
+                    super.onBackPressed()
+                }
+                super.onBackPressed()
+            }
+
         }
     }
 
