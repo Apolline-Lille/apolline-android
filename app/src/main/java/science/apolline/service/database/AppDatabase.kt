@@ -6,13 +6,17 @@ import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.Database
 import android.content.Context
 import science.apolline.models.Device
+import android.arch.persistence.db.SupportSQLiteDatabase
+import android.arch.persistence.room.migration.Migration
+
+
 
 
 /**
  * Created by sparow on 11/5/17.
  */
 
-@Database(entities = [(Device::class)], version = 1, exportSchema = false)
+@Database(entities = [(Device::class)], version = 2, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -34,6 +38,7 @@ abstract class AppDatabase : RoomDatabase() {
                             .build()
                 } else {
                     db = Room.databaseBuilder(context, AppDatabase::class.java, databaseName)
+                            .addMigrations(MIGRATION_1_2)
                             .build()
                 }
             }
@@ -42,6 +47,12 @@ abstract class AppDatabase : RoomDatabase() {
 
         private fun close() {
             db?.close()
+        }
+
+        val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Since we didn't alter the table, there's nothing else to do here.
+            }
         }
 
     }

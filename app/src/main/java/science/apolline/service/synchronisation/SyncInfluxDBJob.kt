@@ -12,7 +12,7 @@ import science.apolline.service.networks.ApiUtils
 import science.apolline.utils.RequestParser
 import science.apolline.BuildConfig
 import science.apolline.models.InfluxBody
-import java.util.concurrent.TimeUnit
+import science.apolline.utils.CheckUtility.isNetworkConnected
 
 /**
  * Created by sparow on 19/01/2018.
@@ -38,88 +38,86 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
         val api = ApiUtils.apiService
 
 
-        if (super.getApplicationContext() != null) {
+        if (super.getApplicationContext() != null && isNetworkConnected(super.getApplicationContext())) {
 
-                sensorModel = AppDatabase.getInstance(super.getApplicationContext()).sensorDao()
-                var nbUnSynced: Int = sensorModel.getSensorNotSyncCount()
+            sensorModel = AppDatabase.getInstance(super.getApplicationContext()).sensorDao()
+            var nbUnSynced: Int = sensorModel.getSensorNotSyncCount()
 
-                info("number of initial unsyncked is : $nbUnSynced")
+            info("number of initial unsyncked is : $nbUnSynced")
 
-                var attempt: Int = nbUnSynced/MAXLENGH
+            var attempt: Int = nbUnSynced / MAX_LENGTH
 
-                if (nbUnSynced % MAXLENGH != 0) {
-                    attempt++
-                }
+            if (nbUnSynced % MAX_LENGTH != 0) {
+                attempt++
+            }
 
-                info("Attempts " + attempt)
+            info("Attempts " + attempt)
 
-                for (i in 1..attempt) {
+            for (i in 1..attempt) {
 
-                    val dataNotSync = sensorModel.getUnSync()
+                val dataNotSync = sensorModel.getUnSync()
 
-                    if (dataNotSync.isNotEmpty()) {
-                        val dataToSend = RequestParser.createRequestBody(dataNotSync)
-                        info(dataToSend)
-                        val call = api.savePost(BuildConfig.INFLUXDB_DBNAME, BuildConfig.INFLUXDB_USR, BuildConfig.INFLUXDB_PWD, dataToSend)
+                if (dataNotSync.isNotEmpty()) {
+                    info("UnSync to sync is :" + dataNotSync.size)
 
-                        call.enqueue(object : Callback<InfluxBody> {
+                    val dataToSend = RequestParser.createRequestBody(dataNotSync)
+                    info(dataToSend)
+                    val call = api.savePost(BuildConfig.INFLUXDB_DBNAME, BuildConfig.INFLUXDB_USR, BuildConfig.INFLUXDB_PWD, dataToSend)
 
-                                override fun onResponse(call: Call<InfluxBody>?, response: Response<InfluxBody>?) {
+                    call.enqueue(object : Callback<InfluxBody> {
 
-                                if (response != null && response.isSuccessful) {
+                        override fun onResponse(call: Call<InfluxBody>?, response: Response<InfluxBody>?) {
 
-                                    info("response success" + response)
+                            if (response != null && response.isSuccessful) {
 
-                                    doAsync {
+                                info("response success" + response)
 
-                                        dataNotSync.forEach{
-                                            it.isSync = 1
-                                            sensorModel.update(it)
-                                        }
+                                doAsync {
 
-                                        // sensorModel.update(*dataNotSync.toTypedArray())
-
-                                        uiThread {
-
-                                            nbUnSynced -= MAXLENGH
-                                            info("number of pending unsyncked is : $nbUnSynced")
-
-                                            applicationContext.longToast("Synced")
-                                        }
+                                    dataNotSync.forEach {
+                                        it.isSync = 1
+                                        //sensorModel.update(it)
                                     }
 
-                                } else {
-                                    info("response failed " + response)
+                                    uiThread {
+                                        doAsync {
+                                            sensorModel.update(*dataNotSync.toTypedArray())
+                                            uiThread {
+                                                nbUnSynced -= MAX_LENGTH
+                                                info("number of pending unsyncked is : $nbUnSynced")
+                                                applicationContext.longToast("Synced")
+                                            }
+                                        }
+                                    }
                                 }
-                            }
 
-                            override fun onFailure(call: Call<InfluxBody>?, t: Throwable?) {
-
+                            } else {
+                                info("response failed " + response)
                             }
-                        })
-                    }
+                        }
+
+                        override fun onFailure(call: Call<InfluxBody>?, t: Throwable?) {
+
+                        }
+                    })
+                }
             }
         }
-        
+
         info("onRun: ")
     }
 
     override fun shouldReRunOnThrowable(throwable: Throwable, runCount: Int,
                                         maxRunCount: Int): RetryConstraint {
-        // An error occurred in onRun.
-        // Return value determines whether this job should retry or cancel. You can further
-        // specify a backoff strategy or change the job's priority. You can also apply the
-        // delay to the whole group to preserve jobs' running order.
         return RetryConstraint.createExponentialBackoff(runCount, 1000)
     }
 
     override fun onCancel(@CancelReason cancelReason: Int, throwable: Throwable?) {
-        // Job has exceeded retry attempts or shouldReRunOnThrowable() has decided to cancel.
         info("onCancel: ")
     }
 
     companion object {
         private const val PRIORITY = 1
-        private const val MAXLENGH = 8000 //Hardcoded in SensorDao
+        private const val MAX_LENGTH = 8000 //Hardcoded in SensorDao
     }
 }

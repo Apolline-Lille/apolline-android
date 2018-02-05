@@ -18,7 +18,6 @@ interface SensorDao {
     @Query("SELECT * FROM Device ORDER BY date asc")
     fun all(): Flowable<List<Device>>
 
-    @Transaction
     @Query("SELECT * FROM Device WHERE id IN (:sensorIds)")
     fun loadAllByIds(sensorIds: IntArray): List<Device>
 
@@ -26,11 +25,9 @@ interface SensorDao {
     @Query("SELECT * FROM Device WHERE isSync=0 ORDER BY date ASC LIMIT 8000")
     fun getUnSync(): List<Device>
 
-    @Transaction
     @Query("SELECT count(*) FROM Device WHERE isSync=0")
     fun getSensorNotSyncCount(): Int
 
-    @Transaction
     @Query("SELECT count(*) FROM Device")
     fun getSensorCount(): Int
 
