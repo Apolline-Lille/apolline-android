@@ -41,6 +41,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
         if (super.getApplicationContext() != null && isNetworkConnected(super.getApplicationContext())) {
 
             sensorModel = AppDatabase.getInstance(super.getApplicationContext()).sensorDao()
+
             var nbUnSynced: Int = sensorModel.getSensorNotSyncCount()
 
             info("number of initial unsyncked is : $nbUnSynced")

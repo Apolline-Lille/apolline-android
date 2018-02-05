@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'io.fabric'
+
 
 import java.util.regex.Pattern
 
@@ -116,6 +118,17 @@ android {
         }
     }
 
+    // Ensure the no-op dependency is always used in JVM tests.
+    configurations.all { config ->
+        if (config.name.contains('UnitTest')) {
+            config.resolutionStrategy.eachDependency { details ->
+                if (details.requested.group == 'com.squareup.leakcanary' && details.requested.name == 'leakcanary-android') {
+                    details.useTarget(group: details.requested.group, name: 'leakcanary-android-no-op', version: details.requested.version)
+                }
+            }
+        }
+    }
+
 }
 
 
@@ -181,7 +194,7 @@ dependencies {
     testImplementation"android.arch.persistence.room:testing:$project.rc"
 
     // LiveData
-    implementation "android.arch.lifecycle:extensions:$project.rc"
+    implementation 'android.arch.lifecycle:extensions:1.1.0'
     testImplementation "android.arch.core:core-testing:$project.rc"
 
     // Anko
@@ -209,6 +222,15 @@ dependencies {
     // Easy permission
     implementation 'pub.devrel:easypermissions:1.0.1'
 
+    // LeakCanary
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+
+    // Crashlytics
+    implementation 'com.google.firebase:firebase-crash:11.8.0'
+    implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+        transitive = true
+    }
 
 }
 
@@ -221,5 +243,7 @@ configurations {
         exclude module: 'commons-logging'
     }
 }
+
+apply plugin: 'com.google.gms.google-services'
 
 

@@ -78,10 +78,12 @@
                 android:value="science.apolline.view.Activity.MainActivity" />
         </activity>
 
-
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="e4d1dff4ebcf925ddbe93cd3a23c88826c9055a5"/>
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/mapKey" />
+            android:value="@string/mapKey"/>
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more activity_information.
