@@ -5,6 +5,8 @@ import android.Manifest
 
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
+import android.net.wifi.WifiManager
+import android.net.wifi.WifiManager.WifiLock
 import android.os.Bundle
 import android.os.PowerManager.WakeLock
 import android.support.design.widget.NavigationView
@@ -28,6 +30,7 @@ import science.apolline.utils.CheckUtility.isNetworkConnected
 import science.apolline.utils.CheckUtility.requestDozeMode
 import science.apolline.utils.CheckUtility.requestLocation
 import science.apolline.utils.CheckUtility.requestPartialWakeUp
+import science.apolline.utils.CheckUtility.requestWifiFullMode
 import science.apolline.view.Fragment.IOIOFragment
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks,AnkoLogger {
@@ -35,6 +38,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var jobManager: JobManager
     private lateinit var fragmentIOIO: IOIOFragment
     private lateinit var wakeLock: WakeLock
+    private lateinit var wifiLock: WifiLock
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,12 +64,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         // Request enable Bluetooth
         requestBluetooth()
+
         // Request disable Doze Mode
         requestDozeMode(this)
+
         // Request enable location
         requestLocation(this)
+
         // Request partial wake up
         wakeLock = requestPartialWakeUp(this, REQUEST_WAKE_UP_TIMEOUT)
+
+        // Request Wifi full mode
+        wifiLock = requestWifiFullMode(this)
 
         fragmentIOIO = IOIOFragment()
         replaceFragment(fragmentIOIO)
@@ -187,6 +197,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (wakeLock.isHeld){
             wakeLock.release()
             info("wakeLock released")
+        } else if (wifiLock.isHeld){
+            wifiLock.release()
+            info("wifiLock released")
         }
         super.onDestroy()
         stopService(Intent(this, IOIOService::class.java))

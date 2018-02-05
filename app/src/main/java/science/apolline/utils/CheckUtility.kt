@@ -2,27 +2,23 @@ package science.apolline.utils
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
 import android.location.LocationManager
 import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
-import android.net.NetworkInfo
 import android.net.ConnectivityManager
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
-import android.support.v4.app.ActivityCompat.startActivityForResult
-import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
-import science.apolline.view.Activity.MainActivity
 
 
 /**
@@ -152,7 +148,19 @@ object CheckUtility : AnkoLogger{
             val pm =  context.getSystemService(Context.POWER_SERVICE) as PowerManager
             val  wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, packageName)
             wl.acquire(timeout)
-            info("Partial wake up is :"+wl.isHeld)
+            info("Partial wake up is: "+wl.isHeld)
         return wl
     }
+
+    fun requestWifiFullMode(context: Context):WifiManager.WifiLock {
+        val packageName =  context.packageName
+        val pm =  context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val  wf = pm.createWifiLock(WifiManager.WIFI_MODE_FULL, packageName)
+        wf.acquire()
+        info("Wifi full mode is: "+ wf.isHeld)
+        return wf
+    }
+
+
+
 }
