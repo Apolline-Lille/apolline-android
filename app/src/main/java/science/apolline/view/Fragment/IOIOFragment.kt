@@ -31,13 +31,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.doAsync
 import science.apolline.R
 import science.apolline.models.IOIOData
 import science.apolline.service.sensor.IOIOService
 import science.apolline.utils.*
-import science.apolline.utils.CheckUtility.canGetLocation
 import science.apolline.viewModel.SensorViewModel
 import java.util.*
 
@@ -68,9 +66,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
     private val export = DataExport()
 
     private lateinit var dataList: List<ILineDataSet>
-
-    //TODO : allow user to change that value
-    private val maxEntryCount: Int = 20
 
     private lateinit var disposable: CompositeDisposable
 
@@ -181,8 +176,8 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
     }
 
-    //Add new points to graph
-    private fun addEntry(dataTosend: IntArray) {
+    // Add new points to graph
+    private fun addEntry(dataDisplay: IntArray) {
         val data = mChart!!.data
 
         if (data != null) {
@@ -192,14 +187,14 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
                 }
         }
         val now = System.currentTimeMillis() / 1000
-        data!!.addEntry(Entry((now - referenceTimestamp).toFloat(), dataTosend[0].toFloat()), 0)
-        data.addEntry(Entry((now - referenceTimestamp).toFloat(), dataTosend[1].toFloat()), 1)
-        data.addEntry(Entry((now - referenceTimestamp).toFloat(), dataTosend[2].toFloat()), 2)
+        data!!.addEntry(Entry((now - referenceTimestamp).toFloat(), dataDisplay[0].toFloat()), 0)
+        data.addEntry(Entry((now - referenceTimestamp).toFloat(), dataDisplay[1].toFloat()), 1)
+        data.addEntry(Entry((now - referenceTimestamp).toFloat(), dataDisplay[2].toFloat()), 2)
 
 
         data.dataSets.forEach {
 
-            if (it.entryCount >= maxEntryCount) {
+            if (it.entryCount >= MAX_VISIBLE_ENTRIES) {
                 it.removeFirst()
             }
         }
@@ -219,7 +214,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         // this automatically refreshes the chart (calls invalidate())
         //             mChart.moveViewTo(data.getEntryCount() -7, 55f,
         //             YAxis.AxisDependency.LEFT);
-
 
     }
 
@@ -296,26 +290,27 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
                 .subscribe {
 
                     if (it.isNotEmpty()) {
+                        doAsync {
+                            val device = it.first()
+                            //info(device.toString())
+                            val gson = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
+                            val data = gson.fromJson(device.data, IOIOData::class.java)
 
-                        val device = it.first()
-                        //info(device.toString())
-                        val gson = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
-                        val data = gson.fromJson(device.data, IOIOData::class.java)
+                            val PM01Value = data!!.pm01Value
+                            val PM2_5Value = data.pm2_5Value
+                            val PM10Value = data.pm10Value
 
-                        val PM01Value = data!!.pm01Value
-                        val PM2_5Value = data.pm2_5Value
-                        val PM10Value = data.pm10Value
+                            progressPM1!!.progress = PM01Value
+                            progressPM2!!.progress = PM2_5Value
+                            progressPM10!!.progress = PM10Value
+                            textViewPM1!!.text = "$PM01Value"
+                            textViewPM2!!.text = "$PM2_5Value"
+                            textViewPM10!!.text = "$PM10Value"
+                            val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
+                            addEntry(dataToDisplay)
+                        }
 
-                        progressPM1!!.progress = PM01Value
-                        progressPM2!!.progress = PM2_5Value
-                        progressPM10!!.progress = PM10Value
-                        textViewPM1!!.text = "$PM01Value"
-                        textViewPM2!!.text = "$PM2_5Value"
-                        textViewPM10!!.text = "$PM10Value"
-                        val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
-
-                        addEntry(dataToDisplay)
-                    }else{
+                    } else {
                         progressPM1!!.progress = 0
                         progressPM2!!.progress = 0
                         progressPM10!!.progress = 0
@@ -338,6 +333,11 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         if (!disposable.isDisposed) {
             disposable.dispose()
         }
+    }
+
+    companion object {
+        //TODO : allow user to change that value
+        private const val MAX_VISIBLE_ENTRIES: Int = 15
     }
 }
 

@@ -1,9 +1,13 @@
 package science.apolline.service.sensor
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
@@ -24,6 +28,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.info
 import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
+import science.apolline.R
 import science.apolline.models.Device
 import science.apolline.models.IOIOData
 import science.apolline.models.Position
@@ -35,6 +40,7 @@ import science.apolline.utils.CheckUtility.canGetLocation
 import java.io.IOException
 import java.io.InputStream
 import science.apolline.utils.GeoHashHelper
+import science.apolline.view.Activity.MainActivity
 
 
 class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
@@ -175,13 +181,29 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     fun initChannels(context: Context) {
         if (Build.VERSION.SDK_INT < 26) {
-            return
+                val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                val intent = Intent(context, MainActivity::class.java)
+                val n: Notification
+                val pendingIntent = PendingIntent.getActivity(context,
+                        0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                val builder = Notification.Builder(context,"default")
+                        .setContentTitle("Apolline service is running...")
+                        .setContentText("IOIO sensor is collecting data...")
+                        .setContentIntent(pendingIntent)
+                        .setSmallIcon(R.drawable.logo_apolline)
+                        .setLargeIcon(BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.logo_apolline))
+                n = builder.build()
+                n.flags = n.flags or (Notification.FLAG_NO_CLEAR or Notification.FLAG_ONGOING_EVENT)
+                notificationManager.notify(0, n)
+        } else {
+
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val channel = NotificationChannel("default",
+                    "Channel name",
+                    NotificationManager.IMPORTANCE_DEFAULT)
+            channel.description = "Channel description"
+            notificationManager.createNotificationChannel(channel)
         }
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channel = NotificationChannel("default",
-                "Channel name",
-                NotificationManager.IMPORTANCE_DEFAULT)
-        channel.description = "Channel description"
-        notificationManager.createNotificationChannel(channel)
     }
 }

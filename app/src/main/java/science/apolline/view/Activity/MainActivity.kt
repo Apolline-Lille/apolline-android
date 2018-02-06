@@ -135,8 +135,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val itemId = item.itemId
         val groupId = item.groupId
 
-        //
-
         when (groupId) {
             R.id.grp_capteur -> if (itemId == R.id.nav_ioio) {
                 val ioioFragment = IOIOFragment()
