@@ -44,5 +44,9 @@
 
     <string name="btn_sync">Sync</string>
 
+    <string name="export_json">Export to JSON</string>
+    <string name="export_csv">Export to CSV</string>
+    <string name="export_share">Share</string>
+
 
 </resources>

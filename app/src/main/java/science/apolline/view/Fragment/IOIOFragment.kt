@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +13,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.github.clans.fab.FloatingActionMenu
+import com.github.clans.fab.FloatingActionButton
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
@@ -36,6 +37,8 @@ import science.apolline.R
 import science.apolline.models.IOIOData
 import science.apolline.service.sensor.IOIOService
 import science.apolline.utils.*
+import science.apolline.utils.DataExport.exportToCsv
+import science.apolline.utils.DataExport.exportToJson
 import science.apolline.viewModel.SensorViewModel
 import java.util.*
 
@@ -51,7 +54,13 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
     private var textViewPM2: TextView? = null
     private var textViewPM10: TextView? = null
 
-    private var save_fab: FloatingActionButton? = null
+    private var saveFam: FloatingActionMenu? = null
+    private var saveJson: FloatingActionButton? = null
+    private var saveCsv: FloatingActionButton? = null
+    private var saveShare: FloatingActionButton? = null
+
+
+
 
     private val pieton: Button? = null
     private val velo: Button? = null
@@ -63,7 +72,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
     private var mChart: LineChart? = null
     private var referenceTimestamp: Long = 0  // minimum timestamp in your data set
-    private val export = DataExport()
 
     private lateinit var dataList: List<ILineDataSet>
 
@@ -86,11 +94,26 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         textViewPM2 = view.findViewById(R.id.fragment_ioio_tv_pm2_value)
         progressPM10 = view.findViewById(R.id.fragment_ioio_progress_pm10)
         textViewPM10 = view.findViewById(R.id.fragment_ioio_tv_pm10_value)
+
         mChart = view.findViewById(R.id.chart1)
-        save_fab = view.findViewById(R.id.fab_save)
-        save_fab!!.setOnClickListener {
-            export.exportToCsv(activity!!.application)
+
+        saveFam = view.findViewById(R.id.floating_action_menu)
+
+        saveJson = view.findViewById(R.id.floating_action_menu_json)
+
+        saveJson!!.setOnClickListener{
+            exportToJson(activity!!.application)
         }
+        saveCsv = view.findViewById(R.id.floating_action_menu_csv)
+        saveCsv!!.setOnClickListener{
+            exportToCsv(activity!!.application)
+        }
+        saveShare = view.findViewById(R.id.floating_action_menu_share)
+        saveShare!!.setOnClickListener{
+            exportToCsv(activity!!.application)
+        }
+
+
         //        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_ioio_map);
         //        pieton = view.findViewById(R.id.fragment_ioio_pieton);
         //        velo = view.findViewById(R.id.fragment_ioio_velo);

@@ -232,6 +232,8 @@ dependencies {
         transitive = true
     }
 
+    // Floating Actions
+    implementation 'com.github.clans:fab:1.6.4'
 }
 
 repositories {

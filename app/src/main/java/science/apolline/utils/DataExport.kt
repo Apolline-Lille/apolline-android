@@ -2,7 +2,6 @@ package science.apolline.utils
 
 import android.content.Context
 import android.os.Environment.getExternalStorageDirectory
-import android.util.Log
 import science.apolline.service.database.AppDatabase
 import java.io.File
 import java.io.FileWriter
@@ -21,7 +20,7 @@ import org.jetbrains.anko.*
  * Created by damien on 08/12/2017.
  */
 
-class DataExport : AnkoLogger {
+object DataExport : AnkoLogger {
 
     private fun toHeader(data: JsonObject?): Array<String> {
         val headerArray = mutableListOf<String>()
@@ -53,12 +52,12 @@ class DataExport : AnkoLogger {
             val sensorDao = AppDatabase.getInstance(context).sensorDao()
             val fw = FileWriter(filename)
             val dataList = sensorDao.dumpSensor()
-            Log.e("exportToCsv", dataList.size.toString())
+            info("List size: "+dataList.size.toString())
             val gson = GsonBuilder().setPrettyPrinting().create()
             val jsonFile = gson.toJson(dataList)
             fw.write(jsonFile)
             uiThread {
-                context.toast("data exported to JSON")
+                context.toast("Data exported to JSON")
             }
         }
     }
@@ -77,8 +76,7 @@ class DataExport : AnkoLogger {
 
             val sensorDao = AppDatabase.getInstance(context).sensorDao()
             val dataList = sensorDao.dumpSensor()
-            Log.e("exportToCsv", dataList.size.toString())
-
+            info("List size: "+dataList.size.toString())
             val entries: MutableList<Array<String>> = mutableListOf()
             entries.add(toHeader(dataList[0].data))
             dataList.forEach {
