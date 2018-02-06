@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.github.clans.fab.FloatingActionMenu
@@ -26,14 +25,11 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.jobs.MoveViewJob
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapFragment
 import com.google.gson.GsonBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.doAsync
 import science.apolline.R
 import science.apolline.models.IOIOData
 import science.apolline.service.sensor.IOIOService
@@ -48,32 +44,29 @@ import java.util.*
 class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, AnkoLogger {
 
 
-    private var progressPM1: ProgressBar? = null
-    private var progressPM2: ProgressBar? = null
-    private var progressPM10: ProgressBar? = null
+//    private val pieton: Button? = null
+//    private val velo: Button? = null
+//    private val voiture: Button? = null
+//    private val other: Button? = null
+//    private val mapFragment: MapFragment? = null
+//    private val map: GoogleMap? = null
 
-    private var textViewPM1: TextView? = null
-    private var textViewPM2: TextView? = null
-    private var textViewPM10: TextView? = null
+    private lateinit var  progressPM1: ProgressBar
+    private lateinit var  progressPM2: ProgressBar
+    private lateinit var  progressPM10: ProgressBar
 
-    private var saveFam: FloatingActionMenu? = null
-    private var saveJson: FloatingActionButton? = null
-    private var saveCsv: FloatingActionButton? = null
-    private var saveShare: FloatingActionButton? = null
+    private lateinit var  textViewPM1: TextView
+    private lateinit var  textViewPM2: TextView
+    private lateinit var  textViewPM10: TextView
 
+    private lateinit var  saveFam: FloatingActionMenu
+    private lateinit var  saveJson: FloatingActionButton
+    private lateinit var  saveCsv: FloatingActionButton
+    private lateinit var  saveShare: FloatingActionButton
 
-
-
-    private val pieton: Button? = null
-    private val velo: Button? = null
-    private val voiture: Button? = null
-    private val other: Button? = null
-
-    private val mapFragment: MapFragment? = null
-    private val map: GoogleMap? = null
-
-    private var mChart: LineChart? = null
     private var referenceTimestamp: Long = 0  // minimum timestamp in your data set
+
+    private lateinit var  mChart: LineChart
 
     private lateinit var dataList: List<ILineDataSet>
 
@@ -103,18 +96,17 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
         saveJson = view.findViewById(R.id.floating_action_menu_json)
 
-        saveJson!!.setOnClickListener{
+        saveJson.setOnClickListener {
             exportToJson(activity!!.application)
         }
         saveCsv = view.findViewById(R.id.floating_action_menu_csv)
-        saveCsv!!.setOnClickListener{
+        saveCsv.setOnClickListener {
             exportToCsv(activity!!.application)
         }
         saveShare = view.findViewById(R.id.floating_action_menu_share)
-        saveShare!!.setOnClickListener{
+        saveShare.setOnClickListener {
             exportShareCsv(activity!!.application)
         }
-
 
         //        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.fragment_ioio_map);
         //        pieton = view.findViewById(R.id.fragment_ioio_pieton);
@@ -131,41 +123,41 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
         referenceTimestamp = System.currentTimeMillis() / 1000
         val marker = CustomMarkerView(context!!, R.layout.graph_custom_marker, referenceTimestamp)
-        mChart!!.marker = marker
+        mChart.marker = marker
 
         // LineTimeChart
-        mChart!!.setOnChartValueSelectedListener(this)
+        mChart.setOnChartValueSelectedListener(this)
         // enable description text
-        mChart!!.description.isEnabled = false
+        mChart.description.isEnabled = false
 
 
-        mChart!!.dragDecelerationFrictionCoef = 0.9f
-        mChart!!.isHighlightPerDragEnabled = true
+        mChart.dragDecelerationFrictionCoef = 0.9f
+        mChart.isHighlightPerDragEnabled = true
         // set an alternative background color
         //        mChart.setBackgroundColor(Color.WHITE);
         //        mChart.setViewPortOffsets(0f, 0f, 0f, 0f);
 
         // enable touch gestures
-        mChart!!.setTouchEnabled(true)
+        mChart.setTouchEnabled(true)
         // enable scaling and dragging
-        mChart!!.isDragEnabled = true
-        mChart!!.setScaleEnabled(true)
-        mChart!!.setDrawGridBackground(false)
+        mChart.isDragEnabled = true
+        mChart.setScaleEnabled(true)
+        mChart.setDrawGridBackground(false)
         // if disabled, scaling can be done on x- and y-axis separately
-        mChart!!.setPinchZoom(true)
+        mChart.setPinchZoom(true)
         // set an alternative background color
-        mChart!!.setBackgroundColor(Color.TRANSPARENT)
+        mChart.setBackgroundColor(Color.TRANSPARENT)
 
 
         val data = LineData()
         data.setValueTextColor(Color.WHITE)
         // add empty data
-        mChart!!.data = data
+        mChart.data = data
 
-        mChart!!.invalidate()
+        mChart.invalidate()
 
         //        // get the legend (only possible after setting data)
-        val l = mChart!!.legend
+        val l = mChart.legend
         // modify the legend ...
         l.form = Legend.LegendForm.LINE
         l.typeface = Typeface.DEFAULT
@@ -173,7 +165,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         //        Legend l = mChart.getLegend();
         //        l.setEnabled(false);
 
-        val xl = mChart!!.xAxis
+        val xl = mChart.xAxis
         xl.typeface = Typeface.DEFAULT
         xl.textColor = Color.BLACK
         xl.setDrawGridLines(false)
@@ -181,12 +173,12 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         xl.isEnabled = true
         xl.setCenterAxisLabels(true)
         xl.granularity = 1f // one hour
-        xl.position = XAxis.XAxisPosition.TOP_INSIDE
+        xl.position = XAxis.XAxisPosition.BOTTOM
 
         val xAxisFormatter = HourAxisValueFormatter(referenceTimestamp)
         xl.valueFormatter = xAxisFormatter
 
-        val leftAxis = mChart!!.axisLeft
+        val leftAxis = mChart.axisLeft
         leftAxis.typeface = Typeface.DEFAULT
         leftAxis.textColor = Color.BLACK
         leftAxis.axisMaximum = 3000f
@@ -196,14 +188,14 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
         leftAxis.setDrawGridLines(true)
 
-        val rightAxis = mChart!!.axisRight
+        val rightAxis = mChart.axisRight
         rightAxis.isEnabled = false
 
     }
 
     // Add new points to graph
     private fun addEntry(dataDisplay: IntArray) {
-        val data = mChart!!.data
+        val data = mChart.data
 
         if (data != null) {
             if (data.dataSetCount != 3)
@@ -226,16 +218,16 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
         data.notifyDataChanged()
         // let the chart know it's data has changed
-        mChart!!.notifyDataSetChanged()
+        mChart.notifyDataSetChanged()
         // invalidate data in case of data removal du to max entryCount value
-        mChart!!.invalidate()
+        mChart.invalidate()
         // limit the number of visible entries
-        mChart!!.setVisibleXRangeMaximum(25f)
+        mChart.setVisibleXRangeMaximum(25f)
         // Sets the size of the area (range on the y-axis) that should be maximum visible at once
-        mChart!!.setVisibleYRangeMaximum(50f, YAxis.AxisDependency.LEFT)
+        mChart.setVisibleYRangeMaximum(50f, YAxis.AxisDependency.LEFT)
         // mChart.setVisibleYRange(30, AxisDependency.LEFT);
         // move to the latest entry
-        mChart!!.moveViewToX(data.entryCount.toFloat())
+        mChart.moveViewToX(data.entryCount.toFloat())
         // this automatically refreshes the chart (calls invalidate())
         // mChart.moveViewTo(data.getEntryCount() -7, 55f, YAxis.AxisDependency.LEFT)
 
@@ -314,37 +306,45 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
                 .subscribe {
 
                     if (it.isNotEmpty()) {
-                            val device = it.first()
-                            //info(device.toString())
-                            val gson = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
-                            val data = gson.fromJson(device.data, IOIOData::class.java)
+                        val device = it.first()
+                        //info(device.toString())
+                        val gson = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
+                        val data = gson.fromJson(device.data, IOIOData::class.java)
 
-                            val PM01Value = data!!.pm01Value
-                            val PM2_5Value = data.pm2_5Value
-                            val PM10Value = data.pm10Value
+                        val PM01Value = data!!.pm01Value
+                        val PM2_5Value = data.pm2_5Value
+                        val PM10Value = data.pm10Value
 
-                            progressPM1!!.progress = PM01Value
-                            progressPM2!!.progress = PM2_5Value
-                            progressPM10!!.progress = PM10Value
-                            textViewPM1!!.text = "$PM01Value"
-                            textViewPM2!!.text = "$PM2_5Value"
-                            textViewPM10!!.text = "$PM10Value"
-                            val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
-                            addEntry(dataToDisplay)
+                        progressPM1.progress = PM01Value
+                        progressPM2.progress = PM2_5Value
+                        progressPM10.progress = PM10Value
+                        textViewPM1.text = "$PM01Value"
+                        textViewPM2.text = "$PM2_5Value"
+                        textViewPM10.text = "$PM10Value"
+                        val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
+                        addEntry(dataToDisplay)
                     } else {
-                        progressPM1!!.progress = 0
-                        progressPM2!!.progress = 0
-                        progressPM10!!.progress = 0
-                        textViewPM1!!.text = "-1"
-                        textViewPM2!!.text = "-1"
-                        textViewPM10!!.text = "-1"
+                        progressPM1.progress = 0
+                        progressPM2.progress = 0
+                        progressPM10.progress = 0
+                        textViewPM1.text = "-1"
+                        textViewPM2.text = "-1"
+                        textViewPM10.text = "-1"
                     }
                 })
     }
 
     override fun onPause() {
-        MoveViewJob.getInstance(null, 0.0F, 0.0F,null,null)
         super.onPause()
+        MoveViewJob.getInstance(null, 0.0F, 0.0F, null, null)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (!disposable.isDisposed) {
+            disposable.clear()
+        }
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
     }
 
     override fun onDestroy() {
@@ -352,11 +352,12 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         if (!disposable.isDisposed) {
             disposable.dispose()
         }
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
     }
 
     companion object {
         //TODO : allow user to change that value
-        private const val MAX_VISIBLE_ENTRIES: Int = 50
+        private const val MAX_VISIBLE_ENTRIES: Int = 100
     }
 }
 

@@ -20,6 +20,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.config.Configuration
+import com.github.mikephil.charting.jobs.MoveViewJob
 import org.jetbrains.anko.*
 import pub.devrel.easypermissions.EasyPermissions
 import science.apolline.R
@@ -211,6 +212,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        MoveViewJob.getInstance(null, 0.0F, 0.0F, null, null)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
+    }
+
     override fun onDestroy() {
         if (wakeLock.isHeld) {
             wakeLock.release()
@@ -219,9 +230,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             wifiLock.release()
             info("wifiLock released")
         }
-        cancelAutoSync(false)
         super.onDestroy()
+        cancelAutoSync(false)
         stopService(Intent(this, IOIOService::class.java))
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
     }
 
 
