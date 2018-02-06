@@ -96,6 +96,9 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                         disposable.add(locationProvider.getUpdatedLocation(request)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.io())
+                                .doOnError {
+                                    error("Android reactive location error" + it.toString())
+                                }
                                 .subscribe { t ->
                                     position = Position(t!!.provider, GeoHashHelper.encode(t.latitude,t.longitude), "no")
                                     //info("Position in observer" + position.toString())

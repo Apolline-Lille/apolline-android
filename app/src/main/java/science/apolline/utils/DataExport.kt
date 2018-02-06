@@ -62,8 +62,34 @@ object DataExport : AnkoLogger {
         }
     }
 
-
     fun exportToCsv(context: Context) {
+
+        val folder = File(getExternalStorageDirectory().toString() + "/Apolline")
+
+        if (!folder.exists())
+            folder.mkdir()
+
+        val filenameCSV = folder.toString() + "/" + "data.csv"
+
+        doAsync {
+
+            val sensorDao = AppDatabase.getInstance(context).sensorDao()
+            val dataList = sensorDao.dumpSensor()
+            info("List size: "+dataList.size.toString())
+            val entries: MutableList<Array<String>> = mutableListOf()
+            entries.add(toHeader(dataList[0].data))
+            dataList.forEach {
+                entries.add(it.toArray())
+            }
+            CSVWriter(FileWriter(filenameCSV)).use { writer -> writer.writeAll(entries) }
+
+            uiThread {
+                context.toast("Data exported to CSV")
+            }
+        }
+    }
+
+    fun exportShareCsv(context: Context) {
 
         val folder = File(getExternalStorageDirectory().toString() + "/Apolline")
 

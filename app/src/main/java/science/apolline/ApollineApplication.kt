@@ -5,6 +5,8 @@ import com.crashlytics.android.Crashlytics
 import com.squareup.leakcanary.LeakCanary
 import io.fabric.sdk.android.Fabric
 import science.apolline.service.synchronisation.SyncJobManager
+import com.google.firebase.analytics.FirebaseAnalytics
+
 
 /**
  * Created by sparow on 05/02/18.
@@ -12,6 +14,8 @@ import science.apolline.service.synchronisation.SyncJobManager
 
 
 class ApollineApplication : Application() {
+
+    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
     override fun onCreate() {
         super.onCreate()
@@ -21,7 +25,8 @@ class ApollineApplication : Application() {
             // You should not init your app in this process.
             return
         }
-        LeakCanary.install(this);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        LeakCanary.install(this)
         SyncJobManager.getJobManager(this)
     }
 }

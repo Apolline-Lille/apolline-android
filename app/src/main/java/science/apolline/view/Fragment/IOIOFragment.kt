@@ -24,6 +24,7 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.mikephil.charting.jobs.MoveViewJob
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapFragment
@@ -37,8 +38,9 @@ import science.apolline.R
 import science.apolline.models.IOIOData
 import science.apolline.service.sensor.IOIOService
 import science.apolline.utils.*
-import science.apolline.utils.DataExport.exportToCsv
+import science.apolline.utils.DataExport.exportShareCsv
 import science.apolline.utils.DataExport.exportToJson
+import science.apolline.utils.DataExport.exportToCsv
 import science.apolline.viewModel.SensorViewModel
 import java.util.*
 
@@ -110,7 +112,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         }
         saveShare = view.findViewById(R.id.floating_action_menu_share)
         saveShare!!.setOnClickListener{
-            exportToCsv(activity!!.application)
+            exportShareCsv(activity!!.application)
         }
 
 
@@ -344,6 +346,10 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
                 })
     }
 
+    override fun onPause() {
+        MoveViewJob.getInstance(null, 0.0F, 0.0F,null,null)
+        super.onPause()
+    }
     override fun onStop() {
         super.onStop()
         if (!disposable.isDisposed) {

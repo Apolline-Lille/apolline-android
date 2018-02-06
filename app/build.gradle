@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.firebase-perf'
 
 
 import java.util.regex.Pattern
@@ -37,19 +38,19 @@ android {
         debug {
             Properties properties = new Properties()
             properties.load(project.rootProject.file('local.properties').newDataInputStream())
-            buildConfigField "String", "INFLUXDB_URL", '"'+properties.getProperty('influxdb_url')+'"'
-            buildConfigField "String", "INFLUXDB_DBNAME", '"'+properties.getProperty('influxdb_dbname')+'"'
-            buildConfigField "String", "INFLUXDB_USR", '"'+properties.getProperty('influxdb_usr')+'"'
-            buildConfigField "String", "INFLUXDB_PWD", '"'+properties.getProperty('influxdb_pwd')+'"'
+            buildConfigField "String", "INFLUXDB_URL", '"' + properties.getProperty('influxdb_url') + '"'
+            buildConfigField "String", "INFLUXDB_DBNAME", '"' + properties.getProperty('influxdb_dbname') + '"'
+            buildConfigField "String", "INFLUXDB_USR", '"' + properties.getProperty('influxdb_usr') + '"'
+            buildConfigField "String", "INFLUXDB_PWD", '"' + properties.getProperty('influxdb_pwd') + '"'
 
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         release {
-            buildConfigField "String", "INFLUXDB_URL", '"'+influxdb_url+'"'
-            buildConfigField "String", "INFLUXDB_DBNAME", '"'+influxdb_dbname+'"'
-            buildConfigField "String", "INFLUXDB_USR", '"'+influxdb_usr+'"'
-            buildConfigField "String", "INFLUXDB_PWD", '"'+influxdb_pwd+'"'
+            buildConfigField "String", "INFLUXDB_URL", '"' + influxdb_url + '"'
+            buildConfigField "String", "INFLUXDB_DBNAME", '"' + influxdb_dbname + '"'
+            buildConfigField "String", "INFLUXDB_USR", '"' + influxdb_usr + '"'
+            buildConfigField "String", "INFLUXDB_PWD", '"' + influxdb_pwd + '"'
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -96,7 +97,7 @@ android {
     }
 
     task('incrementVersionName') {
-        doLast{
+        doLast {
             def manifestFile = file("src/main/AndroidManifest.xml")
             def patternVersionNumber = Pattern.compile("versionName=\"(\\d+)\\.(\\d+)\\.(\\d+)\"")
             def manifestText = manifestFile.getText()
@@ -135,7 +136,7 @@ android {
 project.ext {
     appcompat = "27.0.2"
     rc = "1.0.0"
-    ioio ="5.07"
+    ioio = "5.07"
     maps = "11.8.0"
     retrofit = "2.3.0"
     constraintLayout = "1.0.2"
@@ -144,7 +145,8 @@ project.ext {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'com.google.firebase:firebase-core:11.8.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -191,7 +193,7 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:$project.rc"
     implementation "android.arch.lifecycle:common-java8:$project.rc"
     implementation "android.arch.persistence.room:rxjava2:$project.rc"
-    testImplementation"android.arch.persistence.room:testing:$project.rc"
+    testImplementation "android.arch.persistence.room:testing:$project.rc"
 
     // LiveData
     implementation 'android.arch.lifecycle:extensions:1.1.0'
@@ -231,6 +233,9 @@ dependencies {
     implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true
     }
+
+    // FireBase performance
+    implementation 'com.google.firebase:firebase-perf:11.8.0'
 
     // Floating Actions
     implementation 'com.github.clans:fab:1.6.4'
