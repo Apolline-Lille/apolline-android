@@ -152,7 +152,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         mChart!!.setScaleEnabled(true)
         mChart!!.setDrawGridBackground(false)
         // if disabled, scaling can be done on x- and y-axis separately
-        mChart!!.setPinchZoom(false)
+        mChart!!.setPinchZoom(true)
         // set an alternative background color
         mChart!!.setBackgroundColor(Color.TRANSPARENT)
 
@@ -189,7 +189,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         val leftAxis = mChart!!.axisLeft
         leftAxis.typeface = Typeface.DEFAULT
         leftAxis.textColor = Color.BLACK
-        leftAxis.axisMaximum = 2500f
+        leftAxis.axisMaximum = 3000f
         leftAxis.axisMinimum = 0f
         //        leftAxis.setSpaceTop(80);
         //        leftAxis.setSpaceBottom(20);
@@ -230,15 +230,14 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         // invalidate data in case of data removal du to max entryCount value
         mChart!!.invalidate()
         // limit the number of visible entries
-        mChart!!.setVisibleXRangeMaximum(5f)
+        mChart!!.setVisibleXRangeMaximum(25f)
         // Sets the size of the area (range on the y-axis) that should be maximum visible at once
-        mChart!!.setVisibleYRangeMaximum(100f, YAxis.AxisDependency.LEFT)
+        mChart!!.setVisibleYRangeMaximum(50f, YAxis.AxisDependency.LEFT)
         // mChart.setVisibleYRange(30, AxisDependency.LEFT);
         // move to the latest entry
         mChart!!.moveViewToX(data.entryCount.toFloat())
         // this automatically refreshes the chart (calls invalidate())
-        //             mChart.moveViewTo(data.getEntryCount() -7, 55f,
-        //             YAxis.AxisDependency.LEFT);
+        // mChart.moveViewTo(data.getEntryCount() -7, 55f, YAxis.AxisDependency.LEFT)
 
     }
 
@@ -315,7 +314,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
                 .subscribe {
 
                     if (it.isNotEmpty()) {
-                        doAsync {
                             val device = it.first()
                             //info(device.toString())
                             val gson = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
@@ -333,8 +331,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
                             textViewPM10!!.text = "$PM10Value"
                             val dataToDisplay = intArrayOf(PM01Value, PM2_5Value, PM10Value)
                             addEntry(dataToDisplay)
-                        }
-
                     } else {
                         progressPM1!!.progress = 0
                         progressPM2!!.progress = 0
@@ -350,12 +346,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         MoveViewJob.getInstance(null, 0.0F, 0.0F,null,null)
         super.onPause()
     }
-    override fun onStop() {
-        super.onStop()
-        if (!disposable.isDisposed) {
-            disposable.clear()
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -366,7 +356,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
     companion object {
         //TODO : allow user to change that value
-        private const val MAX_VISIBLE_ENTRIES: Int = 15
+        private const val MAX_VISIBLE_ENTRIES: Int = 50
     }
 }
 
