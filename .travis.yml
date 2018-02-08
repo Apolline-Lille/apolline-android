@@ -21,7 +21,7 @@ before_install:
   - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
   - ls -all
   - cp local.properties.ci local.properties
-  - openssl aes-256-cbc -K $encrypted_a7c2db6630f4_key -iv $encrypted_a7c2db6630f4_iv -in google-services.json.enc -out google-services.json -d
+  - openssl aes-256-cbc -K $encrypted_a7c2db6630f4_key -iv $encrypted_a7c2db6630f4_iv -in  ${TRAVIS_BUILD_DIR}/app/google-services.json.enc -out  ${TRAVIS_BUILD_DIR}/app/google-services.json -d
   - docker pull influxdb
   - docker run --name=influxdb -d -p 127.0.0.1:8086:8086 influxdb
   - docker ps -a
