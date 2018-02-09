@@ -124,7 +124,7 @@ object CheckUtility : AnkoLogger{
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes") { _, _ ->
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 context.startActivity(intent)
-            }
+                }
             alertDialog.show()
         }
     }

@@ -30,6 +30,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import science.apolline.R
 import science.apolline.models.IOIOData
 import science.apolline.service.sensor.IOIOService
@@ -113,9 +114,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         //        velo = view.findViewById(R.id.fragment_ioio_velo);
         //        voiture = view.findViewById(R.id.fragment_ioio_voiture);
         //        other = view.findViewById(R.id.fragment_ioio_other);
-
-        dataList = createMultiSet()
-        initGraph()
     }
 
     //init graph on create view
@@ -299,6 +297,8 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
 
     override fun onStart() {
+        dataList = createMultiSet()
+        initGraph()
         super.onStart()
         disposable.add(viewModel.deviceListObserver
                 .subscribeOn(Schedulers.io())
@@ -334,25 +334,40 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
                 })
     }
 
+
+    override fun onResume() {
+        super.onResume()
+    }
     override fun onPause() {
-        super.onPause()
         MoveViewJob.getInstance(null, 0.0F, 0.0F, null, null)
+        super.onPause()
     }
 
     override fun onStop() {
-        super.onStop()
         if (!disposable.isDisposed) {
             disposable.clear()
         }
         MoveViewJob.getInstance(null, 0f, 0f, null, null)
+        super.onStop()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
         if (!disposable.isDisposed) {
             disposable.dispose()
         }
         MoveViewJob.getInstance(null, 0f, 0f, null, null)
+        mChart.clear()
+        super.onDestroyView()
+        info("onDestroyView")
+    }
+
+    override fun onDestroy() {
+        if (!disposable.isDisposed) {
+            disposable.dispose()
+        }
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
+        super.onDestroy()
+        info("onDestroy")
     }
 
     companion object {

@@ -14,7 +14,6 @@ import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.google.android.gms.location.LocationRequest
-import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
@@ -50,7 +49,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
     private val locationProvider = ReactiveLocationProvider(this)
 
     private val disposable = CompositeDisposable()
-    
+
     private var location: Location? = null
 
     override fun createIOIOLooper(): IOIOLooper {
@@ -74,16 +73,8 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                 uartIn_ = uart_!!.inputStream
                 inputTemp = ioio_.openAnalogInput(44)
                 inputHum = ioio_.openAnalogInput(42)
-                initChannels(applicationContext)
-                val notification = NotificationCompat.Builder(applicationContext, "default")
-                        .setContentTitle("IOIO service is running")
-                        .setTicker("IOIO service is running")
-                        .setContentText("collect of air quality is running")
-                        .setOngoing(true)
-                        .build()
-                startForeground(101, notification)
+                launchForegroundServiceNotification(applicationContext)
             }
-
 
 
             @Throws(ConnectionLostException::class, InterruptedException::class)
@@ -100,11 +91,11 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                                     error("Android reactive location error" + it.toString())
                                 }
                                 .subscribe { t ->
-                                    position = Position(t!!.provider, GeoHashHelper.encode(t.latitude,t.longitude), "no")
+                                    position = Position(t!!.provider, GeoHashHelper.encode(t.latitude, t.longitude), "no")
                                     //info("Position in observer" + position.toString())
                                 }
                         )
-                    }else{
+                    } else {
                         position = Position()
                     }
 
@@ -148,13 +139,13 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
                 Thread.sleep(freq.toLong())
                 info("Position Hash :" + position.geohash)
-                persistData(data,position)
+                persistData(data, position)
             }
         }
     }
 
 
-    private fun persistData(data: IOIOData, pos:Position?) {
+    private fun persistData(data: IOIOData, pos: Position?) {
         val d1 = System.currentTimeMillis() * 1000000
         val device = Device(AndroidUuid.getAndroidUuid(), "LOA", d1, pos, data.toJson(), 0)
         doAsync {
@@ -163,9 +154,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
         }
     }
 
-    override fun onBind(intent: Intent): IBinder? {
-        return null
-    }
+    override fun onBind(intent: Intent): IBinder? = null
 
     override fun onUnbind(intent: Intent?): Boolean {
         if (!disposable.isDisposed) {
@@ -182,31 +171,39 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
         Log.e(this.javaClass.name, "onDestroy")
     }
 
-    fun initChannels(context: Context) {
+    fun launchForegroundServiceNotification(context: Context) {
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val n: Notification
+        val intent = Intent(context, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(context,0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
         if (Build.VERSION.SDK_INT < 26) {
-                val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                val intent = Intent(context, MainActivity::class.java)
-                val n: Notification
-                val pendingIntent = PendingIntent.getActivity(context,
-                        0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                val builder = Notification.Builder(context,"default")
-                        .setContentTitle("Apolline service is running...")
-                        .setContentText("IOIO sensor is collecting data...")
-                        .setContentIntent(pendingIntent)
-                        .setSmallIcon(R.drawable.logo_apolline)
-                        .setLargeIcon(BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.logo_apolline))
-                n = builder.build()
-                n.flags = n.flags or (Notification.FLAG_NO_CLEAR or Notification.FLAG_ONGOING_EVENT)
-                notificationManager.notify(0, n)
-        } else {
-
-            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val channel = NotificationChannel("default",
-                    "Channel name",
-                    NotificationManager.IMPORTANCE_DEFAULT)
-            channel.description = "Channel description"
+        }else{
+            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
+            channel.description = "Apolline notification channel"
             notificationManager.createNotificationChannel(channel)
         }
+
+        n = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+                .setContentTitle("IOIO service is running")
+                .setTicker("IOIO service is running")
+                .setContentText("collect of air quality is running")
+                .setSmallIcon(R.drawable.logo_apolline)
+                .setLargeIcon(BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.logo_apolline))
+                .setContentIntent(pendingIntent)
+                .build()
+
+        n.flags = n.flags or (Notification.FLAG_NO_CLEAR or Notification.FLAG_ONGOING_EVENT)
+
+        startForeground(SERVICE_ID, n)
+    }
+
+    companion object {
+
+        private const val SERVICE_ID: Int = 101
+        private const val CHANNEL_ID = "science.apolline"
+        private const val CHANNEL_NAME = "Apolline"
+
     }
 }
