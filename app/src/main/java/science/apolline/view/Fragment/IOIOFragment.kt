@@ -114,6 +114,9 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         //        velo = view.findViewById(R.id.fragment_ioio_velo);
         //        voiture = view.findViewById(R.id.fragment_ioio_voiture);
         //        other = view.findViewById(R.id.fragment_ioio_other);
+
+        dataList = createMultiSet()
+        initGraph()
     }
 
     //init graph on create view
@@ -200,9 +203,9 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
                 for (temp in dataList) {
                     data.addDataSet(temp)
                 }
-        }
+
         val now = System.currentTimeMillis() / 1000
-        data!!.addEntry(Entry((now - referenceTimestamp).toFloat(), dataDisplay[0].toFloat()), 0)
+        data.addEntry(Entry((now - referenceTimestamp).toFloat(), dataDisplay[0].toFloat()), 0)
         data.addEntry(Entry((now - referenceTimestamp).toFloat(), dataDisplay[1].toFloat()), 1)
         data.addEntry(Entry((now - referenceTimestamp).toFloat(), dataDisplay[2].toFloat()), 2)
 
@@ -213,12 +216,13 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
                 it.removeFirst()
             }
         }
-
         data.notifyDataChanged()
         // let the chart know it's data has changed
         mChart.notifyDataSetChanged()
         // invalidate data in case of data removal du to max entryCount value
         mChart.invalidate()
+        }
+
         // limit the number of visible entries
         mChart.setVisibleXRangeMaximum(25f)
         // Sets the size of the area (range on the y-axis) that should be maximum visible at once
@@ -287,9 +291,16 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         activity!!.startService(Intent(activity, IOIOService::class.java))
+        info("onAttach")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        info("onDetach")
     }
 
     override fun onValueSelected(e: Entry, h: Highlight) {
+        mChart.setDrawMarkers(true)
     }
 
     override fun onNothingSelected() {
@@ -297,8 +308,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
 
     override fun onStart() {
-        dataList = createMultiSet()
-        initGraph()
         super.onStart()
         disposable.add(viewModel.deviceListObserver
                 .subscribeOn(Schedulers.io())
@@ -332,15 +341,22 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
                         textViewPM10.text = "-1"
                     }
                 })
+        info("onStart")
     }
 
 
     override fun onResume() {
         super.onResume()
+        mChart.moveViewToX(mChart.data.entryCount.toFloat())
+        info("onResume")
     }
     override fun onPause() {
-        MoveViewJob.getInstance(null, 0.0F, 0.0F, null, null)
+        if (!disposable.isDisposed) {
+            disposable.clear()
+        }
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onPause()
+        info("onPause")
     }
 
     override fun onStop() {
@@ -349,6 +365,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         }
         MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onStop()
+        info("onStop")
     }
 
     override fun onDestroyView() {
