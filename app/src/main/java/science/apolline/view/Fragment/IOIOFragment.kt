@@ -116,11 +116,11 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         //        other = view.findViewById(R.id.fragment_ioio_other);
 
         dataList = createMultiSet()
-        initGraph()
+        setupGraph()
     }
 
     //init graph on create view
-    private fun initGraph() {
+    private fun setupGraph() {
 
         referenceTimestamp = System.currentTimeMillis() / 1000
         val marker = CustomMarkerView(context!!, R.layout.graph_custom_marker, referenceTimestamp)
@@ -134,6 +134,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
         mChart.dragDecelerationFrictionCoef = 0.9f
         mChart.isHighlightPerDragEnabled = true
+
         // set an alternative background color
         //        mChart.setBackgroundColor(Color.WHITE);
         //        mChart.setViewPortOffsets(0f, 0f, 0f, 0f);
@@ -157,7 +158,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
         mChart.invalidate()
 
-        //        // get the legend (only possible after setting data)
+        // get the legend (only possible after setting data)
         val l = mChart.legend
         // modify the legend ...
         l.form = Legend.LegendForm.LINE
@@ -182,8 +183,8 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         val leftAxis = mChart.axisLeft
         leftAxis.typeface = Typeface.DEFAULT
         leftAxis.textColor = Color.BLACK
-        leftAxis.axisMaximum = 3000f
-        leftAxis.axisMinimum = 0f
+        leftAxis.axisMaximum = MAX_Y_AXIS
+        leftAxis.axisMinimum = MIN_Y_AXIS
         //        leftAxis.setSpaceTop(80);
         //        leftAxis.setSpaceBottom(20);
 
@@ -211,28 +212,39 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
 
         data.dataSets.forEach {
-
             if (it.entryCount >= MAX_VISIBLE_ENTRIES) {
-                it.removeFirst()
+
+                info("TEST")
+                for (i in 0 until MAX_REMOVED_ENTRIES) {
+                    it.removeEntry(i)
+                }
+
+                for (i in 0 until it.entryCount) {
+                    val entryToChange = it.getEntryForIndex(i)
+                    entryToChange.x = entryToChange.x - 1
+                }
+
+
             }
         }
+
         data.notifyDataChanged()
         // let the chart know it's data has changed
         mChart.notifyDataSetChanged()
         // invalidate data in case of data removal du to max entryCount value
         mChart.invalidate()
+
         }
 
         // limit the number of visible entries
-        mChart.setVisibleXRangeMaximum(25f)
+        mChart.setVisibleXRangeMaximum(MAX_X_RANGE)
         // Sets the size of the area (range on the y-axis) that should be maximum visible at once
-        mChart.setVisibleYRangeMaximum(50f, YAxis.AxisDependency.LEFT)
+        mChart.setVisibleYRangeMaximum(MAX_Y_RANGE, YAxis.AxisDependency.LEFT)
         // mChart.setVisibleYRange(30, AxisDependency.LEFT);
         // move to the latest entry
         mChart.moveViewToX(data.entryCount.toFloat())
         // this automatically refreshes the chart (calls invalidate())
         // mChart.moveViewTo(data.getEntryCount() -7, 55f, YAxis.AxisDependency.LEFT)
-
     }
 
 
@@ -347,14 +359,9 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
     override fun onResume() {
         super.onResume()
-        mChart.moveViewToX(mChart.data.entryCount.toFloat())
         info("onResume")
     }
     override fun onPause() {
-        if (!disposable.isDisposed) {
-            disposable.clear()
-        }
-        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onPause()
         info("onPause")
     }
@@ -363,7 +370,10 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         if (!disposable.isDisposed) {
             disposable.clear()
         }
-        MoveViewJob.getInstance(null, 0f, 0f, null, null)
+//         MoveViewJob.getInstance(null, 0f, 0f, null, null)
+//        if(mChart.data !=null){
+//            mChart.clearValues()
+//        }
         super.onStop()
         info("onStop")
     }
@@ -373,7 +383,6 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
             disposable.dispose()
         }
         MoveViewJob.getInstance(null, 0f, 0f, null, null)
-        mChart.clear()
         super.onDestroyView()
         info("onDestroyView")
     }
@@ -389,7 +398,14 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
     companion object {
         //TODO : allow user to change that value
-        private const val MAX_VISIBLE_ENTRIES: Int = 100
+
+        // Graph params
+        private const val MAX_VISIBLE_ENTRIES: Int = 60
+        private const val MAX_REMOVED_ENTRIES: Int = 30
+        private const val MAX_X_RANGE: Float = 15.0f
+        private const val MAX_Y_RANGE: Float = 50.0f
+        private const val MAX_Y_AXIS: Float = 3000.0f
+        private const val MIN_Y_AXIS: Float = 0.0f
     }
 }
 
