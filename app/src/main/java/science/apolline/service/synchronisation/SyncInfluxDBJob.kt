@@ -1,6 +1,8 @@
 package science.apolline.service.synchronisation
 
+import android.widget.Toast
 import com.birbit.android.jobqueue.*
+import es.dmoral.toasty.Toasty
 import org.jetbrains.anko.*
 
 import retrofit2.Call
@@ -91,7 +93,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
                                             uiThread {
                                                 nbUnSynced -= MAX_LENGTH
                                                 info("number of pending unsyncked is : $nbUnSynced")
-                                                applicationContext.longToast("Synced")
+                                                Toasty.success(applicationContext, "Synchronized !", Toast.LENGTH_LONG, true).show()
                                             }
                                         }
                                     }

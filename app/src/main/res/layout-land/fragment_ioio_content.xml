@@ -6,6 +6,7 @@
     android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:background="@color/loa_background"
     android:weightSum="1">
     <LinearLayout
         android:layout_width="wrap_content"

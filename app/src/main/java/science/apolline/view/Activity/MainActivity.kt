@@ -19,9 +19,11 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.config.Configuration
 import com.github.mikephil.charting.jobs.MoveViewJob
+import es.dmoral.toasty.Toasty
 import org.jetbrains.anko.*
 import pub.devrel.easypermissions.EasyPermissions
 import science.apolline.R
@@ -125,10 +127,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         if (isNetworkConnected(this)) {
             jobManager.addJobInBackground(SyncInfluxDBJob())
-            toast("Synchronisation...")
+            Toasty.info(applicationContext, "Synchronization in progress", Toast.LENGTH_SHORT, true).show()
         } else {
             jobManager.addJobInBackground(SyncInfluxDBJob())
-            toast("No internet connection ! Job added to queue")
+            Toasty.warning(applicationContext, "No internet connection ! Synchronization job added to queue", Toast.LENGTH_LONG, true).show()
         }
         return true
     }

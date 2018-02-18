@@ -16,6 +16,8 @@ import android.os.PowerManager
 import android.provider.Settings
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
+import android.widget.Toast
+import es.dmoral.toasty.Toasty
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
@@ -119,7 +121,7 @@ object CheckUtility : AnkoLogger{
         if (!canGetLocation(context)) {
             alertDialog.setMessage("Your GPS seems to be disabled, do you want to enable it?")
             alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No") { _, _ ->
-                context.toast("You haven't enabled your GPS")
+                Toasty.warning(context, "You haven't enabled your GPS", Toast.LENGTH_SHORT, true).show()
             }
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes") { _, _ ->
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)

@@ -11,7 +11,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.support.v4.content.FileProvider
+import android.widget.Toast
 import com.google.gson.JsonObject
+import es.dmoral.toasty.Toasty
 import science.apolline.R
 import org.jetbrains.anko.*
 
@@ -57,7 +59,7 @@ object DataExport : AnkoLogger {
             val jsonFile = gson.toJson(dataList)
             fw.write(jsonFile)
             uiThread {
-                context.toast("Data exported to JSON")
+                Toasty.success(context, "Data exported to JSON with success!", Toast.LENGTH_SHORT, true).show()
             }
         }
     }
@@ -84,7 +86,7 @@ object DataExport : AnkoLogger {
             CSVWriter(FileWriter(filenameCSV)).use { writer -> writer.writeAll(entries) }
 
             uiThread {
-                context.toast("Data exported to CSV")
+                Toasty.success(context, "Data exported to CSV with success!", Toast.LENGTH_SHORT, true).show()
             }
         }
     }
@@ -127,7 +129,7 @@ object DataExport : AnkoLogger {
                 shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
                 shareIntent.type = "text/plain"
                 shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                context.toast("Data exported with success")
+                Toasty.success(context, "Data exported with success!", Toast.LENGTH_SHORT, true).show()
                 context.startActivity(Intent.createChooser(shareIntent, context.resources.getText(R.string.send_to)))
             }
         }

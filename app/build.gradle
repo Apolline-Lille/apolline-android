@@ -243,6 +243,9 @@ dependencies {
 
     // Circle View
     implementation 'com.github.jakob-grabner:Circle-Progress-View:v1.3'
+
+    // Toasty
+    implementation 'com.github.GrenderG:Toasty:1.2.8'
 }
 
 repositories {

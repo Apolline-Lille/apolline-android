@@ -10,9 +10,11 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
 
-    <color name="ioio_circle_title">#ff3d00</color>
 
-    <color name="loa_orange">#ff3d00</color>
+    <color name="ioio_circle_title">#ff5722</color>
+    <color name="loa_orange">#ff6d00</color>
+    <color name="loa_background">#e3f2fd</color>
+
 
 
     <color name="degraded_color1">#00c853</color>

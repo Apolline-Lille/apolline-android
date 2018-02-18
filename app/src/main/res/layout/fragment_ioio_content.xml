@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-
+    android:background="@color/loa_background"
     xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:weightSum="1">
