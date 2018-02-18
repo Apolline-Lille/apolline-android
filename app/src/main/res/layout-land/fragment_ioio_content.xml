@@ -2,8 +2,8 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:background="@drawable/bg"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:weightSum="1">
@@ -12,88 +12,113 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:baselineAligned="false">
         <RelativeLayout
             android:layout_height="0dp"
             android:orientation="horizontal"
+            android:layout_marginBottom="5dp"
             android:layout_weight="0.5"
             android:layout_width="120dp">
-            <ProgressBar
+
+            <at.grabner.circleprogress.CircleProgressView
                 android:id="@+id/fragment_ioio_progress_pm1"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_centerHorizontal="true"
-                android:indeterminate="false"
-                android:max="100"
-                android:progressDrawable="@drawable/bar" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/fragment_ioio_tv_pm1_value"
-                android:textColor="#0000FF"
-                tools:textSize="@android:dimen/app_icon_size"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentTop="true"
-                android:textAlignment="center"
-                android:gravity="center"
-                android:textSize="@android:dimen/notification_large_icon_width"
-                android:textAllCaps="false"
-                android:text="0" />
+                android:layout_width="500dp"
+                android:layout_height="500dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="6dp"
+                CircleProgressView:cpv_autoTextSize="true"
+                CircleProgressView:cpv_barColor="@color/degraded_color1"
+                CircleProgressView:cpv_barColor1="@color/degraded_color2"
+                CircleProgressView:cpv_barColor2="@color/degraded_color3"
+                CircleProgressView:cpv_barColor3="@color/degraded_color4"
+                CircleProgressView:cpv_barWidth="10dp"
+                CircleProgressView:cpv_innerContourSize="0dp"
+                CircleProgressView:cpv_maxValue="400"
+                CircleProgressView:cpv_outerContourSize="0dp"
+                CircleProgressView:cpv_rimColor="@color/primary_light"
+                CircleProgressView:cpv_rimWidth="5dp"
+                CircleProgressView:cpv_seekMode="false"
+                CircleProgressView:cpv_showUnit="true"
+                CircleProgressView:cpv_spinColor="@color/primary"
+                CircleProgressView:cpv_textColor="@color/primary_dark"
+                CircleProgressView:cpv_textScale="1"
+                CircleProgressView:cpv_unit="@string/ioio_sensor_unit"
+                CircleProgressView:cpv_unitColor="@color/primary_dark"
+                CircleProgressView:cpv_unitPosition="bottom"
+                CircleProgressView:cpv_unitScale="1" />
         </RelativeLayout>
+
         <RelativeLayout
+            android:layout_width="120dp"
             android:layout_height="0dp"
-            android:orientation="horizontal"
             android:layout_weight="0.5"
-            android:layout_width="120dp">
-            <ProgressBar
-                style="?android:attr/progressBarStyleHorizontal"
+            android:orientation="horizontal">
+
+            <at.grabner.circleprogress.CircleProgressView
                 android:id="@+id/fragment_ioio_progress_pm2"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:max="100"
-                android:progressDrawable="@drawable/bar"
-                android:layout_centerHorizontal="true" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/fragment_ioio_tv_pm2_value"
-                android:textColor="#0000FF"
-                tools:textSize="@android:dimen/app_icon_size"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentTop="true"
-                android:textAlignment="center"
-                android:gravity="center"
-                android:textSize="@android:dimen/notification_large_icon_width"
-                android:textAllCaps="false"
-                android:text="0" />
+                android:layout_width="500dp"
+                android:layout_height="500dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                CircleProgressView:cpv_autoTextSize="true"
+                CircleProgressView:cpv_barColor="@color/degraded_color1"
+                CircleProgressView:cpv_barColor1="@color/degraded_color2"
+                CircleProgressView:cpv_barColor2="@color/degraded_color3"
+                CircleProgressView:cpv_barColor3="@color/degraded_color4"
+                CircleProgressView:cpv_barWidth="10dp"
+                CircleProgressView:cpv_innerContourSize="0dp"
+                CircleProgressView:cpv_maxValue="400"
+                CircleProgressView:cpv_outerContourSize="0dp"
+                CircleProgressView:cpv_rimColor="@color/primary_light"
+                CircleProgressView:cpv_rimWidth="5dp"
+                CircleProgressView:cpv_seekMode="false"
+                CircleProgressView:cpv_showUnit="true"
+                CircleProgressView:cpv_spinColor="@color/primary"
+                CircleProgressView:cpv_textColor="@color/primary_dark"
+                CircleProgressView:cpv_textScale="1"
+                CircleProgressView:cpv_unit="@string/ioio_sensor_unit"
+                CircleProgressView:cpv_unitColor="@color/primary_dark"
+                CircleProgressView:cpv_unitPosition="bottom"
+                CircleProgressView:cpv_unitScale="1" />
         </RelativeLayout>
         <RelativeLayout
             android:layout_height="0dp"
             android:orientation="horizontal"
+            android:layout_marginTop="5dp"
             android:layout_weight="0.5"
             android:layout_width="120dp">
-            <ProgressBar
-                style="?android:attr/progressBarStyleHorizontal"
+
+            <at.grabner.circleprogress.CircleProgressView
                 android:id="@+id/fragment_ioio_progress_pm10"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:max="100"
-                android:progressDrawable="@drawable/bar"
-                android:layout_centerHorizontal="true" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/fragment_ioio_tv_pm10_value"
-                android:textColor="#0000FF"
-                tools:textSize="@android:dimen/app_icon_size"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentTop="true"
-                android:textAlignment="center"
-                android:gravity="center"
-                android:textSize="@android:dimen/notification_large_icon_width"
-                android:textAllCaps="false"
-                android:text="0" />
+                android:layout_width="500dp"
+                android:layout_height="500dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                CircleProgressView:cpv_autoTextSize="true"
+                CircleProgressView:cpv_barColor="@color/degraded_color1"
+                CircleProgressView:cpv_barColor1="@color/degraded_color2"
+                CircleProgressView:cpv_barColor2="@color/degraded_color3"
+                CircleProgressView:cpv_barColor3="@color/degraded_color4"
+                CircleProgressView:cpv_barWidth="10dp"
+                CircleProgressView:cpv_innerContourSize="0dp"
+                CircleProgressView:cpv_maxValue="400"
+                CircleProgressView:cpv_outerContourSize="0dp"
+                CircleProgressView:cpv_rimColor="@color/primary_light"
+                CircleProgressView:cpv_rimWidth="5dp"
+                CircleProgressView:cpv_seekMode="false"
+                CircleProgressView:cpv_showUnit="true"
+                CircleProgressView:cpv_spinColor="@color/primary"
+                CircleProgressView:cpv_textColor="@color/primary_dark"
+                CircleProgressView:cpv_textScale="1"
+                CircleProgressView:cpv_unit="@string/ioio_sensor_unit"
+                CircleProgressView:cpv_unitColor="@color/primary_dark"
+                CircleProgressView:cpv_unitPosition="bottom"
+                CircleProgressView:cpv_unitScale="1" />
         </RelativeLayout>
     </LinearLayout>
 
@@ -108,7 +133,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="PM1"
+            android:text="@string/ioio_sensor_pm01"
             android:textColor="#0000FF"
             tools:textSize="30sp" />
 
@@ -118,7 +143,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="PM2.5"
+            android:text="@string/ioio_sensor_pm2_5"
             android:textColor="#0000FF"
             tools:textSize="30sp" />
 
@@ -128,7 +153,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="PM10"
+            android:text="@string/ioio_sensor_pm10"
             android:textColor="#0000FF"
             tools:textSize="30sp" />
     </LinearLayout>

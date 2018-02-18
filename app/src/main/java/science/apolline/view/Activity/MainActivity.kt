@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var fragmentIOIO: IOIOFragment
     private lateinit var wakeLock: WakeLock
     private lateinit var wifiLock: WifiLock
+    private lateinit var requestLocationAlert: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +74,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         requestDozeMode(this)
 
         // Request enable location
-        requestLocation(this)
+        requestLocationAlert = requestLocation(this)
 
         // Request partial wake up
         wakeLock = requestPartialWakeUp(this, REQUEST_WAKE_UP_TIMEOUT)
@@ -233,7 +235,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onDestroy()
         cancelAutoSync(false)
         stopService(Intent(this, IOIOService::class.java))
-        MoveViewJob.getInstance(null, 0f, 0f, null, null)
+        if ( requestLocationAlert.isShowing ){
+            requestLocationAlert.cancel()
+        }
     }
 
 

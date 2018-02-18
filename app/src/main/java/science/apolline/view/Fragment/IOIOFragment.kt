@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import at.grabner.circleprogress.TextMode
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -69,8 +70,136 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
             exportShareCsv(activity!!.application)
         }
 
+        fragment_ioio_progress_pm1.setTextMode(TextMode.VALUE)
+        fragment_ioio_progress_pm2.setTextMode(TextMode.VALUE)
+        fragment_ioio_progress_pm10.setTextMode(TextMode.VALUE)
+
         createGraphMultiSets()
         setupGraphView()
+
+    }
+
+
+    private fun createGraphMultiSets(){
+
+        val setPM1 = LineDataSet(null, "PM1")
+        setPM1.axisDependency = YAxis.AxisDependency.LEFT
+        setPM1.color = Color.BLUE
+        setPM1.setCircleColor(Color.BLUE)
+        setPM1.lineWidth = 2f
+        setPM1.circleRadius = 4f
+        setPM1.fillAlpha = 65
+        setPM1.fillColor = Color.BLUE
+        setPM1.highLightColor = Color.rgb(244, 117, 117)
+        setPM1.valueTextColor = Color.BLUE
+        setPM1.valueTextSize = 9f
+        setPM1.setDrawValues(false)
+
+
+        val setPM2 = LineDataSet(null, "PM2")
+        setPM2.axisDependency = YAxis.AxisDependency.LEFT
+        setPM2.color = Color.GREEN
+        setPM2.setCircleColor(Color.GREEN)
+        setPM2.lineWidth = 2f
+        setPM2.circleRadius = 4f
+        setPM2.fillAlpha = 65
+        setPM2.fillColor = Color.GREEN
+        setPM2.highLightColor = Color.rgb(244, 117, 117)
+        setPM2.valueTextColor = Color.GREEN
+        setPM2.valueTextSize = 9f
+        setPM2.setDrawValues(false)
+
+        val setPM10 = LineDataSet(null, "PM10")
+        setPM10.axisDependency = YAxis.AxisDependency.LEFT
+        setPM10.color = Color.RED
+        setPM10.setCircleColor(Color.RED)
+        setPM10.lineWidth = 2f
+        setPM10.circleRadius = 4f
+        setPM10.fillAlpha = 65
+        setPM10.fillColor = Color.RED
+        setPM10.highLightColor = Color.rgb(244, 117, 117)
+        setPM10.valueTextColor = Color.RED
+        setPM10.valueTextSize = 9f
+        setPM10.setDrawValues(false)
+
+        dataList = listOf(setPM1,setPM2,setPM10)
+
+    }
+
+
+    private fun setupGraphView() {
+
+        referenceTimestamp = System.currentTimeMillis() / 1000
+
+        val marker = CustomMarkerView(context!!, R.layout.graph_custom_marker, referenceTimestamp)
+        chart.marker = marker
+
+        // LineTimeChart
+        chart.setOnChartValueSelectedListener(this)
+        // enable description text
+        chart.description.isEnabled = false
+
+
+        chart.dragDecelerationFrictionCoef = 0.9f
+        chart.isHighlightPerDragEnabled = true
+
+        // set an alternative background color
+        //        chart.setBackgroundColor(Color.WHITE);
+        //        chart.setViewPortOffsets(0f, 0f, 0f, 0f);
+
+        // enable touch gestures
+        chart.setTouchEnabled(true)
+        // enable scaling and dragging
+        chart.isDragEnabled = true
+        chart.setScaleEnabled(true)
+        chart.setDrawGridBackground(false)
+        // if disabled, scaling can be done on x- and y-axis separately
+        chart.setPinchZoom(true)
+        // set an alternative background color
+        chart.setBackgroundColor(Color.TRANSPARENT)
+
+
+        val data = LineData()
+        data.setValueTextColor(Color.WHITE)
+        // add empty data
+        chart.data = data
+
+        chart.invalidate()
+
+        // get the legend (only possible after setting data)
+        val l = chart.legend
+        // modify the legend ...
+        l.form = Legend.LegendForm.LINE
+        l.typeface = Typeface.DEFAULT
+        l.textColor = Color.BLACK
+        //        Legend l = chart.getLegend();
+        //        l.setEnabled(false);
+
+        val xl = chart.xAxis
+        xl.typeface = Typeface.DEFAULT
+        xl.textColor = Color.BLACK
+        xl.setDrawGridLines(false)
+        xl.setAvoidFirstLastClipping(true)
+        xl.isEnabled = true
+        xl.setCenterAxisLabels(true)
+        xl.granularity = 1f // one hour
+        xl.position = XAxis.XAxisPosition.BOTTOM
+
+        val xAxisFormatter = HourAxisValueFormatter(referenceTimestamp)
+        xl.valueFormatter = xAxisFormatter
+
+        val leftAxis = chart.axisLeft
+        leftAxis.typeface = Typeface.DEFAULT
+        leftAxis.textColor = Color.BLACK
+        leftAxis.axisMaximum = MAX_Y_AXIS
+        leftAxis.axisMinimum = MIN_Y_AXIS
+        //        leftAxis.setSpaceTop(80);
+        //        leftAxis.setSpaceBottom(20);
+
+        leftAxis.setDrawGridLines(true)
+
+        val rightAxis = chart.axisRight
+        rightAxis.isEnabled = false
 
     }
 
@@ -119,136 +248,13 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         //chart.moveViewToX(data.entryCount.toFloat())
         // this automatically refreshes the chart (calls invalidate())
 
-        val count = chart.data.getDataSetByIndex(0).entryCount
-        val entry = chart.data.getDataSetByIndex(0).getEntryForIndex(count-1)
+        val count = chart.data.getDataSetByIndex(1).entryCount
+        val entry = chart.data.getDataSetByIndex(1).getEntryForIndex(count-1)
 
-        chart.moveViewToAnimated(entry.x, entry.y, YAxis.AxisDependency.LEFT,500)
-        //chart.moveViewTo(entry.x, entry.y, YAxis.AxisDependency.LEFT)
+        //chart.moveViewToAnimated(entry.x, entry.y, YAxis.AxisDependency.LEFT,500)
+        chart.moveViewTo(entry.x, entry.y, YAxis.AxisDependency.LEFT)
     }
 
-
-    private fun setupGraphView() {
-
-        referenceTimestamp = System.currentTimeMillis() / 1000
-
-        val marker = CustomMarkerView(context!!, R.layout.graph_custom_marker, referenceTimestamp)
-        chart.marker = marker
-
-        // LineTimeChart
-        chart.setOnChartValueSelectedListener(this)
-        // enable description text
-        chart.description.isEnabled = false
-
-
-        chart.dragDecelerationFrictionCoef = 0.9f
-        chart.isHighlightPerDragEnabled = true
-
-        // set an alternative background color
-        //        chart.setBackgroundColor(Color.WHITE);
-        //        chart.setViewPortOffsets(0f, 0f, 0f, 0f);
-
-        // enable touch gestures
-        chart.setTouchEnabled(true)
-        // enable scaling and dragging
-        chart.isDragEnabled = true
-        chart.setScaleEnabled(true)
-        chart.setDrawGridBackground(false)
-        // if disabled, scaling can be done on x- and y-axis separately
-        chart.setPinchZoom(true)
-        // set an alternative background color
-        chart.setBackgroundColor(Color.TRANSPARENT)
-
-
-        val data = LineData()
-        data.setValueTextColor(Color.WHITE)
-        // add empty data
-        chart.data = data
-
-        chart.invalidate()
-
-        // get the legend (only possible after setting data)
-        val l = chart.legend
-        // modify the legend ...
-        l.form = Legend.LegendForm.LINE
-        l.typeface = Typeface.DEFAULT
-        l.textColor = Color.WHITE
-        //        Legend l = chart.getLegend();
-        //        l.setEnabled(false);
-
-        val xl = chart.xAxis
-        xl.typeface = Typeface.DEFAULT
-        xl.textColor = Color.BLACK
-        xl.setDrawGridLines(false)
-        xl.setAvoidFirstLastClipping(true)
-        xl.isEnabled = true
-        xl.setCenterAxisLabels(true)
-        xl.granularity = 1f // one hour
-        xl.position = XAxis.XAxisPosition.BOTTOM
-
-        val xAxisFormatter = HourAxisValueFormatter(referenceTimestamp)
-        xl.valueFormatter = xAxisFormatter
-
-        val leftAxis = chart.axisLeft
-        leftAxis.typeface = Typeface.DEFAULT
-        leftAxis.textColor = Color.BLACK
-        leftAxis.axisMaximum = MAX_Y_AXIS
-        leftAxis.axisMinimum = MIN_Y_AXIS
-        //        leftAxis.setSpaceTop(80);
-        //        leftAxis.setSpaceBottom(20);
-
-        leftAxis.setDrawGridLines(true)
-
-        val rightAxis = chart.axisRight
-        rightAxis.isEnabled = false
-
-    }
-
-
-    private fun createGraphMultiSets(){
-
-        val setPM1 = LineDataSet(null, "PM1")
-        setPM1.axisDependency = YAxis.AxisDependency.LEFT
-        setPM1.color = Color.BLUE
-        setPM1.setCircleColor(Color.BLUE)
-        setPM1.lineWidth = 2f
-        setPM1.circleRadius = 4f
-        setPM1.fillAlpha = 65
-        setPM1.fillColor = Color.BLUE
-        setPM1.highLightColor = Color.rgb(244, 117, 117)
-        setPM1.valueTextColor = Color.BLUE
-        setPM1.valueTextSize = 9f
-        setPM1.setDrawValues(false)
-
-
-        val setPM2 = LineDataSet(null, "PM2")
-        setPM2.axisDependency = YAxis.AxisDependency.LEFT
-        setPM2.color = Color.GREEN
-        setPM2.setCircleColor(Color.GREEN)
-        setPM2.lineWidth = 2f
-        setPM2.circleRadius = 4f
-        setPM2.fillAlpha = 65
-        setPM2.fillColor = Color.GREEN
-        setPM2.highLightColor = Color.rgb(244, 117, 117)
-        setPM2.valueTextColor = Color.GREEN
-        setPM2.valueTextSize = 9f
-        setPM2.setDrawValues(false)
-
-        val setPM10 = LineDataSet(null, "PM10")
-        setPM10.axisDependency = YAxis.AxisDependency.LEFT
-        setPM10.color = Color.YELLOW
-        setPM10.setCircleColor(Color.YELLOW)
-        setPM10.lineWidth = 2f
-        setPM10.circleRadius = 4f
-        setPM10.fillAlpha = 65
-        setPM10.fillColor = Color.YELLOW
-        setPM10.highLightColor = Color.rgb(244, 117, 117)
-        setPM10.valueTextColor = Color.YELLOW
-        setPM10.valueTextSize = 9f
-        setPM10.setDrawValues(false)
-
-        dataList = listOf(setPM1,setPM2,setPM10)
-
-    }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -286,21 +292,18 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
                         val pm25 = data.pm2_5Value
                         val pm10 = data.pm10Value
 
-                        fragment_ioio_progress_pm1.progress = pm01
-                        fragment_ioio_progress_pm2.progress = pm25
-                        fragment_ioio_progress_pm10.progress = pm10
-                        fragment_ioio_tv_pm1_value.text = "$pm01"
-                        fragment_ioio_tv_pm2_value.text = "$pm25"
-                        fragment_ioio_tv_pm10_value.text = "$pm10"
+                        fragment_ioio_progress_pm1.setValueAnimated(pm01.toFloat())
+                        fragment_ioio_progress_pm2.setValueAnimated(pm25.toFloat())
+                        fragment_ioio_progress_pm10.setValueAnimated(pm10.toFloat())
+
+
                         val dataToDisplay = intArrayOf(pm01, pm25, pm10)
+
                         addGraphEntry(dataToDisplay)
                     } else {
-                        fragment_ioio_progress_pm1.progress = 0
-                        fragment_ioio_progress_pm2.progress = 0
-                        fragment_ioio_progress_pm10.progress = 0
-                        fragment_ioio_tv_pm1_value.text = "-1"
-                        fragment_ioio_tv_pm2_value.text = "-1"
-                        fragment_ioio_tv_pm10_value.text = "-1"
+                        fragment_ioio_progress_pm1.setValueAnimated(0.0f)
+                        fragment_ioio_progress_pm2.setValueAnimated(0.0f)
+                        fragment_ioio_progress_pm10.setValueAnimated(0.0f)
                     }
                 })
         info("onStart")
@@ -312,6 +315,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         info("onResume")
     }
     override fun onPause() {
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onPause()
         info("onPause")
     }

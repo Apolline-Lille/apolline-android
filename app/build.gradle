@@ -239,6 +239,10 @@ dependencies {
 
     // Floating Actions
     implementation 'com.github.clans:fab:1.6.4'
+
+
+    // Circle View
+    implementation 'com.github.jakob-grabner:Circle-Progress-View:v1.3'
 }
 
 repositories {

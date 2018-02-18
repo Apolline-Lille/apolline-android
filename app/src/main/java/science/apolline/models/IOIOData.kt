@@ -103,7 +103,7 @@ class IOIOData : IntfSensorData {
 
 
     enum class Units constructor(val value: String) {
-        CONCENTRATION_UG_M3("ug/m3"),
+        CONCENTRATION_UG_M3("µg/m3"),
         PERCENTAGE("%"),
         TEMPERATURE_KELVIN("K");
     }

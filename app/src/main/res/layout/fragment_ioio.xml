@@ -73,6 +73,9 @@
             android:src="@drawable/ic_save_black_24dp"
             android:tint="@android:color/white"
             app:backgroundTint="@color/colorPrimary"
+            app:fab_colorNormal="@color/loa_orange"
+            app:fab_colorPressed="#E75043"
+            app:fab_colorRipple="#99FFFFFF"
             fab:fab_label="@string/export_json"
             fab:fab_size="mini" />
 
@@ -84,6 +87,9 @@
             android:tint="@android:color/white"
             app:backgroundTint="@color/colorPrimary"
             fab:fab_label="@string/export_csv"
+            app:fab_colorNormal="@color/loa_orange"
+            app:fab_colorPressed="#E75043"
+            app:fab_colorRipple="#99FFFFFF"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
@@ -93,6 +99,9 @@
             android:src="@drawable/ic_send_black_24dp"
             android:tint="@android:color/white"
             app:backgroundTint="@color/colorPrimary"
+            app:fab_colorNormal="@color/loa_orange"
+            app:fab_colorPressed="#E75043"
+            app:fab_colorRipple="#99FFFFFF"
             fab:fab_label="@string/export_share"
             fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>

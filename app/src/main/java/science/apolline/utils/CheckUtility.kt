@@ -114,9 +114,9 @@ object CheckUtility : AnkoLogger{
         return !(!gpsEnabled && !networkEnabled)
     }
 
-    fun requestLocation(context: Context) {
+    fun requestLocation(context: Context): AlertDialog {
+        val alertDialog = AlertDialog.Builder(context).create()
         if (!canGetLocation(context)) {
-            val alertDialog = AlertDialog.Builder(context).create()
             alertDialog.setMessage("Your GPS seems to be disabled, do you want to enable it?")
             alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No") { _, _ ->
                 context.toast("You haven't enabled your GPS")
@@ -127,6 +127,7 @@ object CheckUtility : AnkoLogger{
                 }
             alertDialog.show()
         }
+        return alertDialog
     }
 
     @SuppressLint("BatteryLife")
