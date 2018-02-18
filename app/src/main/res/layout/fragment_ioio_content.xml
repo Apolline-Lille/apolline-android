@@ -14,21 +14,25 @@
         android:layout_height="wrap_content"
         android:baselineAligned="false"
         android:gravity="bottom|center"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:orientation="horizontal">
 
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_weight="0.5"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
             android:orientation="horizontal">
 
             <at.grabner.circleprogress.CircleProgressView
                 android:id="@+id/fragment_ioio_progress_pm1"
-                android:layout_width="277dp"
-                android:layout_height="277dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
                 CircleProgressView:cpv_autoTextSize="true"
@@ -55,15 +59,19 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_weight="0.5"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
             android:orientation="horizontal">
 
             <at.grabner.circleprogress.CircleProgressView
                 android:id="@+id/fragment_ioio_progress_pm2"
-                android:layout_width="277dp"
-                android:layout_height="277dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
                 CircleProgressView:cpv_autoTextSize="true"
@@ -90,15 +98,19 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_weight="0.5"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
             android:orientation="horizontal">
 
             <at.grabner.circleprogress.CircleProgressView
                 android:id="@+id/fragment_ioio_progress_pm10"
-                android:layout_width="277dp"
-                android:layout_height="277dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
                 CircleProgressView:cpv_autoTextSize="true"
@@ -121,13 +133,15 @@
                 CircleProgressView:cpv_unitColor="@color/primary_dark"
                 CircleProgressView:cpv_unitPosition="bottom"
                 CircleProgressView:cpv_unitScale="1" />
-
-
         </RelativeLayout>
 
     </LinearLayout>
 
     <LinearLayout
+        android:gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
