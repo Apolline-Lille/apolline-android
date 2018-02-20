@@ -16,7 +16,6 @@ import android.util.Log
 import com.google.android.gms.location.LocationRequest
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-
 import ioio.lib.api.AnalogInput
 import ioio.lib.api.DigitalOutput
 import ioio.lib.api.Uart
@@ -85,11 +84,11 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                     if (CheckUtility.checkFineLocationPermission(applicationContext) && canGetLocation(applicationContext)) {
                         info("checked")
                         disposable.add(locationProvider.getUpdatedLocation(request)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(Schedulers.io())
-                                .doOnError {
+                                .onErrorReturn {
                                     error("Android reactive location error" + it.toString())
                                 }
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.io())
                                 .subscribe { t ->
                                     position = Position(t!!.provider, GeoHashHelper.encode(t.latitude, t.longitude), "no")
                                     //info("Position in observer" + position.toString())

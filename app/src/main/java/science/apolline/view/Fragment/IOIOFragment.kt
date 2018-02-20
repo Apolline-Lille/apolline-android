@@ -96,7 +96,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         setPM1.setDrawValues(false)
 
 
-        val setPM2 = LineDataSet(null, "PM2")
+        val setPM2 = LineDataSet(null, "PM2.5")
         setPM2.axisDependency = YAxis.AxisDependency.LEFT
         setPM2.color = Color.GREEN
         setPM2.setCircleColor(Color.GREEN)

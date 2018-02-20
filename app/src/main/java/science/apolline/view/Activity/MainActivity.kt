@@ -218,12 +218,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onPause() {
         super.onPause()
-        MoveViewJob.getInstance(null, 0.0F, 0.0F, null, null)
+        //MoveViewJob.getInstance(null, 0.0F, 0.0F, null, null)
     }
 
     override fun onStop() {
         super.onStop()
-        MoveViewJob.getInstance(null, 0f, 0f, null, null)
+        //MoveViewJob.getInstance(null, 0f, 0f, null, null)
     }
 
     override fun onDestroy() {

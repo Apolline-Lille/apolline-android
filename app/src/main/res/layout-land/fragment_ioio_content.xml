@@ -149,7 +149,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/ioio_sensor_pm01"
-            android:textColor="#0000FF"
+            android:textColor="@color/loa_sensor_text_color3"
             tools:textSize="30sp" />
 
         <TextView
@@ -159,7 +159,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/ioio_sensor_pm2_5"
-            android:textColor="#0000FF"
+            android:textColor="@color/loa_sensor_text_color2"
             tools:textSize="30sp" />
 
         <TextView
@@ -169,7 +169,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/ioio_sensor_pm10"
-            android:textColor="#0000FF"
+            android:textColor="@color/loa_sensor_text_color1"
             tools:textSize="30sp" />
     </LinearLayout>
 
