@@ -1,12 +1,13 @@
 package science.apolline.view.Fragment
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.jobs.MoveViewJob
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.github.salomonbrys.kodein.android.appKodein
 import com.google.gson.GsonBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -32,14 +34,17 @@ import org.jetbrains.anko.info
 import science.apolline.R
 import science.apolline.models.IOIOData
 import science.apolline.service.sensor.IOIOService
-import science.apolline.utils.*
+import science.apolline.utils.CustomMarkerView
+import science.apolline.utils.DataDeserializer
 import science.apolline.utils.DataExport.exportShareCsv
-import science.apolline.utils.DataExport.exportToJson
 import science.apolline.utils.DataExport.exportToCsv
+import science.apolline.utils.DataExport.exportToJson
+import science.apolline.utils.HourAxisValueFormatter
+import science.apolline.root.RootFragment
 import science.apolline.viewModel.SensorViewModel
 
 
-class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, AnkoLogger {
+class IOIOFragment : RootFragment(), OnChartValueSelectedListener, AnkoLogger {
 
 
     private var referenceTimestamp: Long = MIN_TIME_STAMP
@@ -48,7 +53,13 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
 
     private lateinit var disposable: CompositeDisposable
 
-    private lateinit var viewModel: SensorViewModel
+    private lateinit var  viewModel: SensorViewModel
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProviders.of(this).get(SensorViewModel::class.java).init(appKodein())
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -58,7 +69,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         disposable = CompositeDisposable()
-        viewModel = SensorViewModel(activity!!.application)
+        // viewModel = SensorViewModel(activity!!.application)
 
         floating_action_menu_json.setOnClickListener {
             exportToJson(activity!!.application)
@@ -80,7 +91,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
     }
 
 
-    private fun createGraphMultiSets(){
+    private fun createGraphMultiSets() {
 
         val setPM1 = LineDataSet(null, "PM1")
         setPM1.axisDependency = YAxis.AxisDependency.LEFT
@@ -122,7 +133,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         setPM10.valueTextSize = 9f
         setPM10.setDrawValues(false)
 
-        dataList = listOf(setPM1,setPM2,setPM10)
+        dataList = listOf(setPM1, setPM2, setPM10)
 
     }
 
@@ -249,7 +260,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         // this automatically refreshes the chart (calls invalidate())
 
         val count = chart.data.getDataSetByIndex(1).entryCount
-        val entry = chart.data.getDataSetByIndex(1).getEntryForIndex(count-1)
+        val entry = chart.data.getDataSetByIndex(1).getEntryForIndex(count - 1)
 
         //chart.moveViewToAnimated(entry.x, entry.y, YAxis.AxisDependency.LEFT,500)
         chart.moveViewTo(entry.x, entry.y, YAxis.AxisDependency.LEFT)
@@ -277,7 +288,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
     override fun onStart() {
         super.onStart()
         chart.fitScreen()
-        disposable.add(viewModel.deviceListObserver
+        disposable.add(viewModel.getDeviceList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
@@ -314,6 +325,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         super.onResume()
         info("onResume")
     }
+
     override fun onPause() {
         MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onPause()
@@ -335,6 +347,7 @@ class IOIOFragment : Fragment(), LifecycleOwner, OnChartValueSelectedListener, A
         info("onDestroyView")
     }
 
+    @SuppressLint("MissingSuperCall")
     override fun onDestroy() {
         if (!disposable.isDisposed) {
             disposable.dispose()

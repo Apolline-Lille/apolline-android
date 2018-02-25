@@ -12,8 +12,8 @@ import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
-import android.util.Log
 import com.google.android.gms.location.LocationRequest
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import ioio.lib.api.AnalogInput
@@ -78,20 +78,23 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
             @Throws(ConnectionLostException::class, InterruptedException::class)
             override fun loop() {
-                Log.e("ioioService", "loop")
                 try {
 
                     if (CheckUtility.checkFineLocationPermission(applicationContext) && canGetLocation(applicationContext)) {
-                        info("checked")
+                        //info("checked")
                         disposable.add(locationProvider.getUpdatedLocation(request)
-                                .onErrorReturn {
-                                    error("Android reactive location error" + it.toString())
-                                }
+                                .onExceptionResumeNext(Observable.empty())
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.io())
                                 .subscribe { t ->
-                                    position = Position(t!!.provider, GeoHashHelper.encode(t.latitude, t.longitude), "no")
-                                    //info("Position in observer" + position.toString())
+
+                                    if (t == null) {
+                                        info("Get location error")
+                                    } else {
+                                        position = Position(t.provider, GeoHashHelper.encode(t.latitude, t.longitude), "no")
+                                        //info("Position in observer" + position.toString())
+                                    }
+
                                 }
                         )
                     } else {
@@ -146,7 +149,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     private fun persistData(data: IOIOData, pos: Position?) {
         val d1 = System.currentTimeMillis() * 1000000
-        val device = Device(AndroidUuid.getAndroidUuid(), "LOA", d1, pos, data.toJson(), 0)
+        val device = Device(AndroidUuid.getAndroidUuid(), DEVICE_NAME, d1, pos, data.toJson(), 0)
         doAsync {
             sensorModel.insert(device)
             location = null
@@ -167,18 +170,18 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
         if (!disposable.isDisposed) {
             disposable.dispose()
         }
-        Log.e(this.javaClass.name, "onDestroy")
+        info("onDestroy")
     }
 
     fun launchForegroundServiceNotification(context: Context) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val n: Notification
         val intent = Intent(context, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context,0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         if (Build.VERSION.SDK_INT < 26) {
 
-        }else{
+        } else {
             val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
             channel.description = "Apolline notification channel"
             notificationManager.createNotificationChannel(channel)
@@ -203,6 +206,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
         private const val SERVICE_ID: Int = 101
         private const val CHANNEL_ID = "science.apolline"
         private const val CHANNEL_NAME = "Apolline"
+        private const val DEVICE_NAME = "LOA"
 
     }
 }

@@ -1,66 +1,23 @@
 package science.apolline.viewModel
 
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.content.Context
-import retrofit2.Call
-import retrofit2.Response
-import science.apolline.service.database.AppDatabase
 import science.apolline.service.database.SensorDao
-import science.apolline.models.InfluxBody
 import science.apolline.models.Device
-import science.apolline.service.networks.ApiService
-import science.apolline.service.networks.ApiUtils
-import science.apolline.utils.RequestParser
 import org.jetbrains.anko.*
-import science.apolline.BuildConfig
-import android.net.ConnectivityManager
+import com.github.salomonbrys.kodein.instance
 import io.reactivex.Flowable
+import science.apolline.root.RootViewModel
 
 
-class SensorViewModel(application: Application) : AndroidViewModel(application), AnkoLogger {
+class SensorViewModel: RootViewModel<SensorViewModel>(), AnkoLogger {
 
 
-    private val sensorModel: SensorDao = AppDatabase.getInstance(getApplication()).sensorDao()
-    var deviceListObserver: Flowable<List<Device>> = sensorModel.getLastEntries()
+    private val sensorModel by injector.instance<SensorDao>()
+
+    private lateinit var deviceListObserver: Flowable<List<Device>>
 
 
-    private fun sendData(device: Device) {
-
-        doAsync {
-            if (isConnectingToInternet(getApplication())) {
-                val requestBody: String = RequestParser.createSingleRequestBody(device)
-//                info(requestBody)
-                val api: ApiService = ApiUtils.apiService
-                val postCall: Call<InfluxBody> = api.savePost(BuildConfig.INFLUXDB_DBNAME, BuildConfig.INFLUXDB_USR, BuildConfig.INFLUXDB_PWD, requestBody)
-                val postResponse: Response<InfluxBody>
-                postResponse = postCall.execute()
-
-                if (postResponse.isSuccessful) {
-                    info("Data send: success")
-                } else {
-                    info("Data send: Failure, message = " + postResponse.message())
-                }
-            } else {
-                info("Data send: can't establish internet connection")
-            }
-
-        }
-
+    fun getDeviceList(): Flowable<List<Device>>{
+        deviceListObserver = sensorModel.getLastEntries()
+        return deviceListObserver
     }
-
-    private fun setPersistant(device: Device) {
-        doAsync {
-            info(device.data?.toString())
-            sensorModel.insert(device)
-        }
-    }
-
-    private fun isConnectingToInternet(context: Context): Boolean {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = cm.activeNetworkInfo
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting
-    }
-
-
 }

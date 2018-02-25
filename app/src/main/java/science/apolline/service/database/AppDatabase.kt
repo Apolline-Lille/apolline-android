@@ -10,8 +10,6 @@ import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.migration.Migration
 
 
-
-
 /**
  * Created by sparow on 11/5/17.
  */

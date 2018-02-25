@@ -246,6 +246,11 @@ dependencies {
 
     // Toasty
     implementation 'com.github.GrenderG:Toasty:1.2.8'
+
+    // Kodein
+    implementation 'com.github.salomonbrys.kodein:kodein-core:4.1.0'
+    implementation 'com.github.salomonbrys.kodein:kodein:4.1.0'
+    implementation 'com.github.salomonbrys.kodein:kodein-android:4.1.0'
 }
 
 repositories {

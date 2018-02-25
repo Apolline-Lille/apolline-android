@@ -27,4 +27,5 @@
 -keep class org.** { *; }
 -keepattributes EnclosingMethod
 -keepattributes InnerClasses
+-keepattributes Signature
 #-dontoptimize
