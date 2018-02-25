@@ -11,13 +11,13 @@ import science.apolline.root.RootViewModel
 class SensorViewModel: RootViewModel<SensorViewModel>(), AnkoLogger {
 
 
-    private val sensorModel by injector.instance<SensorDao>()
+    private val sensorDao by instance<SensorDao>()
 
     private lateinit var deviceListObserver: Flowable<List<Device>>
 
 
     fun getDeviceList(): Flowable<List<Device>>{
-        deviceListObserver = sensorModel.getLastEntries()
+        deviceListObserver = sensorDao.getLastEntries()
         return deviceListObserver
     }
 }

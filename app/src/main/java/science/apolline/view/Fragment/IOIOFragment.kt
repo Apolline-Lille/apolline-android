@@ -1,7 +1,6 @@
 package science.apolline.view.Fragment
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent

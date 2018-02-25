@@ -12,6 +12,10 @@ import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
+import com.github.salomonbrys.kodein.KodeinInjector
+import com.github.salomonbrys.kodein.android.ServiceInjector
+import com.github.salomonbrys.kodein.android.appKodein
+import com.github.salomonbrys.kodein.instance
 import com.google.android.gms.location.LocationRequest
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -43,8 +47,12 @@ import science.apolline.view.Activity.MainActivity
 
 class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
+    private val injector: KodeinInjector = KodeinInjector()
+
+    private val sensorModel by injector.instance<SensorDao>()
+
     internal var led = true
-    private val sensorModel: SensorDao = AppDatabase.getInstance(this).sensorDao()
+
     private val locationProvider = ReactiveLocationProvider(this)
 
     private val disposable = CompositeDisposable()
@@ -52,6 +60,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
     private var location: Location? = null
 
     override fun createIOIOLooper(): IOIOLooper {
+        injector.inject(appKodein())
         return object : BaseIOIOLooper() {
             private val data = IOIOData()
             private var led_: DigitalOutput? = null

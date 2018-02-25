@@ -3,7 +3,6 @@ package science.apolline.view.Activity
 
 import android.Manifest
 import android.annotation.SuppressLint
-
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.net.wifi.WifiManager.WifiLock
@@ -16,35 +15,38 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.birbit.android.jobqueue.JobManager
-import com.birbit.android.jobqueue.config.Configuration
+import com.github.salomonbrys.kodein.instance
+import com.github.salomonbrys.kodein.with
 import es.dmoral.toasty.Toasty
 import org.jetbrains.anko.*
 import pub.devrel.easypermissions.EasyPermissions
 import science.apolline.R
 import science.apolline.service.sensor.IOIOService
 import science.apolline.service.synchronisation.SyncInfluxDBJob
-import science.apolline.service.synchronisation.SyncJobService
 import science.apolline.utils.CheckUtility.isNetworkConnected
 import science.apolline.utils.CheckUtility.requestDozeMode
-import science.apolline.utils.CheckUtility.requestLocation
-import science.apolline.utils.CheckUtility.requestPartialWakeUp
-import science.apolline.utils.CheckUtility.requestWifiFullMode
 import science.apolline.utils.SyncJobScheduler.cancelAutoSync
 import science.apolline.utils.SyncJobScheduler.setAutoSync
 import science.apolline.view.Fragment.IOIOFragment
 import science.apolline.root.RootActivity
+import science.apolline.utils.CheckUtility.requestLocation
 
 class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks, AnkoLogger {
 
-    private lateinit var jobManager: JobManager
-    private lateinit var fragmentIOIO: IOIOFragment
-    private lateinit var wakeLock: WakeLock
-    private lateinit var wifiLock: WifiLock
+    private val jobManager by instance<JobManager>()
+
+    private val fragmentIOIO  by instance<IOIOFragment>()
+
+    private  val wakeLock: WakeLock by with(this as AppCompatActivity).instance()
+
+    private val wifiLock: WifiLock by with(this as AppCompatActivity).instance()
+
     private lateinit var requestLocationAlert: AlertDialog
 
     @SuppressLint("MissingSuperCall")
@@ -63,10 +65,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         val navigationView = findViewById<NavigationView>(R.id.nav_drawer)
         navigationView.setNavigationItemSelectedListener(this)
 
-        // Setup JobManager
-        val builder = Configuration.Builder(this)
-        jobManager = JobManager(builder.build())
-
         // Check permissions
         checkPermissions()
 
@@ -79,19 +77,10 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         // Request enable location
         requestLocationAlert = requestLocation(this)
 
-        // Request partial wake up
-        wakeLock = requestPartialWakeUp(this, REQUEST_WAKE_UP_TIMEOUT)
-
-        // Request Wifi full mode
-        wifiLock = requestWifiFullMode(this)
-
-        // Init sync service
-        jobManager = SyncJobService().jobManager
-
         // Launch AutoSync
         setAutoSync(INFLUXDB_SYNC_FREQ, this)
 
-        fragmentIOIO = IOIOFragment()
+        //fragmentIOIO = IOIOFragment()
         replaceFragment(fragmentIOIO)
 
     }
