@@ -1,4 +1,4 @@
-package science.apolline.view.Fragment
+package science.apolline.view.fragment
 
 import android.annotation.SuppressLint
 import android.arch.lifecycle.ViewModelProviders
@@ -94,41 +94,41 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, AnkoLogger {
 
         val setPM1 = LineDataSet(null, "PM1")
         setPM1.axisDependency = YAxis.AxisDependency.LEFT
-        setPM1.color = Color.BLUE
-        setPM1.setCircleColor(Color.BLUE)
+        setPM1.color = Color.rgb(48, 79, 254)
+        setPM1.setCircleColor(Color.rgb(48, 79, 254))
         setPM1.lineWidth = 2f
         setPM1.circleRadius = 4f
         setPM1.fillAlpha = 65
-        setPM1.fillColor = Color.BLUE
+        setPM1.fillColor = Color.rgb(48, 79, 254)
         setPM1.highLightColor = Color.rgb(244, 117, 117)
-        setPM1.valueTextColor = Color.BLUE
+        setPM1.valueTextColor = Color.rgb(48, 79, 254)
         setPM1.valueTextSize = 9f
         setPM1.setDrawValues(false)
 
 
         val setPM2 = LineDataSet(null, "PM2.5")
         setPM2.axisDependency = YAxis.AxisDependency.LEFT
-        setPM2.color = Color.GREEN
-        setPM2.setCircleColor(Color.GREEN)
+        setPM2.color = Color.rgb(0, 200, 83)
+        setPM2.setCircleColor(Color.rgb(0, 200, 83))
         setPM2.lineWidth = 2f
         setPM2.circleRadius = 4f
         setPM2.fillAlpha = 65
-        setPM2.fillColor = Color.GREEN
+        setPM2.fillColor = Color.rgb(0, 200, 83)
         setPM2.highLightColor = Color.rgb(244, 117, 117)
-        setPM2.valueTextColor = Color.GREEN
+        setPM2.valueTextColor = Color.rgb(0, 200, 83)
         setPM2.valueTextSize = 9f
         setPM2.setDrawValues(false)
 
         val setPM10 = LineDataSet(null, "PM10")
         setPM10.axisDependency = YAxis.AxisDependency.LEFT
-        setPM10.color = Color.RED
-        setPM10.setCircleColor(Color.RED)
+        setPM10.color = Color.rgb(213, 0, 0)
+        setPM10.setCircleColor(Color.rgb(213, 0, 0))
         setPM10.lineWidth = 2f
         setPM10.circleRadius = 4f
         setPM10.fillAlpha = 65
-        setPM10.fillColor = Color.RED
+        setPM10.fillColor = Color.rgb(213, 0, 0)
         setPM10.highLightColor = Color.rgb(244, 117, 117)
-        setPM10.valueTextColor = Color.RED
+        setPM10.valueTextColor = Color.rgb(213, 0, 0)
         setPM10.valueTextSize = 9f
         setPM10.setDrawValues(false)
 

@@ -1,4 +1,4 @@
-package science.apolline.view.Activity
+package science.apolline.view.activity
 
 
 import android.Manifest
@@ -33,7 +33,7 @@ import science.apolline.utils.CheckUtility.isNetworkConnected
 import science.apolline.utils.CheckUtility.requestDozeMode
 import science.apolline.utils.SyncJobScheduler.cancelAutoSync
 import science.apolline.utils.SyncJobScheduler.setAutoSync
-import science.apolline.view.Fragment.IOIOFragment
+import science.apolline.view.fragment.IOIOFragment
 import science.apolline.root.RootActivity
 import science.apolline.utils.CheckUtility.requestLocation
 

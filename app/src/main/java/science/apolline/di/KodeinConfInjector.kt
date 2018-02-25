@@ -1,10 +1,8 @@
 package science.apolline.di
 
-import android.Manifest
 import android.content.Context
 import android.net.wifi.WifiManager.WifiLock
 import android.os.PowerManager.WakeLock
-import android.support.v7.app.AlertDialog
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.config.Configuration
 import com.github.salomonbrys.kodein.*
@@ -17,7 +15,7 @@ import science.apolline.service.networks.ApiUtils
 import science.apolline.service.synchronisation.SyncJobService
 import science.apolline.utils.CheckUtility.requestPartialWakeUp
 import science.apolline.utils.CheckUtility.requestWifiFullMode
-import science.apolline.view.Fragment.IOIOFragment
+import science.apolline.view.fragment.IOIOFragment
 
 /**
  * Created by sparow on 2/25/2018.

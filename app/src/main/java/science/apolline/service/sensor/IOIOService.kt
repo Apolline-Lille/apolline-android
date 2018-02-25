@@ -13,7 +13,6 @@ import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import com.github.salomonbrys.kodein.KodeinInjector
-import com.github.salomonbrys.kodein.android.ServiceInjector
 import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.instance
 import com.google.android.gms.location.LocationRequest
@@ -34,7 +33,6 @@ import science.apolline.R
 import science.apolline.models.Device
 import science.apolline.models.IOIOData
 import science.apolline.models.Position
-import science.apolline.service.database.AppDatabase
 import science.apolline.service.database.SensorDao
 import science.apolline.utils.AndroidUuid
 import science.apolline.utils.CheckUtility
@@ -42,7 +40,7 @@ import science.apolline.utils.CheckUtility.canGetLocation
 import java.io.IOException
 import java.io.InputStream
 import science.apolline.utils.GeoHashHelper
-import science.apolline.view.Activity.MainActivity
+import science.apolline.view.activity.MainActivity
 
 
 class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
