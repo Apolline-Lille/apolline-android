@@ -46,18 +46,18 @@ import science.apolline.viewModel.SensorViewModel
 class IOIOFragment : RootFragment(), OnChartValueSelectedListener, AnkoLogger {
 
 
-    private var referenceTimestamp: Long = MIN_TIME_STAMP
+    private var mReferenceTimestamp: Long = MIN_TIME_STAMP
 
-    private lateinit var dataList: List<ILineDataSet>
+    private lateinit var mDataList: List<ILineDataSet>
 
-    private lateinit var disposable: CompositeDisposable
+    private lateinit var mDisposable: CompositeDisposable
 
-    private lateinit var  viewModel: SensorViewModel
+    private lateinit var mViewModel: SensorViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(SensorViewModel::class.java).init(appKodein())
+        mViewModel = ViewModelProviders.of(this).get(SensorViewModel::class.java).init(appKodein())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -67,8 +67,8 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, AnkoLogger {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        disposable = CompositeDisposable()
-        // viewModel = SensorViewModel(activity!!.application)
+        mDisposable = CompositeDisposable()
+        // mViewModel = SensorViewModel(activity!!.application)
 
         floating_action_menu_json.setOnClickListener {
             exportToJson(activity!!.application)
@@ -132,16 +132,16 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, AnkoLogger {
         setPM10.valueTextSize = 9f
         setPM10.setDrawValues(false)
 
-        dataList = listOf(setPM1, setPM2, setPM10)
+        mDataList = listOf(setPM1, setPM2, setPM10)
 
     }
 
 
     private fun setupGraphView() {
 
-        referenceTimestamp = System.currentTimeMillis() / 1000
+        mReferenceTimestamp = System.currentTimeMillis() / 1000
 
-        val marker = CustomMarkerView(context!!, R.layout.graph_custom_marker, referenceTimestamp)
+        val marker = CustomMarkerView(context!!, R.layout.graph_custom_marker, mReferenceTimestamp)
         chart.marker = marker
 
         // LineTimeChart
@@ -195,7 +195,7 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, AnkoLogger {
         xl.granularity = 1f // one hour
         xl.position = XAxis.XAxisPosition.BOTTOM
 
-        val xAxisFormatter = HourAxisValueFormatter(referenceTimestamp)
+        val xAxisFormatter = HourAxisValueFormatter(mReferenceTimestamp)
         xl.valueFormatter = xAxisFormatter
 
         val leftAxis = chart.axisLeft
@@ -220,14 +220,14 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, AnkoLogger {
 
         if (data != null) {
             if (data.dataSetCount != 3)
-                for (temp in dataList) {
+                for (temp in mDataList) {
                     data.addDataSet(temp)
                 }
 
             val now = System.currentTimeMillis() / 1000
-            data.addEntry(Entry((now - referenceTimestamp).toFloat(), dataDisplay[0].toFloat()), 0)
-            data.addEntry(Entry((now - referenceTimestamp).toFloat(), dataDisplay[1].toFloat()), 1)
-            data.addEntry(Entry((now - referenceTimestamp).toFloat(), dataDisplay[2].toFloat()), 2)
+            data.addEntry(Entry((now - mReferenceTimestamp).toFloat(), dataDisplay[0].toFloat()), 0)
+            data.addEntry(Entry((now - mReferenceTimestamp).toFloat(), dataDisplay[1].toFloat()), 1)
+            data.addEntry(Entry((now - mReferenceTimestamp).toFloat(), dataDisplay[2].toFloat()), 2)
 
 
             data.dataSets.forEach {
@@ -287,7 +287,7 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, AnkoLogger {
     override fun onStart() {
         super.onStart()
         chart.fitScreen()
-        disposable.add(viewModel.getDeviceList()
+        mDisposable.add(mViewModel.getDeviceList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
@@ -338,8 +338,8 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, AnkoLogger {
     }
 
     override fun onDestroyView() {
-        if (!disposable.isDisposed) {
-            disposable.dispose()
+        if (!mDisposable.isDisposed) {
+            mDisposable.dispose()
         }
         MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onDestroyView()
@@ -348,8 +348,8 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, AnkoLogger {
 
     @SuppressLint("MissingSuperCall")
     override fun onDestroy() {
-        if (!disposable.isDisposed) {
-            disposable.dispose()
+        if (!mDisposable.isDisposed) {
+            mDisposable.dispose()
         }
         MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onDestroy()

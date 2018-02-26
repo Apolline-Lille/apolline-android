@@ -34,29 +34,28 @@ import pub.devrel.easypermissions.EasyPermissions
 import science.apolline.R
 import science.apolline.service.sensor.IOIOService
 import science.apolline.service.synchronisation.SyncInfluxDBJob
-import science.apolline.utils.CheckUtility.isNetworkConnected
-import science.apolline.utils.CheckUtility.requestDozeMode
 import science.apolline.utils.SyncJobScheduler.cancelAutoSync
-import science.apolline.utils.SyncJobScheduler.setAutoSync
 import science.apolline.view.fragment.IOIOFragment
 import science.apolline.root.RootActivity
-import science.apolline.utils.CheckUtility.requestLocation
+import science.apolline.utils.CheckUtility
+import science.apolline.utils.SyncJobScheduler
 import science.apolline.view.fragment.MapFragment
 
 
 class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks, AnkoLogger {
 
-    private val jobManager by instance<JobManager>()
+    private val mJobManager by instance<JobManager>()
 
-    private val fragmentIOIO  by instance<IOIOFragment>()
+    private val mFragmentIOIO by instance<IOIOFragment>()
 
-    private val fragmentMaps  by instance<MapFragment>()
+    private val mFragmentMaps by instance<MapFragment>()
 
-    private  val wakeLock: WakeLock by with(this as AppCompatActivity).instance()
+    private val mWakeLock: WakeLock by with(this as AppCompatActivity).instance()
 
-    private val wifiLock: WifiLock by with(this as AppCompatActivity).instance()
+    private val mWifiLock: WifiLock by with(this as AppCompatActivity).instance()
 
-    private lateinit var requestLocationAlert: AlertDialog
+    private lateinit var mRequestLocationAlert: AlertDialog
+
 
     @SuppressLint("MissingSuperCall")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,20 +80,17 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         requestBluetooth()
 
         // Request disable Doze Mode
-        requestDozeMode(this)
+        CheckUtility.requestDozeMode(this)
 
         // Request enable location
-        requestLocationAlert = requestLocation(this)
+        mRequestLocationAlert = CheckUtility.requestLocation(this)
 
         // Launch AutoSync
-        setAutoSync(INFLUXDB_SYNC_FREQ, this)
+        SyncJobScheduler.setAutoSync(INFLUXDB_SYNC_FREQ, this)
 
         // VIewPager
         setupViewPager(pager)
         tabs.setupWithViewPager(pager)
-
-        //fragmentIOIO = IOIOFragment()
-        //replaceFragment(fragmentIOIO)
 
     }
 
@@ -128,11 +124,11 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
 
-        if (isNetworkConnected(this)) {
-            jobManager.addJobInBackground(SyncInfluxDBJob())
+        if (CheckUtility.isNetworkConnected(this)) {
+            mJobManager.addJobInBackground(SyncInfluxDBJob())
             Toasty.info(applicationContext, "Synchronization in progress", Toast.LENGTH_SHORT, true).show()
         } else {
-            jobManager.addJobInBackground(SyncInfluxDBJob())
+            mJobManager.addJobInBackground(SyncInfluxDBJob())
             Toasty.warning(applicationContext, "No internet connection ! Synchronization job added to queue", Toast.LENGTH_LONG, true).show()
         }
         return true
@@ -221,23 +217,20 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onPause() {
         super.onPause()
-        //MoveViewJob.getInstance(null, 0.0F, 0.0F, null, null)
     }
 
     override fun onStop() {
         super.onStop()
-        //MoveViewJob.getInstance(null, 0f, 0f, null, null)
     }
-
 
 
     private fun setupViewPager(pager: ViewPager?) {
         val adapter = Adapter(supportFragmentManager)
 
-        val f1 = fragmentIOIO
+        val f1 = mFragmentIOIO
         adapter.addFragment(f1, "IOIO")
 
-        val f2 = fragmentMaps
+        val f2 = mFragmentMaps
         adapter.addFragment(f2, "MAP")
 
         pager?.adapter = adapter
@@ -259,38 +252,20 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @SuppressLint("MissingSuperCall")
     override fun onDestroy() {
-        if (wakeLock.isHeld) {
-            wakeLock.release()
-            info("wakeLock released")
-        } else if (wifiLock.isHeld) {
-            wifiLock.release()
-            info("wifiLock released")
+        if (mWakeLock.isHeld) {
+            mWakeLock.release()
+            info("WakeLock released")
+        } else if (mWifiLock.isHeld) {
+            mWifiLock.release()
+            info("WifiLock released")
         }
         super.onDestroy()
         cancelAutoSync(false)
         stopService(Intent(this, IOIOService::class.java))
-        if ( requestLocationAlert.isShowing ){
-            requestLocationAlert.cancel()
+        if (mRequestLocationAlert.isShowing) {
+            mRequestLocationAlert.cancel()
         }
     }
 
@@ -301,13 +276,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         private val PERMISSIONS_ARRAY = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         private const val REQUEST_CODE_PERMISSIONS_ARRAY = 100
         private const val REQUEST_CODE_ENABLE_BLUETOOTH = 101
-        private const val REQUEST_CODE_FINE_LOCATION = 102
-        private const val REQUEST_CODE_COARSE_LOCATION = 103
-        private const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 104
-        private const val REQUEST_WAKE_UP_TIMEOUT: Long = 86400 // 24h
-
-        private const val INFLUXDB_SYNC_JOB_ID = "influxDBJobId"
-
         private const val INFLUXDB_SYNC_FREQ: Long = 60 // Minutes
 
     }

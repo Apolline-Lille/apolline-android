@@ -48,6 +48,7 @@ Alphabetical order of last names
 
 * Moncef AOUDIA
 * Patrick BINCHATA
+* Cyril Delegove
 * Guillaume-Jean J SEM
 * Damien TOULOUSE
  
