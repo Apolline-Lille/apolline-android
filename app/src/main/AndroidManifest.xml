@@ -82,9 +82,11 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e4d1dff4ebcf925ddbe93cd3a23c88826c9055a5"/>
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/mapKey"/>
+
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="${google_map_api_key}" />
+
+
         <meta-data android:name="firebase_performance_logcat_enabled" android:value="true" />
 
         <!--

@@ -7,11 +7,10 @@
 
 
 
-    <include
-        android:id="@+id/ioio_content"
-        layout="@layout/fragment_ioio_content"
+    <fragment
+        class="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
 
 

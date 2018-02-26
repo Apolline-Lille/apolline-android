@@ -10,8 +10,11 @@ import android.os.Bundle
 import android.os.PowerManager.WakeLock
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.GravityCompat
+import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
@@ -24,6 +27,8 @@ import com.birbit.android.jobqueue.JobManager
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.with
 import es.dmoral.toasty.Toasty
+import kotlinx.android.synthetic.main.activity_main_app_bar.*
+import kotlinx.android.synthetic.main.activity_main_content.*
 import org.jetbrains.anko.*
 import pub.devrel.easypermissions.EasyPermissions
 import science.apolline.R
@@ -80,8 +85,12 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         // Launch AutoSync
         setAutoSync(INFLUXDB_SYNC_FREQ, this)
 
+        // VIewPager
+        setupViewPager(pager)
+        tabs.setupWithViewPager(pager)
+
         //fragmentIOIO = IOIOFragment()
-        replaceFragment(fragmentIOIO)
+        //replaceFragment(fragmentIOIO)
 
     }
 
@@ -215,6 +224,54 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         super.onStop()
         //MoveViewJob.getInstance(null, 0f, 0f, null, null)
     }
+
+
+
+    private fun setupViewPager(pager: ViewPager?) {
+        val adapter = Adapter(supportFragmentManager)
+
+        val f1 = fragmentIOIO
+        adapter.addFragment(f1, "IOIO")
+
+//        val f2 = fragmentIOIO
+//        adapter.addFragment(f2, "MAP")
+
+        pager?.adapter = adapter
+    }
+
+    private class Adapter(manager: FragmentManager) : FragmentPagerAdapter(manager) {
+        val fragments = ArrayList<Fragment>()
+        val titles = ArrayList<String>()
+        override fun getItem(position: Int): Fragment = fragments.get(position)
+
+        override fun getCount(): Int = fragments.size
+
+        override fun getPageTitle(position: Int): CharSequence? = titles.get(position)
+
+        fun addFragment(fragment: Fragment, title: String) {
+            fragments.add(fragment)
+            titles.add(title)
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @SuppressLint("MissingSuperCall")
     override fun onDestroy() {
