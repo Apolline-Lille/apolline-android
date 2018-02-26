@@ -41,12 +41,16 @@ import science.apolline.utils.SyncJobScheduler.setAutoSync
 import science.apolline.view.fragment.IOIOFragment
 import science.apolline.root.RootActivity
 import science.apolline.utils.CheckUtility.requestLocation
+import science.apolline.view.fragment.MapFragment
+
 
 class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks, AnkoLogger {
 
     private val jobManager by instance<JobManager>()
 
     private val fragmentIOIO  by instance<IOIOFragment>()
+
+    private val fragmentMaps  by instance<MapFragment>()
 
     private  val wakeLock: WakeLock by with(this as AppCompatActivity).instance()
 
@@ -233,8 +237,8 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         val f1 = fragmentIOIO
         adapter.addFragment(f1, "IOIO")
 
-//        val f2 = fragmentIOIO
-//        adapter.addFragment(f2, "MAP")
+        val f2 = fragmentMaps
+        adapter.addFragment(f2, "MAP")
 
         pager?.adapter = adapter
     }

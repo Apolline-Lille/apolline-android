@@ -36,7 +36,6 @@ import science.apolline.models.Position
 import science.apolline.service.database.SensorDao
 import science.apolline.utils.AndroidUuid
 import science.apolline.utils.CheckUtility
-import science.apolline.utils.CheckUtility.canGetLocation
 import java.io.IOException
 import java.io.InputStream
 import science.apolline.utils.GeoHashHelper
@@ -87,7 +86,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
             override fun loop() {
                 try {
 
-                    if (CheckUtility.checkFineLocationPermission(applicationContext) && canGetLocation(applicationContext)) {
+                    if (CheckUtility.checkFineLocationPermission(applicationContext) && CheckUtility.canGetLocation(applicationContext)) {
                         //info("checked")
                         disposable.add(locationProvider.getUpdatedLocation(request)
                                 .onExceptionResumeNext(Observable.empty())

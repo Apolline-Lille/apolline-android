@@ -8,12 +8,12 @@ import org.jetbrains.anko.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import science.apolline.service.database.AppDatabase
-import science.apolline.service.database.SensorDao
-import science.apolline.service.networks.ApiUtils
 import science.apolline.utils.RequestParser
 import science.apolline.BuildConfig
 import science.apolline.models.InfluxBody
+import science.apolline.service.database.AppDatabase
+import science.apolline.service.database.SensorDao
+import science.apolline.service.networks.ApiUtils
 import science.apolline.utils.CheckUtility.isNetworkConnected
 
 /**

@@ -6,5 +6,5 @@ function copyEnvVarsToManifest {
     export ANDROID_MANIFEST
     echo "AndroidManifest should exist at $ANDROID_MANIFEST"
     sed -i -e "s/\"\${google_map_api_key}\"/"\"$GOOGLE_MAP_API_KEY\""/g" $ANDROID_MANIFEST
-
+    sed -i -e "s/\"\${fabric_api_key}\"/"\"$FABRIC_API_KEY\""/g" $ANDROID_MANIFEST
 }
