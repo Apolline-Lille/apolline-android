@@ -22,7 +22,7 @@ before_install:
   - ls -all
   - openssl aes-256-cbc -K $encrypted_1f0900b4d867_key -iv $encrypted_1f0900b4d867_iv -in ${TRAVIS_BUILD_DIR}/app/google-services.json.enc -out ${TRAVIS_BUILD_DIR}/app/google-services.json -d
   - cp local.properties.ci local.properties
-  - source scripts/writeToManifest.sh && copyEnvVarsToManifest
+  - source $HOME/scripts/writeToManifest.sh && copyEnvVarsToManifest
   - docker pull influxdb
   - docker run --name=influxdb -d -p 127.0.0.1:8086:8086 influxdb
   - docker ps -a

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function copyEnvVarsToManifest {
-    ANDROID_MANIFEST=$HOME"/locafarm/app/src/main/AndroidManifest.xml"
+    ANDROID_MANIFEST=$HOME"/app/src/main/AndroidManifest.xml"
 
     export ANDROID_MANIFEST
     echo "AndroidManifest should exist at $ANDROID_MANIFEST"

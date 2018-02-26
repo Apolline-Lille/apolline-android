@@ -15,9 +15,16 @@ class SensorViewModel: RootViewModel<SensorViewModel>(), AnkoLogger {
 
     private lateinit var deviceListObserver: Flowable<List<Device>>
 
+    private lateinit var deviceAllListForMapObserver: Flowable<List<Device>>
+
 
     fun getDeviceList(): Flowable<List<Device>>{
         deviceListObserver = sensorDao.getLastEntries()
         return deviceListObserver
+    }
+
+    fun getAllDeviceForMapList(): Flowable<List<Device>>{
+        deviceAllListForMapObserver = sensorDao.getAllForMap()
+        return deviceAllListForMapObserver
     }
 }

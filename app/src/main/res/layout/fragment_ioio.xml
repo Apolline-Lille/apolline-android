@@ -105,7 +105,6 @@
             app:fab_colorNormal="@color/loa_orange"
             app:fab_colorPressed="#E75043"
             app:fab_colorRipple="#99FFFFFF"
-
             fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
     </RelativeLayout>

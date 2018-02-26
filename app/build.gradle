@@ -252,6 +252,10 @@ dependencies {
     implementation 'com.github.salomonbrys.kodein:kodein:4.1.0'
     implementation 'com.github.salomonbrys.kodein:kodein-android:4.1.0'
 
+    // Google Maps heat map utility
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
+
+
 }
 
 repositories {
