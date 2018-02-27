@@ -104,9 +104,10 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
                         error("Android reactive location error" + it.toString())
                     }
                     .subscribe { t ->
-                        mHeatMap.isMyLocationEnabled = true
+                        if (!mHeatMap.isMyLocationEnabled){
+                            mHeatMap.isMyLocationEnabled = true
+                        }
                         mHeatMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(t.latitude, t.longitude), DEFAULT_ZOOM))
-                        mHeatMap.uiSettings.isMyLocationButtonEnabled = true
                     }
             )
 
@@ -116,6 +117,7 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
                     .subscribe {
 
                         if (it.isNotEmpty()) {
+
                             val device = it.first()
                             val gsonBuilder = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
                             val data = gsonBuilder.fromJson(device.data, IOIOData::class.java)
@@ -134,7 +136,7 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
 
                                 if (mOldGeoHash == geoHashStr) {
                                     info("Same geoHash with old Device object")
-                                    mOverlay.remove()
+                                    //mOverlay.remove()
                                     addHeatMap(geo)
                                 } else {
                                     addHeatMap(geo)
@@ -182,26 +184,21 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
             mDisposable.dispose()
         }
         super.onDestroy()
-        mHeatMapView.onDestroy()
-
-        if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
-            mHeatMap.isMyLocationEnabled = false
-            mHeatMap.clear()
-        }
     }
 
     override fun onDestroyView() {
         if (!mDisposable.isDisposed) {
             mDisposable.dispose()
         }
-        super.onDestroyView()
 
+        mHeatMapView.onPause()
+        mHeatMap.clear()
         mHeatMapView.onDestroy()
         if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
             mHeatMap.isMyLocationEnabled = false
-            mHeatMap.clear()
         }
 
+        super.onDestroyView()
     }
 
 
@@ -212,6 +209,15 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
 
     override fun onMapReady(mapM: GoogleMap) {
         mHeatMap = mapM
+
+        mHeatMap.uiSettings.isCompassEnabled = true
+        mHeatMap.uiSettings.isMyLocationButtonEnabled = true
+        mHeatMap.uiSettings.isIndoorLevelPickerEnabled = true
+        mHeatMap.uiSettings.isZoomControlsEnabled = true
+        mHeatMap.isIndoorEnabled = true
+        mHeatMap.isBuildingsEnabled = true
+        mHeatMap.isTrafficEnabled = true
+        mHeatMap.mapType = GoogleMap.MAP_TYPE_TERRAIN
 
         val mgr = MapStateManager(context!!.applicationContext, MAPS_NAME)
         val position = mgr.savedCameraPosition
@@ -224,7 +230,6 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
 
         // Add existing points to map
         initHeatMap()
-
     }
 
 
