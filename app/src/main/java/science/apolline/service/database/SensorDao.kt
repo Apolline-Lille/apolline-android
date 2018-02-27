@@ -19,7 +19,7 @@ interface SensorDao {
     fun getAll(): Flowable<List<Device>>
 
     @Transaction
-    @Query("SELECT * FROM Device ORDER BY date desc LIMIT 20000")
+    @Query("SELECT * FROM Device ORDER BY date desc LIMIT 10000")
     fun getAllForMap(): Flowable<List<Device>>
 
     @Transaction

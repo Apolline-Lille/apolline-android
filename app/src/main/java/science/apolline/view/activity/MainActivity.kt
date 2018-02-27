@@ -39,16 +39,14 @@ import science.apolline.view.fragment.IOIOFragment
 import science.apolline.root.RootActivity
 import science.apolline.utils.CheckUtility
 import science.apolline.utils.SyncJobScheduler
-import science.apolline.view.fragment.MapFragment
+import science.apolline.view.fragment.ViewPagerFragment
 
 
 class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks, AnkoLogger {
 
     private val mJobManager by instance<JobManager>()
 
-    private val mFragmentIOIO by instance<IOIOFragment>()
-
-    private val mFragmentMaps by instance<MapFragment>()
+    private val mFragmentViewPager by instance<ViewPagerFragment>()
 
     private val mWakeLock: WakeLock by with(this as AppCompatActivity).instance()
 
@@ -88,9 +86,8 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         // Launch AutoSync
         SyncJobScheduler.setAutoSync(INFLUXDB_SYNC_FREQ, this)
 
-        // VIewPager
-        setupViewPager(pager)
-        tabs.setupWithViewPager(pager)
+
+        replaceFragment(mFragmentViewPager)
 
     }
 
@@ -221,34 +218,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onStop() {
         super.onStop()
-    }
-
-
-    private fun setupViewPager(pager: ViewPager?) {
-        val adapter = Adapter(supportFragmentManager)
-
-        val f1 = mFragmentIOIO
-        adapter.addFragment(f1, "IOIO")
-
-        val f2 = mFragmentMaps
-        adapter.addFragment(f2, "MAP")
-
-        pager?.adapter = adapter
-    }
-
-    private class Adapter(manager: FragmentManager) : FragmentPagerAdapter(manager) {
-        val fragments = ArrayList<Fragment>()
-        val titles = ArrayList<String>()
-        override fun getItem(position: Int): Fragment = fragments.get(position)
-
-        override fun getCount(): Int = fragments.size
-
-        override fun getPageTitle(position: Int): CharSequence? = titles.get(position)
-
-        fun addFragment(fragment: Fragment, title: String) {
-            fragments.add(fragment)
-            titles.add(title)
-        }
     }
 
 

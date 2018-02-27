@@ -36,6 +36,7 @@ Supported sensors:
  * [Circle-Progress-View](https://github.com/jakob-grabner/Circle-Progress-View) - An animated circle view.
  * [Toasty](https://github.com/GrenderG/Toasty) - The usual Android Toast, but with steroids (Colors).
  * [Gson](https://github.com/google/gson) - A Java serialization/deserialization library to convert Java Objects into JSON and back.
+ * [Google Maps Android Heatmap Utility](https://developers.google.com/maps/documentation/android-api/utility/heatmap) - The Google Maps Android API Utility Library includes a heatmap utility, which you can use to add one or more heatmaps to a Google map in your application.
 
 
 ## Download (Unreleased)
@@ -49,7 +50,7 @@ Alphabetical order of last names
 * Moncef AOUDIA
 * Patrick BINCHATA
 * Cyril Delegove
-* Guillaume-Jean J SEM
+* Guillaume Jean-Jaques SEM
 * Damien TOULOUSE
  
  

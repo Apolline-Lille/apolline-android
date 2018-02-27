@@ -184,8 +184,11 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
         if (!mDisposable.isDisposed) {
             mDisposable.dispose()
         }
+
         super.onDestroy()
+        info("MAP onDestroy")
     }
+
 
     override fun onDestroyView() {
         if (!mDisposable.isDisposed) {
@@ -194,15 +197,16 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
 
         mHeatMapView.onPause()
         mHeatMapView.onDestroy()
-
         if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
+            if(mHeatMap!=null){
+
+            }
             mHeatMap.isMyLocationEnabled = false
+            mHeatMap.clear()
         }
 
         super.onDestroyView()
-
-        mHeatMap.clear()
-        System.gc()
+        info("MAP onDestroyView")
     }
 
 
@@ -281,7 +285,7 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
                     val geoHashStr = it.position?.geohash
 
                     if (geoHashStr == null || geoHashStr == "no") {
-                        info("geohash null or no")
+                        // info("geohash null or no")
                     } else {
                         val lonLat = WeightedLatLng(GeoHashHelper.decode(geoHashStr), pm25.toDouble())
                         geo.add(lonLat)

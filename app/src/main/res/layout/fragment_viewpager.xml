@@ -1,0 +1,27 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintTop_toBottomOf="@+id/tabs" />
+
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:background="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimary"
+            app:tabTextColor="@color/divider"
+            app:tabSelectedTextColor="@color/icons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+</android.support.constraint.ConstraintLayout>
