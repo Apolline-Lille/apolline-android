@@ -46,6 +46,7 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
     private lateinit var mOverlay: TileOverlay
     private lateinit var mHeatMapView: MapView
     private lateinit var mOldGeoHash: String
+
     private lateinit var mHeatMap: GoogleMap
     private lateinit var mDisposable: CompositeDisposable
     private lateinit var mViewModel: SensorViewModel
@@ -154,8 +155,8 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
     }
 
     override fun onResume() {
-        super.onResume()
         mHeatMapView.onResume()
+        super.onResume()
     }
 
 
@@ -192,13 +193,16 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
         }
 
         mHeatMapView.onPause()
-        mHeatMap.clear()
         mHeatMapView.onDestroy()
+
         if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
             mHeatMap.isMyLocationEnabled = false
         }
 
         super.onDestroyView()
+
+        mHeatMap.clear()
+        System.gc()
     }
 
 
