@@ -5,23 +5,32 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintTop_toBottomOf="@+id/tabs" />
-
+        android:orientation="vertical">
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:backgroundTint="@color/colorPrimary"
-            app:tabTextColor="@color/divider"
             app:tabSelectedTextColor="@color/icons"
+            app:tabTextColor="@color/divider" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:layout_marginTop="8dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintTop_toBottomOf="@+id/tabs" />
+
+
+    </LinearLayout>
+
 
 </android.support.constraint.ConstraintLayout>
