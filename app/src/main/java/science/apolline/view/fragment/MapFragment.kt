@@ -33,6 +33,7 @@ import org.jetbrains.anko.info
 import com.google.maps.android.heatmaps.Gradient
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import science.apolline.root.FragmentLifecycle
 
 
 /**
@@ -40,7 +41,7 @@ import org.jetbrains.anko.uiThread
  */
 
 
-class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
+class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoLogger {
 
     private lateinit var mProvider: HeatmapTileProvider
     private lateinit var mOverlay: TileOverlay
@@ -82,19 +83,21 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-    }
 
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
         mDisposable = CompositeDisposable()
         mLocationProvider = ReactiveLocationProvider(context)
         mOldGeoHash = ""
     }
 
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+    }
+
     override fun onStart() {
         super.onStart()
         mHeatMapView.onStart()
+
         if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
             mDisposable.add(mLocationProvider.getUpdatedLocation(mRequest)
                     .onExceptionResumeNext(Observable.empty())
@@ -105,9 +108,12 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
                         error("Android reactive location error" + it.toString())
                     }
                     .subscribe { t ->
-                        if (!mHeatMap.isMyLocationEnabled){
+
+                        if (!mHeatMap.isMyLocationEnabled) {
                             mHeatMap.isMyLocationEnabled = true
+                            mHeatMap.uiSettings.isMyLocationButtonEnabled = true
                         }
+
                         mHeatMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(t.latitude, t.longitude), DEFAULT_ZOOM))
                     }
             )
@@ -185,6 +191,13 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
             mDisposable.dispose()
         }
 
+        mHeatMapView.onPause()
+        mHeatMapView.onDestroy()
+        if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
+            mHeatMap.isMyLocationEnabled = false
+            mHeatMap.clear()
+        }
+
         super.onDestroy()
         info("MAP onDestroy")
     }
@@ -194,17 +207,6 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
         if (!mDisposable.isDisposed) {
             mDisposable.dispose()
         }
-
-        mHeatMapView.onPause()
-        mHeatMapView.onDestroy()
-        if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
-            if(mHeatMap!=null){
-
-            }
-            mHeatMap.isMyLocationEnabled = false
-            mHeatMap.clear()
-        }
-
         super.onDestroyView()
         info("MAP onDestroyView")
     }
@@ -215,11 +217,36 @@ class MapFragment : RootFragment(), OnMapReadyCallback, AnkoLogger {
         mHeatMapView.onLowMemory()
     }
 
+    override fun onPauseFragment() {
+        if (::mHeatMapView.isInitialized) {
+            mHeatMapView.onPause()
+            if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
+                mHeatMap.isMyLocationEnabled = false
+            }
+        }
+        info("MAP onPauseFragment")
+    }
+
+    override fun onResumeFragment() {
+
+        if (::mHeatMapView.isInitialized) {
+            mHeatMapView.onResume()
+
+
+            if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
+                mHeatMap.isMyLocationEnabled = true
+                if (!mHeatMap.uiSettings.isMyLocationButtonEnabled) {
+                    mHeatMap.uiSettings.isMyLocationButtonEnabled = true
+                }
+            }
+        }
+        info("MAP onResumeFragment")
+    }
+
     override fun onMapReady(mapM: GoogleMap) {
         mHeatMap = mapM
 
         mHeatMap.uiSettings.isCompassEnabled = true
-        mHeatMap.uiSettings.isMyLocationButtonEnabled = true
         mHeatMap.uiSettings.isIndoorLevelPickerEnabled = true
         mHeatMap.uiSettings.isZoomControlsEnabled = true
         mHeatMap.isIndoorEnabled = true

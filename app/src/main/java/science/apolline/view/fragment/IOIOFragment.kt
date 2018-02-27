@@ -32,6 +32,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import science.apolline.R
 import science.apolline.models.IOIOData
+import science.apolline.root.FragmentLifecycle
 import science.apolline.service.sensor.IOIOService
 import science.apolline.utils.CustomMarkerView
 import science.apolline.utils.DataDeserializer
@@ -43,7 +44,7 @@ import science.apolline.root.RootFragment
 import science.apolline.viewModel.SensorViewModel
 
 
-class IOIOFragment : RootFragment(), OnChartValueSelectedListener, AnkoLogger {
+class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifecycle, AnkoLogger {
 
 
     private var mReferenceTimestamp: Long = MIN_TIME_STAMP
@@ -354,6 +355,16 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, AnkoLogger {
         MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onDestroy()
         info("onDestroy")
+    }
+
+
+    override fun onPauseFragment() {
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
+        info("IOIO onPauseFragment")
+    }
+
+    override fun onResumeFragment() {
+        info("IOIO onResumeFragment")
     }
 
     companion object {
