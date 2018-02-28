@@ -52,6 +52,7 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     private lateinit var mViewModel: SensorViewModel
     private lateinit var mLocationProvider: ReactiveLocationProvider
     private val mRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+            .setNumUpdates(5)
             .setInterval(1000)
 
     private var mOldDeviceListSize: Long = 0L
