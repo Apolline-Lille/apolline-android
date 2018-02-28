@@ -358,7 +358,9 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
                 uiThread {
                     info("Size of list after: " + geo.size)
-                    addHeatMap(geo)
+                    if(geo.isNotEmpty()){
+                        addHeatMap(geo)
+                    }
                 }
 
             } else {
