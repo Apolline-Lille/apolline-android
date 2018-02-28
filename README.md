@@ -10,9 +10,9 @@ Supported sensors:
 ## Screenshots
 | | | |
 |:-------------------------:|:-------------------------:|:-------------------------:|
-|<img width="1604" alt="screenshot_20180218-123954" src="https://user-images.githubusercontent.com/22281426/36351387-54cb14c4-14a9-11e8-9982-f4b790d16cc8.jpg">|<img width="1604" alt="screenshot_20180218-123937" src="https://user-images.githubusercontent.com/22281426/36351388-54e15ef0-14a9-11e8-8d8e-cefcc9d23e8a.jpg">|<img width="1604" alt="screenshot_20180218-123852" src="https://user-images.githubusercontent.com/22281426/36351390-550c886e-14a9-11e8-82bc-7687eb77f0c2.jpg">|
+|<img width="1604" alt="screenshot_20180228-172821__01" src="https://user-images.githubusercontent.com/22281426/36799845-59b7ca92-1cae-11e8-85e2-c64cd483b50e.jpg">|<img width="1604" alt="screenshot_20180228-172912__01" src="https://user-images.githubusercontent.com/22281426/36799840-5953c380-1cae-11e8-9334-0e53292e21a4.jpg">|<img width="1604" alt="screenshot_20180227-212536__01" src="https://user-images.githubusercontent.com/22281426/36799844-599a20fa-1cae-11e8-9dd9-62b4f698cf37.jpg">|
 
-<img width="1604" alt="screenshot_20180218-124033" src="https://user-images.githubusercontent.com/22281426/36351389-54f6e978-14a9-11e8-850f-69f037a482dd.jpg">
+<img width="1604" alt="screenshot_20180227-190110__01" src="https://user-images.githubusercontent.com/22281426/36799842-59791252-1cae-11e8-8254-044ce7f8dd7c.jpg">
 
 
 ## Libraries used
