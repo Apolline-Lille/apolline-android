@@ -67,8 +67,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
             private var inputHum: AnalogInput? = null
             private val freq = 1000
             private val request = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                    .setNumUpdates(5)
-                    .setInterval(100)
+                    .setInterval(750)
             private var position = Position()
 
             @Throws(ConnectionLostException::class, InterruptedException::class)

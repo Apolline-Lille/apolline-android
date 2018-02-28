@@ -212,14 +212,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
 
     @SuppressLint("MissingSuperCall")
     override fun onDestroy() {

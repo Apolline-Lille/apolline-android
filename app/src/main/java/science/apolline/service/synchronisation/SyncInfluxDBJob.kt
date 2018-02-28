@@ -44,13 +44,13 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
 
             sensorModel = AppDatabase.getInstance(super.getApplicationContext()).sensorDao()
 
-            var nbUnSynced: Int = sensorModel.getSensorNotSyncCount()
+            var nbUnSynced: Long = sensorModel.getSensorNotSyncCount()
 
             info("number of initial unsyncked is : $nbUnSynced")
 
-            var attempt: Int = nbUnSynced / MAX_LENGTH
+            var attempt: Long = nbUnSynced / MAX_LENGTH
 
-            if (nbUnSynced % MAX_LENGTH != 0) {
+            if (nbUnSynced % MAX_LENGTH != 0L) {
                 attempt++
             }
 
@@ -58,7 +58,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
 
             for (i in 1..attempt) {
 
-                val dataNotSync = sensorModel.getUnSync()
+                val dataNotSync = sensorModel.getUnSync(MAX_LENGTH)
 
                 if (dataNotSync.isNotEmpty()) {
                     info("UnSync to sync is :" + dataNotSync.size)
@@ -126,6 +126,6 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
 
     companion object {
         private const val PRIORITY = 1
-        private const val MAX_LENGTH = 8000 //Hardcoded in SensorDao
+        private const val MAX_LENGTH = 8000L //Hardcoded in SensorDao
     }
 }

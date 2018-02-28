@@ -5,26 +5,20 @@ import science.apolline.models.Device
 import org.jetbrains.anko.*
 import com.github.salomonbrys.kodein.instance
 import io.reactivex.Flowable
+import io.reactivex.Single
 import science.apolline.root.RootViewModel
 
 
 class SensorViewModel: RootViewModel<SensorViewModel>(), AnkoLogger {
 
-
     private val sensorDao by instance<SensorDao>()
 
-    private lateinit var deviceListObserver: Flowable<List<Device>>
-
-    private lateinit var deviceAllListForMapObserver: Flowable<List<Device>>
-
-
-    fun getDeviceList(): Flowable<List<Device>>{
-        deviceListObserver = sensorDao.getLastEntries()
-        return deviceListObserver
+    fun getDeviceListSizeObserver(): Flowable<Long> {
+        return sensorDao.getCount()
     }
 
-    fun getAllDeviceForMapList(): Flowable<List<Device>>{
-        deviceAllListForMapObserver = sensorDao.getAllForMap()
-        return deviceAllListForMapObserver
+    fun getDeviceList(nbDevice: Long): Flowable<List<Device>>{
+        return sensorDao.getLastEntries(nbDevice)
     }
+
 }

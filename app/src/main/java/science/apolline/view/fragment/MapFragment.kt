@@ -12,7 +12,6 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.TileOverlay
 import com.google.gson.GsonBuilder
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -52,13 +51,17 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     private lateinit var mDisposable: CompositeDisposable
     private lateinit var mViewModel: SensorViewModel
     private lateinit var mLocationProvider: ReactiveLocationProvider
-    private val mRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_LOW_POWER)
-            .setNumUpdates(5)
-            .setInterval(100)
+    private val mRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+            .setInterval(1000)
+
+    private var mOldDeviceListSize: Long = 0L
+
+    private var mFirstDeviceListSize: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mViewModel = ViewModelProviders.of(this).get(SensorViewModel::class.java).init(appKodein())
+        this.retainInstance = true
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -100,7 +103,7 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
         if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
             mDisposable.add(mLocationProvider.getUpdatedLocation(mRequest)
-                    .onExceptionResumeNext(Observable.empty())
+                    // .onExceptionResumeNext(Observable.empty())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnError {
@@ -113,51 +116,83 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                             mHeatMap.isMyLocationEnabled = true
                             mHeatMap.uiSettings.isMyLocationButtonEnabled = true
                         }
-
                         mHeatMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(t.latitude, t.longitude), DEFAULT_ZOOM))
+
+
                     }
             )
 
-            mDisposable.add(mViewModel.getDeviceList()
+            mDisposable.add(mViewModel.getDeviceListSizeObserver()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
 
-                        if (it.isNotEmpty()) {
 
-                            val device = it.first()
-                            val gsonBuilder = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
-                            val data = gsonBuilder.fromJson(device.data, IOIOData::class.java)
-                            //val pm01 = data!!.pm01Value
-                            val pm25 = data.pm2_5Value
-                            //val pm10 = data.pm10Value
-
-                            val geoHashStr = device.position?.geohash
-
-                            if (geoHashStr == null || geoHashStr == "no") {
-
-                            } else {
-
-                                val lonLat = WeightedLatLng(GeoHashHelper.decode(geoHashStr), pm25.toDouble())
-                                val geo = listOf(lonLat)
-
-                                if (mOldGeoHash == geoHashStr) {
-                                    info("Same geoHash with old Device object")
-                                    //mOverlay.remove()
-                                    addHeatMap(geo)
-                                } else {
-                                    addHeatMap(geo)
-                                    mOldGeoHash = geoHashStr
-                                }
-
-
-                            }
+                        if (!mFirstDeviceListSize) {
+                            mOldDeviceListSize = it
+                            mFirstDeviceListSize = true
 
                         } else {
-                            info("No list of Device objects returned")
+
+                            val diff = it - mOldDeviceListSize
+
+                            info("diff :"+diff )
+                            if (diff == 0L) {
+
+                                val gsonBuilder = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
+
+                                val geo: MutableList<WeightedLatLng> = mutableListOf()
+
+                                doAsync {
+
+                                    val listForMap = mViewModel.getDeviceList(MAX_DEVICE_ADD).blockingFirst()
+
+                                    if (listForMap.isNotEmpty()) {
+
+                                        listForMap.forEach {
+                                            val data = gsonBuilder.fromJson(it.data, IOIOData::class.java)
+                                            //val pm01 = data!!.pm01Value
+                                            val pm25 = data.pm2_5Value
+                                            //val pm10 = data.pm10Value
+
+                                            val geoHashStr = it.position?.geohash
+
+                                            if (geoHashStr == null || geoHashStr == "no") {
+                                                // info("geohash null or no")
+                                            } else {
+                                                val lonLat = WeightedLatLng(GeoHashHelper.decode(geoHashStr), pm25.toDouble())
+                                                geo.add(lonLat)
+                                            }
+
+                                        }
+
+                                        geo.toList().distinctBy {
+                                            it.point
+                                        }
+
+                                        uiThread {
+                                            info("Size of list after: " + geo.size)
+                                            addHeatMap(geo)
+                                            mOldDeviceListSize = 0L
+                                        }
+
+                                    } else {
+                                        info("Empty device list")
+                                    }
+                                }
+
+                            } else {
+                                mOldDeviceListSize++
+                                info("mOldDeviceListSize: " + mOldDeviceListSize)
+                            }
+
+
                         }
-                    })
+                    }
+            )
+
         }
+
     }
 
     override fun onResume() {
@@ -168,18 +203,19 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
     override fun onPause() {
 
-        val mgr = MapStateManager(activity!!.baseContext, MAPS_NAME)
-        mgr.saveMapState(mHeatMap)
-
-        super.onPause()
+        if (::mHeatMapView.isInitialized) {
+            val mgr = MapStateManager(activity!!.baseContext, MAPS_NAME)
+            mgr.saveMapState(mHeatMap)
+        }
         mHeatMapView.onPause()
 
+        super.onPause()
     }
 
 
     override fun onStop() {
         if (!mDisposable.isDisposed) {
-            mDisposable.dispose()
+            mDisposable.clear()
         }
         super.onStop()
         mHeatMapView.onStop()
@@ -190,7 +226,6 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
         if (!mDisposable.isDisposed) {
             mDisposable.dispose()
         }
-
         mHeatMapView.onPause()
         mHeatMapView.onDestroy()
         if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
@@ -207,6 +242,7 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
         if (!mDisposable.isDisposed) {
             mDisposable.dispose()
         }
+        mHeatMapView.onPause()
         super.onDestroyView()
         info("MAP onDestroyView")
     }
@@ -222,22 +258,18 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
             mHeatMapView.onPause()
             if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
                 mHeatMap.isMyLocationEnabled = false
+                mHeatMap.uiSettings.isMyLocationButtonEnabled = false
             }
         }
         info("MAP onPauseFragment")
     }
 
     override fun onResumeFragment() {
-
         if (::mHeatMapView.isInitialized) {
             mHeatMapView.onResume()
-
-
             if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
                 mHeatMap.isMyLocationEnabled = true
-                if (!mHeatMap.uiSettings.isMyLocationButtonEnabled) {
-                    mHeatMap.uiSettings.isMyLocationButtonEnabled = true
-                }
+                mHeatMap.uiSettings.isMyLocationButtonEnabled = true
             }
         }
         info("MAP onResumeFragment")
@@ -293,7 +325,7 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
         doAsync {
 
-            val listAllDevices = mViewModel.getAllDeviceForMapList().blockingFirst()
+            val listAllDevices = mViewModel.getDeviceList(MAX_DEVICE).blockingFirst()
 
             info("Size of list before: " + listAllDevices.size)
 
@@ -341,6 +373,8 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
     companion object {
         private const val MAPS_NAME = "HEAT_MAP_HIST"
-        private const val DEFAULT_ZOOM = 20.0f
+        private const val DEFAULT_ZOOM = 15.0f
+        private const val MAX_DEVICE_ADD = 100L
+        private const val MAX_DEVICE= 10000L
     }
 }

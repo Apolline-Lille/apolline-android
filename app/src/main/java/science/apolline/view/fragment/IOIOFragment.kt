@@ -59,6 +59,7 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mViewModel = ViewModelProviders.of(this).get(SensorViewModel::class.java).init(appKodein())
+        this.retainInstance = true
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -288,7 +289,7 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
     override fun onStart() {
         super.onStart()
         chart.fitScreen()
-        mDisposable.add(mViewModel.getDeviceList()
+        mDisposable.add(mViewModel.getDeviceList(MAX_DEVICE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
@@ -377,6 +378,7 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
         private const val MAX_Y_AXIS: Float = 3000.0f
         private const val MIN_Y_AXIS: Float = 0.0f
         private const val MIN_TIME_STAMP: Long = 0
+        private const val MAX_DEVICE: Long = 10
     }
 }
 
