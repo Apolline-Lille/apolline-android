@@ -37,7 +37,9 @@ Supported sensors:
  * [Toasty](https://github.com/GrenderG/Toasty) - The usual Android Toast, but with steroids (Colors).
  * [Gson](https://github.com/google/gson) - A Java serialization/deserialization library to convert Java Objects into JSON and back.
  * [Google Maps Android Heatmap Utility](https://developers.google.com/maps/documentation/android-api/utility/heatmap) - The Google Maps Android API Utility Library includes a heatmap utility, which you can use to add one or more heatmaps to a Google map in your application.
-
+ * [Sonar-kotlin](https://github.com/arturbosch/sonar-kotlin) - Kotlin Sonarqube plugin (Unofficial)
+ * [Detekt](https://github.com/arturbosch/detekt) - Kotlin static code analysis tool. It operates on the abstract syntax tree provided by the Kotlin compiler.
+ * [JaCoCo](http://www.eclemma.org/jacoco/) - JaCoCo is a free code coverage library for Java, which has been created by the EclEmma team based on the lessons learned from using and integration existing libraries for many years.
 
 ## Download (Unreleased)
 
