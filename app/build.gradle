@@ -4,9 +4,9 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.firebase.firebase-perf'
+apply plugin: 'jacoco'
 
 
-import java.util.regex.Pattern
 
 android {
 
@@ -30,6 +30,7 @@ android {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -42,6 +43,8 @@ android {
             buildConfigField "String", "INFLUXDB_DBNAME", '"' + properties.getProperty('influxdb_dbname') + '"'
             buildConfigField "String", "INFLUXDB_USR", '"' + properties.getProperty('influxdb_usr') + '"'
             buildConfigField "String", "INFLUXDB_PWD", '"' + properties.getProperty('influxdb_pwd') + '"'
+
+            project.ext.sonarqube_url = '"' + properties.getProperty('sonarqube_url') + '"'
 
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -63,6 +66,16 @@ android {
         sourceCompatibility 1.8
     }
 
+    testOptions {
+
+        execution 'ANDROID_TEST_ORCHESTRATOR'
+        animationsDisabled true
+
+        unitTests {
+            includeAndroidResources = true
+            returnDefaultValues = true
+        }
+    }
 
     packagingOptions {
         exclude 'META-INF/LICENSE'
@@ -71,52 +84,11 @@ android {
 
     lintOptions {
         checkReleaseBuilds true
+        abortOnError false
     }
 
     defaultConfig {
         multiDexEnabled true
-    }
-
-    tasks.whenTaskAdded { task ->
-        if (task.name == "lint") {
-            task.enabled = false
-        }
-    }
-
-    task('increaseVersionCode') {
-        doLast {
-            def manifestFile = file("src/main/AndroidManifest.xml")
-            def pattern = Pattern.compile("versionCode=\"(\\d+)\"")
-            def manifestText = manifestFile.getText()
-            def matcher = pattern.matcher(manifestText)
-            matcher.find()
-            def versionCode = Integer.parseInt(matcher.group(1))
-            def manifestContent = matcher.replaceAll("versionCode=\"" + ++versionCode + "\"")
-            manifestFile.write(manifestContent)
-        }
-    }
-
-    task('incrementVersionName') {
-        doLast {
-            def manifestFile = file("src/main/AndroidManifest.xml")
-            def patternVersionNumber = Pattern.compile("versionName=\"(\\d+)\\.(\\d+)\\.(\\d+)\"")
-            def manifestText = manifestFile.getText()
-            def matcherVersionNumber = patternVersionNumber.matcher(manifestText)
-            matcherVersionNumber.find()
-            def majorVersion = Integer.parseInt(matcherVersionNumber.group(1))
-            def pointVersion = Integer.parseInt(matcherVersionNumber.group(2))
-            def buildVersion = Integer.parseInt(matcherVersionNumber.group(3))
-            def mNextVersionName = majorVersion + "." + pointVersion + "." + (buildVersion + 1)
-            def manifestContent = matcherVersionNumber.replaceAll("versionName=\"" + mNextVersionName + "\"")
-            manifestFile.write(manifestContent)
-        }
-    }
-
-    tasks.whenTaskAdded { task ->
-        if (task.name == 'assembleRelease') {
-            task.dependsOn 'increaseVersionCode'
-            task.dependsOn 'incrementVersionName'
-        }
     }
 
     // Ensure the no-op dependency is always used in JVM tests.
@@ -134,70 +106,72 @@ android {
 
 
 project.ext {
-    appcompat = "27.0.2"
-    rc = "1.0.0"
-    ioio = "5.07"
-    maps = "11.8.0"
-    retrofit = "2.3.0"
-    constraintLayout = "1.0.2"
-    anko_version = "0.10.3"
+    appcompat_version = '27.1.0'
+    aac_version = '1.0.0'
+    ioio_version = '5.07'
+    gms_version = '11.8.0'
+    retrofit_version = '2.3.0'
+    anko_version = '0.10.3'
+    kodein_version = '4.1.0'
+    leak_version = '1.5.4'
 }
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.google.firebase:firebase-core:11.8.0'
+    implementation "com.google.firebase:firebase-core:$gms_version"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     // Android
-    implementation "com.android.support:appcompat-v7:$project.appcompat"
-    implementation "com.android.support:design:$project.appcompat"
+    implementation "com.android.support:appcompat-v7:$appcompat_version"
+    implementation "com.android.support:design:$appcompat_version"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation "com.android.support:support-v4:$project.appcompat"
+    implementation "com.android.support:support-v4:$appcompat_version"
 
     // Retrofit
-    implementation "com.squareup.retrofit2:retrofit:$project.retrofit"
-    implementation "com.squareup.retrofit2:converter-gson:$project.retrofit"
-    implementation "com.squareup.retrofit2:converter-scalars:$project.retrofit"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-scalars:$retrofit_version"
     implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
 
     // Gson
     implementation 'com.google.code.gson:gson:2.8.2'
 
     // IOIO card
-    implementation "com.github.ytai.ioio:IOIOLibAndroid:$project.ioio"
-    implementation "com.github.ytai.ioio:IOIOLibAndroidBluetooth:$project.ioio"
-    implementation "com.github.ytai.ioio:IOIOLibAndroidAccessory:$project.ioio"
-    implementation "com.github.ytai.ioio:IOIOLibAndroidDevice:$project.ioio"
+    implementation "com.github.ytai.ioio:IOIOLibAndroid:$ioio_version"
+    implementation "com.github.ytai.ioio:IOIOLibAndroidBluetooth:$ioio_version"
+    implementation "com.github.ytai.ioio:IOIOLibAndroidAccessory:$ioio_version"
+    implementation "com.github.ytai.ioio:IOIOLibAndroidDevice:$ioio_version"
 
     // MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 
     // Google map
-    implementation "com.google.android.gms:play-services-maps:$project.maps"
-    implementation "com.google.android.gms:play-services-location:$project.maps"
+    implementation "com.google.android.gms:play-services-maps:$gms_version"
+    implementation "com.google.android.gms:play-services-location:$gms_version"
 
     // Logger
     implementation 'com.orhanobut:logger:2.1.1'
 
-    // RxJaVa
+    // RxJava
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
 
     // Room
 
-    kapt "android.arch.persistence.room:compiler:$project.rc"
-    implementation "android.arch.persistence.room:runtime:$project.rc"
-    implementation "android.arch.lifecycle:common-java8:$project.rc"
-    implementation "android.arch.persistence.room:rxjava2:$project.rc"
-    testImplementation "android.arch.persistence.room:testing:$project.rc"
+    kapt "android.arch.persistence.room:compiler:$aac_version"
+    implementation "android.arch.persistence.room:runtime:$aac_version"
+    implementation "android.arch.lifecycle:common-java8:$aac_version"
+    implementation "android.arch.persistence.room:rxjava2:$aac_version"
+    testImplementation "android.arch.persistence.room:testing:$aac_version"
 
     // LiveData
     implementation 'android.arch.lifecycle:extensions:1.1.0'
-    testImplementation "android.arch.core:core-testing:$project.rc"
+    testImplementation "android.arch.core:core-testing:$aac_version"
 
     // Anko
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
@@ -207,9 +181,9 @@ dependencies {
     implementation 'com.opencsv:opencsv:4.1'
 
     // MultiDex
-    implementation 'com.android.support:multidex:1.0.2'
+    implementation 'com.android.support:multidex:1.0.3'
 
-    // RxLocation
+    // Android reactive location
     implementation 'pl.charmas.android:android-reactive-location2:2.1@aar'
 
     // Android Priority Job Queue
@@ -225,17 +199,17 @@ dependencies {
     implementation 'pub.devrel:easypermissions:1.0.1'
 
     // LeakCanary
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_version"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leak_version"
 
     // Crashlytics
-    implementation 'com.google.firebase:firebase-crash:11.8.0'
+    implementation "com.google.firebase:firebase-crash:$gms_version"
     implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true
     }
 
     // FireBase performance
-    implementation 'com.google.firebase:firebase-perf:11.8.0'
+    implementation "com.google.firebase:firebase-perf:$gms_version"
 
     // Floating Actions
     implementation 'com.github.clans:fab:1.6.4'
@@ -248,9 +222,9 @@ dependencies {
     implementation 'com.github.GrenderG:Toasty:1.2.8'
 
     // Kodein
-    implementation 'com.github.salomonbrys.kodein:kodein-core:4.1.0'
-    implementation 'com.github.salomonbrys.kodein:kodein:4.1.0'
-    implementation 'com.github.salomonbrys.kodein:kodein-android:4.1.0'
+    implementation "com.github.salomonbrys.kodein:kodein-core:$kodein_version"
+    implementation "com.github.salomonbrys.kodein:kodein:$kodein_version"
+    implementation "com.github.salomonbrys.kodein:kodein-android:$kodein_version"
 
     // Google Maps heat map utility
     implementation 'com.google.maps.android:android-maps-utils:0.5'
@@ -267,6 +241,73 @@ configurations {
         exclude module: 'commons-logging'
     }
 }
+
+
+
+jacoco {
+    toolVersion = "0.8.0"
+    reportsDir = file("$buildDir/reports")
+}
+
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}
+
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+        csv.enabled = true
+        xml.destination file("${buildDir}/reports/jacocoTestReport.xml")
+        html.destination file("${buildDir}/reports/jacoco")
+        csv.destination file("${buildDir}/reports/jacocoTestReport.csv")
+    }
+
+    def fileFilter = [
+            '**/*Parcel.class',
+            '**/*$CREATOR.class',
+            '**/*Test*.*',
+            '**/AutoValue_*.*',
+            '**/*JavascriptBridge.class',
+            '**/R.class',
+            '**/R$*.class',
+            '**/Manifest*.*',
+            'android/**/*.*',
+            '**/BuildConfig.*',
+            '**/*$ViewBinder*.*',
+            '**/*$ViewInjector*.*',
+            '**/Lambda$*.class',
+            '**/Lambda.class',
+            '**/*Lambda.class',
+            '**/*Lambda*.class',
+            '**/*$InjectAdapter.class',
+            '**/*$ModuleAdapter.class',
+            '**/*$ViewInjector*.class',
+            '**/*_MembersInjector.class', //Dagger2 generated code
+            '*/*_MembersInjector*.*', //Dagger2 generated code
+            '**/*_*Factory*.*', //Dagger2 generated code
+            '**/*Component*.*', //Dagger2 generated code
+            '**/*Module*.*' //Dagger2 generated code
+    ]
+
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+
+    def mainSrc = "${project.projectDir}/src/main/java"
+
+    def kotlinDebugTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
+
+    sourceDirectories = files([mainSrc])
+
+    classDirectories = files([debugTree], [kotlinDebugTree])
+
+    executionData = fileTree(dir: buildDir, includes:
+            ['**/*.exec', '**/*.ec'])
+}
+
+task sonarqube(dependsOn: 'jacocoTestReport')
 
 apply plugin: 'com.google.gms.google-services'
 

@@ -6,14 +6,14 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_UPDATES" />
-    <uses-permission android:name="com.example.androidmapsv2.permission.MAPS_RECEIVE" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="com.example.androidmapsv2.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
@@ -23,14 +23,14 @@
         android:required="true" />
 
     <application
-        android:name=".ApollineApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:largeHeap="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".ApollineApplication">
         <uses-library
             android:name="com.android.future.usb.accessory"
             android:required="false" />
@@ -39,14 +39,13 @@
             android:required="false" />
 
         <service android:name=".service.sensor.IOIOService" />
-        <service
-            android:name=".service.synchronisation.SyncJobService"
+        <service android:name=".service.synchronisation.SyncJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity
             android:name=".view.activity.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -83,18 +82,13 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="${fabric_api_key}" />
+            android:value="${fabric_api_key}"/>
 
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
+        <meta-data android:name="com.google.android.maps.v2.API_KEY"
             android:value="${google_map_api_key}" />
 
 
-        <meta-data
-            android:name="firebase_performance_logcat_enabled"
+        <meta-data android:name="firebase_performance_logcat_enabled"
             android:value="true" />
 
         <!--
@@ -112,7 +106,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
+                android:resource="@xml/provider_paths"/>
         </provider>
 
     </application>

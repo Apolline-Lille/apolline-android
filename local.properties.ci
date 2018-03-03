@@ -12,6 +12,6 @@ influxdb_url=travisci
 influxdb_dbname=travisci
 influxdb_usr=travisci
 influxdb_pwd=travisci
-
+sonarqube_url=travisci
 
 

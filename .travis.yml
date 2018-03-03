@@ -19,9 +19,11 @@ before_install:
   - mkdir "$ANDROID_HOME/licenses" || true
   - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
   - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
-  - ls -all
-  - openssl aes-256-cbc -K $encrypted_1f0900b4d867_key -iv $encrypted_1f0900b4d867_iv -in ${TRAVIS_BUILD_DIR}/app/google-services.json.enc -out ${TRAVIS_BUILD_DIR}/app/google-services.json -d
+  - openssl aes-256-cbc -K $encrypted_8906d6504312_key -iv $encrypted_8906d6504312_iv -in configuration.tar.enc -out configuration.tar -d
+  - tar xvf configuration.tar
+  - mv ${TRAVIS_BUILD_DIR}/google-services.json ${TRAVIS_BUILD_DIR}/app/google-services.json
   - cp local.properties.ci local.properties
+  - ls -all
   - source scripts/writeToManifest.sh && copyEnvVarsToManifest
   - docker pull influxdb
   - docker run --name=influxdb -d -p 127.0.0.1:8086:8086 influxdb
@@ -33,13 +35,6 @@ env:
   - ANDROID_API_LEVEL=27
   - ANDROID_BUILD_TOOLS=27.0.3
   - ADB_INSTALL_TIMEOUT=5
-  - secure: lYFnvihaPRXu97v1emVFawOlzExUGFayzzA4fqFEaBdPfvJSMMCcZJUOPFJQKmFmUzVdH1ib5z2DuaLgy+vWQKT0ILODAwa+24O3EXbfpJxdMgdrS/h8zC6QsPZ16BmJUeoaavLejQh4WPFb7zqD//NH6XRpfQT69PdB0sSl7lKFvGjmPx9iHsnW5petNYNhT3S7zSy/xWf/MPDRMf0nUmf8hdiXsmZRH+pByC1BccsUiEYa5HrIcb69KGfpMH9EaNLuaquvV45RyCmlq+glOg2xvW1JII13D+GRoAOLHq1zuqLtShnWJNmOuvfvx0tsOXIOgNJxi5xVRwWU3QjykfZMtwSJfCM133yz3QfDKOlNvbiFbVlgV0LWwxQQi5fFQPOTGYZd6TH2b/7/Cg5hgaQvmU2mWHUIL/Q/uvl+T3rJVLlLh0BIeTTandfFwoPJtRAmvPZl7zXCwv5ocEK7knSG/uGZB8t1ceagxxt5cUb3CZrAg7MiOhO6uHnevozmnQCZDvBrQ5iWmWgIFlem6HZMAr0e4X2OVRTmaHdX2OH8pyryhMyCpMyRBm8XbCrkFSPK74YFgb7/5YnMlsciYLkb8rkSsqouvy8DYJMC/Huaa+CCQh0goygFo6wHJLYPRig17UvoCorzB0vUUZ72Lmbs6BKfV9InknXdAfywLL8=
-  - secure: ig65OGCzLAx2J6R3HYQqE+K/s8SpBLjWGad182G3XMgDQ122c+6seXANhwQcWEjGjZ1uTKuuSoKqampEqLXJGMlMbpz4kYiIVCj8j21ZFz2HaVcReFUJbeFHZ6hKC2+HS5AF8wfub+1Q8DTrnHFNoccbxjA9Z+vaG49jj+Io8wJXsN+5rIzUeB3uG1aY5CL+pNk3i8jQkSPhuCMWmW1PduuzrhTnHKQdrDOikuq+FhjaJgod0lBabs2iJwT1Q4srjCwhWQgDD2AwWrxwzjX3AAou5Xjb1eDwlFSE/mWPA032HAwgxhQ9TyEuRYsaQu3G5edYzFPt92BwegN2rKTZicJeMgzzixMaDixylzEAEaA/24QzplTLUuHFmv3kh/LvVm/8G5PA1jeHDb0ljXmItM6knKrseUjF1YHmJHi5Fms0y9Ec4IFaTPEadEraLKHtStrFYuPdmbgnU9yVmy7Ef0jAuGxfvEg6yV0tM4N4qF35sv3gPXNgrsyL8C5qSauWnUa2tXI9x1lFjg8JKt22PLkLq+2FoHcNGXxqnrzTkahc9RsqLIkx5LsGqu3bbYigTZrR6s6WJFzNdNFx3/sdejVCfJyqtQdLgXkBG1OzO23+3Mq8ySlLz+wI844D/ZHCYabcHEY7cmMNzMuDpjV2ym7ZwaYiow4+oZjlTcml/FA=
-  - secure: myjOpzRzwA+/9KKWHG3RxlDvCBlsBDHV6UmXogBwKl71AAtNfzNCoEKCL9HH2tW0uyn1SEfnxT3HfwDtMMVJVzjKjR31WqEy7BPvrcZUn8pbMHyVOeuIAULd12cvtfxK2kqjR19POo3KAN7Fnm4GZWkUtfT+/gVuiV6u4DlCM3qbYLRzkuuiaPDZcY3aJe5IYe/kP4V4E9xOH5G6LvCXpNE0dSOzAcgjpiGt2eCopiaX5+W1kWjJHkODvpI3kBbYufZXf7pcpErycDVQcJkFEQck9LP9bJfR34TtULAz4TC5K8hNgkDHkEQJzwulWk8l2iAApZxWINQ6Ds90g0VptlBXQ04VVaFkq1j6pJEj5/lXbOn/rIPTqSDFyVs3hTOsUVgEPU1ReMhYUwR1rsuuNAJ/cO9PXdaHZtbKKtVsLRE3OKtWTQgFXgeT0oPT6IG7MTxwsBejx4101ttVsIm35GMVIEYhuR4rLg6G5fsrWITCgmvVxH8EKc5kT2B5R5RxzQ68FRnAE+Pn4JnjYZLUAdU689QeK9j1q/0N8fSH0kK3XP8hS9+ARPzGWpd4cojgdsf0LDnaa7nQZNVt+HrtadFVKjihmBsLyJobTmEDpEfrHusZNBiR+LBIMYVxnVQ/LwqnPnlXGsdeFZcGNogoH77PP12xvIoEiqtUgb708TA=
-  - secure: bc810l5YTOMZDi4JkO98P87hLiRs2WDzB43uXXWU76r0a/4w+Xlb3M+wvFA+WzhjpQal1h7dn4O/AMDjc1GSIFz1AtaR7P2eLt10oUHN+eou7zEvbrHq4aE0qmfRilCPQm5Mx7VGPSR8ugyEHrolouBtwXGIlcmm6wiB5BlJ7XfXB5l8vjLpOBiDOuRrVst9auQN4oiDsSOV07osZz2fi+NQxQDI4RwKx3q+0Hx6avJpUSthyfze16qokGAFpd54rM/b57y2eaPemDrafe2tyUbbAEcITMWMFX3I/24nqCv8ywlZdOeDy5pqPXrCviwBTEp6tf9J3IowK4QY3KTvp7jq7cf22X30XmebxJIDHEpptJkTm49W55jUknuPZ84udXcUXY2srY9VPQoSJylz65mtE5UpTOZFOFp7/RfoRb0xhslQJM7ie4tY4f9pCyJAJ1khfnNZ4WgEh3dQoP7SvTIfLJzoPcVRlhyD58HXvC0p1hvCwF3WKseZX7nVMcIE1I8QUq6jkgsVKJr3Hr0LTA0K8JuGol7cUtwuaOM5TUoPLw6V1M9qyAtDXT+O4/+aNPp7hPrv+S+Fte/SxnOLNXRrrUhcngJHNzkmz3rzVxu1xTY+qYqUPRokt583qNCbrw8qOCsmwPATu7cl7nM2tGeY0lA8SivMGKV6d4HNqNg=
-  - secure: Vj/ufopqgrJjUDEYwodf6GYsPZVS+q67AodFt7+bRqRVHasN4+l2vodicBQU0vztI+kHEZ6CyaCAFBy7GclA3CxX7wADFpjGKiXTuTkEuSDqS2JHicjmzhAoH0LmVRxuevskN7EfKstJ2ZgB//gKL/Zzt5dNf6SoAleoJG8p4bDtUjx3VymoMO5qPl8d1DMBAw2HPmN4HSxlJwwkR0UTekEkSptmFznq8MH3qzx6XBfgMj+Pu93FW3WW5ti799pdSwzlQpPsHbtQD7ylxz6bfyKgiqtPhSUoWZiVDV0KpoSAru08dn1kFsUwx4mOEEVAdRNjlIkJX9Ts4xmOZoAJObS16nVdfeg2Km50Blp/Bg+VMjk5KeWUluD53Op2ul9ggdYhobeQ5u4Pf27TjiaompbKwUYjoDoehmTV8oMs9urU+S9pLqb3HIAPCFq1LPAwjlR+dCgehogZ9QzGWUi4KSi1P0OGZoVUIscw+TCb7i45OENb2VccgqPh98VgbHWHsiTEWF5igsyIU7/RsAaBm1JbKaerfUgc+3AC7nPF1WoWU1cMo3c3X9590yJzgGCG2+ewlBGHq2SxlAYOHkjuaO6S8DuSctbAWzMn5bhpHlgL06f41lH8SZXl2kGEoJYfa1f6Kv0OtMmRfyTifFI7eP1f+de2jbM343OOQ9jN5l4=
-  - secure: FWt+AV8W8OsfzqB5Vwp3KSIdgFEzCAuU9tAHyecyOJsajUbj9ZrYEq3uLbE706VnTdCCs6QeB4OCzIlPLFvkX86cViUeTZCCNcoxmGrj+6ozbM3xUFquk1lCu9Q4Pcjjky+hVyGZ8640MUc2/pp+HGWmelPIQBUGomZXqhi59pnqqjUOLulp9gz6nqQXP1yof92EzsyxIaCNge8Uq+1ISnWHiULUWKjhWGkw/z3XH/SiZ9yvOfTjnyHEG3TUmS4qI2Z/fPFa0ZpUeKjVNO2+Rfd+xDYbUctEcAGMEmjjg+vaw3LF/vFqa8w2Zfs4uXISzvNGmiH2RFft1DpvaAG90C1dp8jw4ehTcMOif4Z5aZJIgOOkiJklefY5tnt+GqkOP5ynoitfd7eRRJ0HvAeWmi16rV+Y+MeS8GuhsAYhCiSpzH2Y41a6WUX9VgKShI4YTonkD2+wOiaLgRdQePUiFmiltEJBXtVwEfD2hMvnp5E6booktKvNw7Pce56iRCrMcam12Auk0B2O1GloWYVb2CJeH7+hbpsoNqYA04/5XVPGLS5oXySQkuD8faQYeR4dCBsDOPizc5C2mUhq68rIZhW8crCz9PLA7xeF6K8F67G0szjVunsUtb4pXz6lVcrFOR105wY3R9/hwQx5rO/pH0ZCqqmw/FlLR3NFM+YvAYs=
-  - secure: ROXBgeOvnE6rk/pZKQD/i38VGZs7Lxd18sRBNpAn+QJNV3lgJtD11J3vo+V7myoKsprgmXx4vZd2tYMywub7vjCdb4EoG6FjIML/7d6Nw5ASB2THmN+3cF/mEaFN/ow3rqTuLZmOPfPB0x+2hz8rXgwxPbGDCloKgqMAFnEu/W9xmOlrKuh56MXmPSv4wP9+t3nreXeJJ2HQCwV9BYbtpR47tUGIIRavV6wZbkA5GztfMso4wwVmUWuOTBSzGYrw4pbbchTWyPaMLUAWPdS4qs06BvNEMgxyIfWcupXNpsuAbzGdHEL7XOINxexc4KsziXNhuztXr3nC73t1MP3V8toLW3OYFrl/3SVBO0wVUjtG/UshyoqL4s2SCBRDJFRm0SIk7PCOz/N28v8MMkrTM/4Dxo9oT7p2HuclHDa8Z7OXlAVsdYS5YuuLNFOXSbg4m6tq0KYeWQC2DTdEwKFUuW1FZLUYUKxsLvI3BHNtP58WiS4Z3TnjetQhwV0NfxwGq2bdRNl7SBCv2YodTlbwRn6aShznOlJAmeDhEmEf6nbK+g5tPVOV0IxmS6Qrv+qvWN9qqrk3f0v4Y0EsiNdy8qkBcm6ZB80TRj8KuRm0QlJARvkvvFCD1bcVSAsCwfGaSZ4U6uFhIpSiUSdcgSmWxdoNgWiwzVj9fj4ClSbNUlg=
 android:
   components:
   - tools
@@ -55,10 +50,8 @@ script:
   - curl -i -XPOST http://127.0.0.1:8086/query --data-urlencode "q=CREATE DATABASE test"
   - "./gradlew clean test build"
 before_deploy:
-  - openssl aes-256-cbc -K $encrypted_c4a232eaf55b_key -iv $encrypted_c4a232eaf55b_iv -in ApollineKeyStore.jks.enc -out ApollineKeyStore.jks -d
   - cd app/build/outputs/apk/release
-  - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ${TRAVIS_BUILD_DIR}/ApollineKeyStore.jks
-    -storepass $storepass -keypass $keypass app-release-unsigned.apk apolline
+  - jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore ${TRAVIS_BUILD_DIR}/ApollineKeystore.jks -storepass $STOREPASS -keypass $KEYPASS app-release-unsigned.apk $ALIAS
   - jarsigner -verify app-release-unsigned.apk
   - "${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/zipalign -v 4 app-release-unsigned.apk
     Apolline.apk"
@@ -66,8 +59,7 @@ deploy:
   provider: releases
   skip_cleanup: true
   file: Apolline.apk
-  api_key:
-    secure: wNyHnxqWJcwqR6ZwxkY8/xh/7yWedut5c+PX+0aaNtL+xBDzbXlFyf5SqwKrG3/UN+JtiVVtjomrzE7MALiHEUpeqmA1jT5BwirFwB7hFYSHu26p4pwsanZM1tkZxkGW8rlLx75qrud70MOboi3nb2ZoAaJk27khfTViDv8BowrPFTG6X26Lzg0P0dD94s+24cB7KtcdmBlkZvp8uK1xfLYQflAUGPRpFC0lPJujqODZXTyqapXQZPcCDOvG+A1iKNWR175EuAgSwdcqLqp3cB6KGZJ+44ODE2zv3W9sR9bSQ0xQqYjBRaCeIwNmpRyB8UW4rY8zTw/gput2gV/nJZBBE+xDsuLTSVRuqSABTRfPzJVYy6QJ2R936/EIIsIdyzU45a7k48hHOQFWiopabBxm0uilS7T0Y1PNuOUln3SABL7igjGfaPeNH511F9qUDdSUuvaNEFialUk5L7V6syPb8tYQ/sJDRZjE9gk6V5J8Z+Ig9pw9lD/3SAPIi1f5bVD1WNhfy7tHWR4Y+s5gZ7B0T76SKmiVIcgolBTEx0OXiG0Z2ML5pRw8zkj0R016Wq/kjeSqJlQnKFhbLFFB4ZzDH6ac6jIz6FOYqv0gBd5FzoSY31+34CoVaKqEhnCFCtjpR6tVGIHMbRkaSECwCKU4LITTl8borVr3yUly0+8=
+  api_key: $GH_TOKEN
   on:
     repo: Apolline-Lille/apolline-android
     tags: true

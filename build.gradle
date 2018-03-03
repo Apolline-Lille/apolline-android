@@ -1,8 +1,17 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.2.21'
-    ext.gradle_version = '3.0.0'
+
+    project.ext {
+        kotlin_version = '1.2.30'
+        gradle_version = '3.0.1'
+        jacoco_version = '0.8.0'
+        sonarqube_version = '2.6.2'
+        fabric_version = '1.25.1'
+        gmss_version = '3.1.1'
+        firebase_version = '1.1.5'
+        sonarqube_url = hasProperty('SONARQUBE_URL') ? SONARQUBE_URL : System.getenv('SONARQUBE_URL')
+    }
     repositories {
         jcenter()
         google()
@@ -10,11 +19,13 @@ buildscript {
     }
     dependencies {
 
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath "com.android.tools.build:gradle:$gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'io.fabric.tools:gradle:1.25.1'
-        classpath 'com.google.gms:google-services:3.1.1'
-        classpath 'com.google.firebase:firebase-plugins:1.1.5'
+        classpath "io.fabric.tools:gradle:$fabric_version"
+        classpath "com.google.gms:google-services:$gmss_version"
+        classpath "com.google.firebase:firebase-plugins:$firebase_version"
+        classpath "org.jacoco:org.jacoco.core:$jacoco_version"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqube_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -37,5 +48,46 @@ task clean(type: Delete) {
 task printVersionName {
     doLast {
         println android.defaultConfig.versionName
+    }
+}
+
+apply plugin: "org.sonarqube"
+
+sonarqube {
+
+    androidVariant 'debug'
+
+    properties {
+
+        property "sonar.projectName", "apolline"
+        property "sonar.projectVersion", "2.2.1"
+
+        property "sonar.verbose", true
+        property "sonar.host.url", project.sonarqube_url
+        property "sonar.issuesReport.html.enable", "true"
+        property "sonar.issuesReport.console.enable", "true"
+        property "detekt.sonar.kotlin.config.path", "detekt-config.yml"
+        property "sonar.sourceEncoding", "UTF-8"
+
+        property "sonar.sources", "app/src/main/java/**"
+        property "sonar.tests", "app/src/test/java/**"
+
+        property "sonar.exclusions", "app/src/test/java/**"
+        property "sonar.test.exclusions", "app/src/main/java/**"
+
+        property "sonar.report.export.path", "sonar-report.json"
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.java.binaries", "${rootProject.projectDir}/target/classes," +
+                "${rootProject.projectDir}/app/build/intermediates/classes/debug," +
+                "${rootProject.projectDir}/app/build/tmp/kotlin-classes"
+        property 'sonar.jacoco.reportPaths', "${rootProject.projectDir}/app/build/jacoco/testDebugUnitTest.exec"
+
+//        property "sonar.login", "xxx"
+//        property "sonar.report.export.path", "${rootProject.projectDir}/sonar-report.json"
+//        property "sonar.test", "."
+//        property "sonar.source", "."
+//        property "sonar.test", "."
+//        property "sonar.cpd.exclusions", "app/src/main/java/**"
+//        property "sonar.coverage.exclusions", "xxx"
     }
 }
