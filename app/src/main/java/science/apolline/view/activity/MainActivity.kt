@@ -184,7 +184,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     private fun checkPermissions(): Boolean {
         if (!EasyPermissions.hasPermissions(this, *PERMISSIONS_ARRAY)) {
             EasyPermissions.requestPermissions(this, "Geolocation and writing permissions are necessary for the proper functioning of the application", REQUEST_CODE_PERMISSIONS_ARRAY,
-                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
             return false
         }
         return true
@@ -234,7 +234,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     companion object {
 
         const val MY_PREFS_NAME = "MyPrefsFile"
-        private val PERMISSIONS_ARRAY = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        private val PERMISSIONS_ARRAY = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE)
         private const val REQUEST_CODE_PERMISSIONS_ARRAY = 100
         private const val REQUEST_CODE_ENABLE_BLUETOOTH = 101
         private const val INFLUXDB_SYNC_FREQ: Long = 60 // Minutes
