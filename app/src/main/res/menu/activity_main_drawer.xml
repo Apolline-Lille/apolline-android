@@ -8,21 +8,21 @@
         android:title="@string/loa_ioio_name" />
     </group>
 
-    <group android:id="@+id/grp_fonction" android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_setting"
-            android:icon="@drawable/ic_settings_black_48dp"
-            android:title="@string/drawer_settings" />
-        <item
-            android:id="@+id/nav_info"
-            android:icon="@drawable/ic_info_black_48dp"
-            android:title="@string/drawer_information" />
+    <!--<group android:id="@+id/grp_fonction" android:checkableBehavior="single">-->
+        <!--<item-->
+            <!--android:id="@+id/nav_setting"-->
+            <!--android:icon="@drawable/ic_settings_black_48dp"-->
+            <!--android:title="@string/drawer_settings" />-->
+        <!--<item-->
+            <!--android:id="@+id/nav_info"-->
+            <!--android:icon="@drawable/ic_info_black_48dp"-->
+            <!--android:title="@string/drawer_information" />-->
 
-        <item
-            android:id="@+id/nav_contact"
-            android:icon="@drawable/ic_account_circle_black_48dp"
-            android:title="@string/drawer_contact" />
-    </group>
+        <!--<item-->
+            <!--android:id="@+id/nav_contact"-->
+            <!--android:icon="@drawable/ic_account_circle_black_48dp"-->
+            <!--android:title="@string/drawer_contact" />-->
+    <!--</group>-->
 
     <!--<item android:title="Communicate">-->
         <!--<menu>-->

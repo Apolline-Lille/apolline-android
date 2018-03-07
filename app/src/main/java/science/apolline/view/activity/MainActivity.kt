@@ -3,6 +3,7 @@ package science.apolline.view.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.PendingIntent.getActivity
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.net.wifi.WifiManager.WifiLock
@@ -52,6 +53,8 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
     private val mWifiLock: WifiLock by with(this as AppCompatActivity).instance()
 
+    private var mBluetoothAdapter: BluetoothAdapter? = null
+
     private lateinit var mRequestLocationAlert: AlertDialog
 
 
@@ -71,11 +74,13 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         val navigationView = findViewById<NavigationView>(R.id.nav_drawer)
         navigationView.setNavigationItemSelectedListener(this)
 
-        // Check permissions
-        checkPermissions()
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
         // Request enable Bluetooth
-        requestBluetooth()
+        checkBlueToothState()
+
+        // Check permissions
+        checkPermissions()
 
         // Request disable Doze Mode
         CheckUtility.requestDozeMode(this)
@@ -141,24 +146,9 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 val ioioFragment = IOIOFragment()
                 replaceFragment(ioioFragment)
             }
-            R.id.grp_fonction -> if (itemId == R.id.nav_setting) {
-                val intent = Intent(this, OptionsActivity::class.java)
-                startActivity(intent)
-            } else if (itemId == R.id.nav_info) {
-                val intent = Intent(this, InformationActivity::class.java)
-                startActivity(intent)
-                return true
-            } else if (itemId == R.id.nav_contact) {
-                val intent = Intent(this, ContactActivity::class.java)
-                startActivity(intent)
-            }
             else -> {
             }
-        }//              if (itemId == R.id.nav_share) {
-        //
-        //              } else if (itemId == R.id.nav_send) {
-        //
-        //              }
+        }
 
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.closeDrawer(GravityCompat.START)
@@ -204,15 +194,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
 
-    private fun requestBluetooth() {
-        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        if (!bluetoothAdapter.isEnabled) {
-            val enableBlueTooth = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableBlueTooth, REQUEST_CODE_ENABLE_BLUETOOTH)
-        }
-    }
-
-
     @SuppressLint("MissingSuperCall")
     override fun onDestroy() {
         if (mWakeLock.isHeld) {
@@ -230,13 +211,42 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
+    private fun checkBlueToothState() {
+
+        if (mBluetoothAdapter == null) {
+            Toasty.error(applicationContext, "Bluetooth NOT support", Toast.LENGTH_SHORT, true).show()
+        } else {
+            if (mBluetoothAdapter!!.isEnabled) {
+                if (mBluetoothAdapter!!.isDiscovering) {
+                    Toasty.info(applicationContext, "Bluetooth is currently in device discovery process.", Toast.LENGTH_SHORT, true).show()
+                } else {
+                    info("Bluetooth is Enabled.")
+                }
+            } else {
+                Toasty.warning(applicationContext, "Bluetooth NOT enabled.", Toast.LENGTH_SHORT, true).show()
+                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                startActivityForResult(enableBtIntent, REQUEST_CODE_ENABLE_BLUETOOTH)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == REQUEST_CODE_ENABLE_BLUETOOTH) {
+            if (resultCode == RESULT_OK && data != null) {
+                Toasty.success(applicationContext, "Bluetooth is Enabled.", Toast.LENGTH_SHORT, true).show()
+            } else {
+                //checkBlueToothState()
+                Toasty.error(applicationContext, "Bluetooth NOT enabled", Toast.LENGTH_LONG, true).show()
+            }
+        }
+    }
 
     companion object {
 
         const val MY_PREFS_NAME = "MyPrefsFile"
-        private val PERMISSIONS_ARRAY = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE)
+        private val PERMISSIONS_ARRAY = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
         private const val REQUEST_CODE_PERMISSIONS_ARRAY = 100
-        private const val REQUEST_CODE_ENABLE_BLUETOOTH = 101
+        private const val REQUEST_CODE_ENABLE_BLUETOOTH = 1
         private const val INFLUXDB_SYNC_FREQ: Long = 60 // Minutes
 
     }
