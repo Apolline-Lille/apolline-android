@@ -1,9 +1,5 @@
 package science.apolline.service.database
 
-/**
- * Created by sparow on 11/5/17.
- */
-
 import android.arch.persistence.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -12,10 +8,7 @@ import java.util.*
 /**
  * Created by sparow on 10/31/17.
  */
-
 class Converters {
-
-
     @TypeConverter
     fun fromTimestamp(value: Long?): Date? = if (value == null) null else Date(value)
 
@@ -36,5 +29,4 @@ class Converters {
         val gson = Gson()
         return gson.toJson(data)
     }
-
 }

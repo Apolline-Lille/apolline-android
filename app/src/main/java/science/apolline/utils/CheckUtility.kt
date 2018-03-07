@@ -3,24 +3,23 @@ package science.apolline.utils
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
-import android.support.v4.content.ContextCompat
-import android.location.LocationManager
 import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
 import android.widget.Toast
 import es.dmoral.toasty.Toasty
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
 
 
 /**
@@ -28,7 +27,7 @@ import org.jetbrains.anko.toast
  */
 
 
-object CheckUtility : AnkoLogger{
+object CheckUtility : AnkoLogger {
 
     /**
      * To get device consuming netowork type is 2g,3g,4g
@@ -70,50 +69,33 @@ object CheckUtility : AnkoLogger{
         var wifiNetworkState = false
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val netInfo = cm.activeNetworkInfo
-
-        if (netInfo.type == ConnectivityManager.TYPE_WIFI ){
+        if (netInfo.type == ConnectivityManager.TYPE_WIFI)
             wifiNetworkState = true
-        }
-
         return netInfo != null && wifiNetworkState
     }
 
     fun checkCoarseLocationPermission(context: Context): Boolean {
-        if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            return false
-        }
-        return true
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     fun checkFineLocationPermission(context: Context): Boolean {
-        if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            return false
-        }
-        return true
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     fun canGetLocation(context: Context): Boolean {
         var gpsEnabled = false
         var networkEnabled = false
-
         val lm = context.getSystemService(LOCATION_SERVICE) as LocationManager
-
         try {
             gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
         } catch (ex: Exception) {
         }
-
         try {
             networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
         } catch (ex: Exception) {
 
         }
-
-        return !(!gpsEnabled && !networkEnabled)
+        return gpsEnabled || networkEnabled
     }
 
     fun requestLocation(context: Context): AlertDialog {
@@ -121,23 +103,23 @@ object CheckUtility : AnkoLogger{
         if (!canGetLocation(context)) {
             alertDialog.setMessage("Your GPS seems to be disabled, do you want to enable it?")
             alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No") { _, _ ->
-                Toasty.warning(context, "You haven't enabled your GPS", Toast.LENGTH_SHORT, true).show()
+                Toasty.warning(context, "Your GPS is disabled", Toast.LENGTH_SHORT, true).show()
             }
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes") { _, _ ->
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 context.startActivity(intent)
-                }
+            }
             alertDialog.show()
         }
         return alertDialog
     }
 
     @SuppressLint("BatteryLife")
-    fun requestDozeMode(context: Context){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    fun requestDozeMode(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val intent = Intent()
-            val packageName =  context.packageName
-            val pm =  context.getSystemService(Context.POWER_SERVICE) as PowerManager
+            val packageName = context.packageName
+            val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
             if (!pm.isIgnoringBatteryOptimizations(packageName)) {
                 intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
                 intent.data = Uri.parse("package:" + packageName)
@@ -146,21 +128,21 @@ object CheckUtility : AnkoLogger{
         }
     }
 
-    fun requestPartialWakeUp(context: Context, timeout: Long):PowerManager.WakeLock {
-            val packageName =  context.packageName
-            val pm =  context.getSystemService(Context.POWER_SERVICE) as PowerManager
-            val  wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, packageName)
-            wl.acquire(timeout)
-            info("Partial wake up is: "+wl.isHeld)
+    fun requestPartialWakeUp(context: Context, timeout: Long): PowerManager.WakeLock {
+        val packageName = context.packageName
+        val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, packageName)
+        wl.acquire(timeout)
+        info("Partial wake up is: " + wl.isHeld)
         return wl
     }
 
-    fun requestWifiFullMode(context: Context):WifiManager.WifiLock {
-        val packageName =  context.packageName
-        val pm =  context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val  wf = pm.createWifiLock(WifiManager.WIFI_MODE_FULL, packageName)
+    fun requestWifiFullMode(context: Context): WifiManager.WifiLock {
+        val packageName = context.packageName
+        val pm = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wf = pm.createWifiLock(WifiManager.WIFI_MODE_FULL, packageName)
         wf.acquire()
-        info("Wifi full mode is: "+ wf.isHeld)
+        info("WiFi full mode is: " + wf.isHeld)
         return wf
     }
 

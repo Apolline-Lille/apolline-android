@@ -12,10 +12,8 @@ import science.apolline.models.InfluxBody
 
 interface ApiService {
     @POST("write")
-    //@FormUrlEncoded
     fun savePost(@Query("db") dbName: String,
                  @Query("u") dbUserName: String,
                  @Query("p") dbPassword: String,
                  @Body data: String): Call<InfluxBody>
-
 }

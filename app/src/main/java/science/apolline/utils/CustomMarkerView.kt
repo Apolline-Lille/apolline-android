@@ -19,15 +19,11 @@ import science.apolline.R
 
 class CustomMarkerView(context: Context, layoutResource: Int, private val referenceTimestamp: Long  // minimum timestamp in your data set
 ) : MarkerView(context, layoutResource) {
-
     private val mDataFormat: DateFormat
     private val mDate: Date
-
     private var mOffset: MPPointF? = null
 
     init {
-
-        // find your layout components
         this.mDataFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
         this.mDate = Date()
     }
@@ -37,28 +33,21 @@ class CustomMarkerView(context: Context, layoutResource: Int, private val refere
     override fun refreshContent(e: Entry?, highlight: Highlight?) {
         val currentTimestamp = e!!.x.toInt() + referenceTimestamp
         tvContent.text = String.format("%s at %s", e.y, getTimedate(currentTimestamp))
-        // this will perform necessary layouting
         super.refreshContent(e, highlight)
     }
 
     override fun getOffset(): MPPointF {
-
-        if (mOffset == null) {
-            // center the marker horizontally and vertically
+        if (mOffset == null)
             mOffset = MPPointF((-(width / 2)).toFloat(), (-height).toFloat())
-        }
-
         return mOffset as MPPointF
     }
 
     private fun getTimedate(timestamp: Long): String {
-
         try {
             mDate.time = timestamp * 1000
             return mDataFormat.format(mDate)
         } catch (ex: Exception) {
             return "xx"
         }
-
     }
 }

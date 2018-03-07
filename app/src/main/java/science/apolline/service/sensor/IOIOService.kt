@@ -60,9 +60,9 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
         injector.inject(appKodein())
         return object : BaseIOIOLooper() {
             private val data = IOIOData()
-            private var led_: DigitalOutput? = null
-            private var uart_: Uart? = null
-            private var uartIn_: InputStream? = null
+            private var led: DigitalOutput? = null
+            private var uart: Uart? = null
+            private var inputStream: InputStream? = null
             private var inputTemp: AnalogInput? = null
             private var inputHum: AnalogInput? = null
             private val freq = 1000
@@ -73,9 +73,9 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
             @Throws(ConnectionLostException::class, InterruptedException::class)
             override fun setup() {
-                led_ = ioio_.openDigitalOutput(0, true)
-                uart_ = ioio_.openUart(7, 6, 9600, Uart.Parity.NONE, Uart.StopBits.ONE)
-                uartIn_ = uart_!!.inputStream
+                led = ioio_.openDigitalOutput(0, true)
+                uart = ioio_.openUart(7, 6, 9600, Uart.Parity.NONE, Uart.StopBits.ONE)
+                inputStream = uart!!.inputStream
                 inputTemp = ioio_.openAnalogInput(44)
                 inputHum = ioio_.openAnalogInput(42)
                 launchForegroundServiceNotification(applicationContext)
@@ -85,52 +85,43 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
             @Throws(ConnectionLostException::class, InterruptedException::class)
             override fun loop() {
                 try {
-
-                    if (CheckUtility.checkFineLocationPermission(applicationContext) && CheckUtility.canGetLocation(applicationContext)) {
-                        //info("checked")
+                    if (CheckUtility.checkFineLocationPermission(applicationContext) && CheckUtility.canGetLocation(applicationContext))
                         disposable.add(locationProvider.getUpdatedLocation(request)
                                 .onExceptionResumeNext(Observable.empty())
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.io())
                                 .subscribe { t ->
-
-                                    if (t == null) {
+                                    if (t == null)
                                         info("Get location error")
-                                    } else {
+                                    else
                                         position = Position(t.provider, GeoHashHelper.encode(t.latitude, t.longitude), "no")
-                                        //info("Position in observer" + position.toString())
-                                    }
-
                                 }
                         )
-                    } else {
+                    else
                         position = Position()
-                    }
 
-                    val availableCount = this.uartIn_!!.available()
-                    if (availableCount > 0) {
-                        val buffer = ByteArray(availableCount)
-                        this.uartIn_!!.read(buffer)
-                        for (b in buffer) {
-                            if (b.compareTo(0x42) == 0) {
+                    val dataAvailability = this.inputStream!!.available()
+                    if (dataAvailability > 0) {
+                        val buffer = ByteArray(dataAvailability)
+                        this.inputStream!!.read(buffer)
+                        for (b in buffer)
+                            if (b.compareTo(0x42) == 0)
                                 data.count = 0
-                            } else {
+                            else {
                                 data.setBuff(data.count, b.toInt().and(0xff))
                                 data.count = data.count + 1
                                 if (data.count == data.LENG.toInt()) {
                                     data.count = 0
                                     if (data.checkValue()) {
-                                        led = !led
-                                        led_!!.write(led)
+                                        this@IOIOService.led = !this@IOIOService.led
+                                        led!!.write(this@IOIOService.led)
 
                                         //parse PM value
                                         data.parse()
 
-                                        //Température
                                         val tensionTemp = inputTemp!!.voltage
                                         data.tempKelvin = tensionTemp * 100
 
-                                        //humidity
                                         val tensionHum = inputHum!!.voltage
                                         val RH = ((tensionHum / 3.3 - 0.1515) / 0.0636).toFloat() //pour avoir l'humidité à 25°C
                                         val RHT = RH / (1.0546 - 0.00216 * (tensionTemp * 100 - 273.15)) * 10 //compensé en t°
@@ -139,10 +130,9 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                                     }
                                 }
                             }
-                        }
                     }
                 } catch (e: IOException) {
-                    e.printStackTrace()
+                    e.printStackTrace() // TODO: Replace by logging
                 }
 
                 Thread.sleep(freq.toLong())
@@ -151,7 +141,6 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
             }
         }
     }
-
 
     private fun persistData(data: IOIOData, pos: Position?) {
         val d1 = System.currentTimeMillis() * 1000000
@@ -165,17 +154,15 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
     override fun onBind(intent: Intent): IBinder? = null
 
     override fun onUnbind(intent: Intent?): Boolean {
-        if (!disposable.isDisposed) {
+        if (!disposable.isDisposed)
             disposable.clear()
-        }
         return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (!disposable.isDisposed) {
+        if (!disposable.isDisposed)
             disposable.dispose()
-        }
         info("onDestroy")
     }
 
@@ -185,9 +172,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
         val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        if (Build.VERSION.SDK_INT < 26) {
-
-        } else {
+        if (Build.VERSION.SDK_INT >= 26) {
             val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
             channel.description = "Apolline notification channel"
             notificationManager.createNotificationChannel(channel)
@@ -196,7 +181,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
         n = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
                 .setContentTitle("IOIO service is running")
                 .setTicker("IOIO service is running")
-                .setContentText("collect of air quality is running")
+                .setContentText("collecting particles measurements")
                 .setSmallIcon(R.drawable.logo_apolline)
                 .setLargeIcon(BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.logo_apolline))
                 .setContentIntent(pendingIntent)
@@ -208,11 +193,9 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
     }
 
     companion object {
-
         private const val SERVICE_ID: Int = 101
         private const val CHANNEL_ID = "science.apolline"
         private const val CHANNEL_NAME = "Apolline"
         private const val DEVICE_NAME = "LOA"
-
     }
 }

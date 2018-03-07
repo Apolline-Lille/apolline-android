@@ -11,17 +11,14 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
 
-
 /**
  * Created by sparow on 05/02/18.
  */
 object SyncJobScheduler : AnkoLogger {
-
     private val scheduler = Executors.newSingleThreadScheduledExecutor()
     private lateinit var executor: ScheduledFuture<*>
 
     fun setAutoSync(time: Long, context: Context) {
-
         executor = scheduler.scheduleAtFixedRate(
                 { syncTask(context) },
                 1,
@@ -29,7 +26,6 @@ object SyncJobScheduler : AnkoLogger {
                 TimeUnit.MINUTES)
         info("setAutoSync: "+ executor.isDone)
     }
-
 
     fun cancelAutoSync(interrupt: Boolean): Boolean {
         if (!(executor.isDone || executor.isCancelled)) {
@@ -40,9 +36,7 @@ object SyncJobScheduler : AnkoLogger {
         return false
     }
 
-
     private fun syncTask(context: Context) {
-
         if (CheckUtility.isNetworkConnected(context) && isWifiNetworkConnected(context)) {
             jobManager!!.addJobInBackground(SyncInfluxDBJob())
             info("Auto synchronisation...")
@@ -51,6 +45,4 @@ object SyncJobScheduler : AnkoLogger {
             info("No internet connection ! Job added to queue")
         }
     }
-
-
 }
