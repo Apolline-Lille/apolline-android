@@ -23,24 +23,6 @@
                 app:showAsAction="ifRoom">
             </item>
 
-            <item
-                android:id="@+id/informations"
-                app:showAsAction="ifRoom"
-                android:title="Informations">
-            </item>
-
-            <item
-                android:id="@+id/contact"
-                app:showAsAction="ifRoom"
-                android:title="Contact">
-            </item>
-
-            <item
-                android:id="@+id/close"
-                app:showAsAction="ifRoom"
-                android:title="Close">
-            </item>
-
         </menu>
 
     </item>
