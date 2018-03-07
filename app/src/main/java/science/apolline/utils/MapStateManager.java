@@ -11,14 +11,12 @@ import com.google.android.gms.maps.model.LatLng;
  * Created by sparow on 2/26/2018.
  */
 public class MapStateManager {
-
     private static final String LONGITUDE = "longitude";
     private static final String LATITUDE = "latitude";
     private static final String ZOOM = "zoom";
     private static final String BEARING = "bearing";
     private static final String TILT = "tilt";
     private static final String MAPTYPE = "MAPTYPE";
-
     private static final String PREFS_NAME ="mapCameraState";
 
     private SharedPreferences mapStatePrefs;
@@ -44,12 +42,9 @@ public class MapStateManager {
     }
 
     public CameraPosition getSavedCameraPosition() {
-
         double latitude = mapStatePrefs.getFloat(LATITUDE+"_"+mMapName, 0);
-        if (latitude == 0) {
+        if (latitude == 0)
             return null;
-        }
-
         double longitude = mapStatePrefs.getFloat(LONGITUDE+"_"+mMapName, 0);
         LatLng target = new LatLng(latitude, longitude);
 

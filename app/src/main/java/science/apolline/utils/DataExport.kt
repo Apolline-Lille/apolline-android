@@ -29,7 +29,7 @@ object DataExport : AnkoLogger {
         headerArray.add("SensorID")
         headerArray.add("Device")
         headerArray.add("Date")
-        headerArray.add("geohash")
+        headerArray.add("Geohash")
         headerArray.add("Provider")
         headerArray.add("Transport")
 
@@ -41,23 +41,15 @@ object DataExport : AnkoLogger {
     }
 
     fun exportToJson(context: Context) {
-
-        val folder = File(getExternalStorageDirectory().toString() + "/Apolline")
-
-        if (!folder.exists())
-            folder.mkdir()
-
-        val filename = folder.toString() + "/" + "data.json"
-
         doAsync {
-
             val sensorDao = AppDatabase.getInstance(context).sensorDao()
-            val fw = FileWriter(filename)
             val dataList = sensorDao.dumpSensor()
             info("List size: "+dataList.size.toString())
+            val fw = FileWriter(filename("json"))
             val gson = GsonBuilder().setPrettyPrinting().create()
             val jsonFile = gson.toJson(dataList)
             fw.write(jsonFile)
+
             uiThread {
                 Toasty.success(context, "Data exported to JSON with success!", Toast.LENGTH_SHORT, true).show()
             }
@@ -65,16 +57,7 @@ object DataExport : AnkoLogger {
     }
 
     fun exportToCsv(context: Context) {
-
-        val folder = File(getExternalStorageDirectory().toString() + "/Apolline")
-
-        if (!folder.exists())
-            folder.mkdir()
-
-        val filenameCSV = folder.toString() + "/" + "data.csv"
-
         doAsync {
-
             val sensorDao = AppDatabase.getInstance(context).sensorDao()
             val dataList = sensorDao.dumpSensor()
             info("List size: "+dataList.size.toString())
@@ -83,7 +66,7 @@ object DataExport : AnkoLogger {
             dataList.forEach {
                 entries.add(it.toArray())
             }
-            CSVWriter(FileWriter(filenameCSV)).use { writer -> writer.writeAll(entries) }
+            CSVWriter(FileWriter(filename("csv"))).use { writer -> writer.writeAll(entries) }
 
             uiThread {
                 Toasty.success(context, "Data exported to CSV with success!", Toast.LENGTH_SHORT, true).show()
@@ -92,16 +75,7 @@ object DataExport : AnkoLogger {
     }
 
     fun exportShareCsv(context: Context) {
-
-        val folder = File(getExternalStorageDirectory().toString() + "/Apolline")
-
-        if (!folder.exists())
-            folder.mkdir()
-
-        val filenameCSV = folder.toString() + "/" + "data.csv"
-
         doAsync {
-
             val sensorDao = AppDatabase.getInstance(context).sensorDao()
             val dataList = sensorDao.dumpSensor()
             info("List size: "+dataList.size.toString())
@@ -110,13 +84,10 @@ object DataExport : AnkoLogger {
             dataList.forEach {
                 entries.add(it.toArray())
             }
-
-            CSVWriter(FileWriter(filenameCSV)).use { writer -> writer.writeAll(entries) }
-
+            CSVWriter(FileWriter(filename("csv"))).use { writer -> writer.writeAll(entries) }
 
             uiThread {
-
-                val file = File(folder,"data.csv")
+                val file = File(localFolder(),"data.csv")
                 val uri :Uri
                 uri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
                     Uri.fromFile(file)
@@ -135,5 +106,15 @@ object DataExport : AnkoLogger {
         }
     }
 
+    private fun filename(extension: String): String {
+        val filenameCSV = localFolder().toString() + "/" + "data.$extension"
+        return filenameCSV
+    }
 
+    private fun localFolder(): File {
+        val folder = File(getExternalStorageDirectory().toString() + "/Apolline")
+        if (!folder.exists())
+            folder.mkdir()
+        return folder
+    }
 }

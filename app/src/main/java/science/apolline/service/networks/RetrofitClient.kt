@@ -13,13 +13,12 @@ object RetrofitClient {
     private var retrofit: Retrofit? = null
 
     fun getClient(baseUrl: String): Retrofit? {
-        if (retrofit == null) {
+        if (retrofit == null)
             retrofit = Retrofit.Builder()
                     .baseUrl(baseUrl)
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
-        }
         return retrofit
     }
 }

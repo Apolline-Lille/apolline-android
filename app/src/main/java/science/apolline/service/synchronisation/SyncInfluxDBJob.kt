@@ -35,29 +35,21 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
 
     @Throws(Throwable::class)
     override fun onRun() {
-
         ApiUtils.setUrl(BuildConfig.INFLUXDB_URL)
         val api = ApiUtils.apiService
 
-
         if (super.getApplicationContext() != null && isNetworkConnected(super.getApplicationContext())) {
-
             sensorModel = AppDatabase.getInstance(super.getApplicationContext()).sensorDao()
 
             var nbUnSynced: Long = sensorModel.getSensorNotSyncCount()
-
             info("number of initial unsyncked is : $nbUnSynced")
 
             var attempt: Long = nbUnSynced / MAX_LENGTH
-
-            if (nbUnSynced % MAX_LENGTH != 0L) {
+            if (nbUnSynced % MAX_LENGTH != 0L)
                 attempt++
-            }
-
             info("Attempts " + attempt)
 
             for (i in 1..attempt) {
-
                 val dataNotSync = sensorModel.getUnSync(MAX_LENGTH)
 
                 if (dataNotSync.isNotEmpty()) {
@@ -68,25 +60,13 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
                     val call = api.savePost(BuildConfig.INFLUXDB_DBNAME, BuildConfig.INFLUXDB_USR, BuildConfig.INFLUXDB_PWD, dataToSend)
 
                     call.enqueue(object : Callback<InfluxBody> {
-
                         override fun onResponse(call: Call<InfluxBody>?, response: Response<InfluxBody>?) {
-
                             if (response != null && response.isSuccessful) {
-
                                 info("response success" + response)
-
                                 doAsync {
-
                                     dataNotSync.forEach {
                                         it.isSync = 1
-                                        //sensorModel.update(it)
                                     }
-//                                            uiThread {
-//                                                nbUnSynced -= MAX_LENGTH
-//                                                info("number of pending unsyncked is : $nbUnSynced")
-//                                                applicationContext.longToast("Synced")
-//                                            }
-//
                                     uiThread {
                                         doAsync {
                                             sensorModel.update(*dataNotSync.toTypedArray())
@@ -98,7 +78,6 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
                                         }
                                     }
                                 }
-
                             } else {
                                 info("response failed " + response)
                             }
@@ -111,7 +90,6 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
                 }
             }
         }
-
         info("onRun: ")
     }
 

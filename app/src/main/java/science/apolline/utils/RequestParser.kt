@@ -23,11 +23,10 @@ object RequestParser {
 
     fun createRequestBody(devices: List<Device>): String {
         val requestBody = StringBuilder()
-        if (devices.isNotEmpty()) {
+        if (devices.isNotEmpty())
             devices.forEach {
                 requestBody.append(createSingleRequestBody(it))
             }
-        }
         return requestBody.toString()
     }
 
@@ -44,9 +43,7 @@ object RequestParser {
         val sb = StringBuilder()
 
         try {
-
             device.data!!.entrySet().iterator().forEach {
-
                 val key = it.key.toString()
                 val value = it.value.asJsonArray
                 val tmpUnit = value[1].asString.replace("\\s".toRegex(), "")
@@ -59,16 +56,13 @@ object RequestParser {
                 sb.append(Tags.GEOHASH.value).append("=").append(tmpGeohash).append(",")
                 sb.append(Tags.LOCATION.value).append("=").append(tmpTransport).append(",")
                 sb.append(Tags.UNIT.value).append("=").append(tmpUnit).append(" ")
-
                 sb.append(Tags.VALUE.value).append("=").append(tmpValue).append(" ")
 
                 sb.append(tmpDate).append("\n")
             }
-
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-
         return sb.toString()
     }
 }

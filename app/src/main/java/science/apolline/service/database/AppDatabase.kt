@@ -13,7 +13,6 @@ import android.arch.persistence.room.migration.Migration
 /**
  * Created by sparow on 11/5/17.
  */
-
 @Database(entities = [(Device::class)], version = 2, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -21,25 +20,23 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun sensorDao(): SensorDao
 
     companion object {
-
         var TEST_MODE = false
         private const val databaseName = "sensors-database"
 
         private var db: AppDatabase? = null
 
         fun getInstance(context: Context): AppDatabase {
-            if (db == null) {
-                if (TEST_MODE) {
-                    db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
+            if (db == null)
+                db = if (TEST_MODE) {
+                    Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
                             .allowMainThreadQueries()
                             .fallbackToDestructiveMigration()
                             .build()
                 } else {
-                    db = Room.databaseBuilder(context, AppDatabase::class.java, databaseName)
+                    Room.databaseBuilder(context, AppDatabase::class.java, databaseName)
                             .addMigrations(MIGRATION_1_2)
                             .build()
                 }
-            }
             return db!!
         }
 
@@ -52,6 +49,5 @@ abstract class AppDatabase : RoomDatabase() {
                 // Since we didn't alter the table, there's nothing else to do here.
             }
         }
-
     }
 }

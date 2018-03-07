@@ -41,7 +41,6 @@ import science.apolline.root.FragmentLifecycle
 
 
 class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoLogger {
-
     private lateinit var mProvider: HeatmapTileProvider
     private lateinit var mOverlay: TileOverlay
     private lateinit var mHeatMapView: MapView
@@ -66,11 +65,9 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
         val v: View = inflater.inflate(R.layout.fragment_map, container, false)
 
         mHeatMapView = v.findViewById(R.id.fragment_mapview) as MapView
-
         mHeatMapView.getMapAsync(this)
         mHeatMapView.onCreate(savedInstanceState)
         mHeatMapView.onResume()
@@ -104,7 +101,6 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
         if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
             mDisposable.add(mLocationProvider.getUpdatedLocation(mRequest)
-                    // .onExceptionResumeNext(Observable.empty())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnError {
@@ -112,14 +108,11 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                         error("Android reactive location error" + it.toString())
                     }
                     .subscribe { t ->
-
                         if (!mHeatMap.isMyLocationEnabled) {
                             mHeatMap.isMyLocationEnabled = true
                             mHeatMap.uiSettings.isMyLocationButtonEnabled = true
                         }
                         mHeatMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(t.latitude, t.longitude), DEFAULT_ZOOM))
-
-
                     }
             )
 
@@ -127,29 +120,21 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
-
-
                         if (!mFirstDeviceListSize) {
                             mOldDeviceListSize = it
                             mFirstDeviceListSize = true
-
                         } else {
-
                             val diff = it - mOldDeviceListSize
 
-                            info("diff :"+diff )
+                            info("diff :" + diff)
                             if (diff == 0L) {
-
                                 val gsonBuilder = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
-
                                 val geo: MutableList<WeightedLatLng> = mutableListOf()
 
                                 doAsync {
-
                                     val listForMap = mViewModel.getDeviceList(MAX_DEVICE_ADD).blockingFirst()
 
                                     if (listForMap.isNotEmpty()) {
-
                                         listForMap.forEach {
                                             val data = gsonBuilder.fromJson(it.data, IOIOData::class.java)
                                             //val pm01 = data!!.pm01Value
@@ -157,14 +142,11 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                                             //val pm10 = data.pm10Value
 
                                             val geoHashStr = it.position?.geohash
-
                                             if (geoHashStr == null || geoHashStr == "no") {
                                                 // info("geohash null or no")
                                             } else {
-                                                val lonLat = WeightedLatLng(GeoHashHelper.decode(geoHashStr), pm25.toDouble())
-                                                geo.add(lonLat)
+                                                geo.add(WeightedLatLng(GeoHashHelper.decode(geoHashStr), pm25.toDouble()))
                                             }
-
                                         }
 
                                         geo.toList().distinctBy {
@@ -176,24 +158,18 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                                             addHeatMap(geo)
                                             mOldDeviceListSize = 0L
                                         }
-
                                     } else {
                                         info("Empty device list")
                                     }
                                 }
-
                             } else {
                                 mOldDeviceListSize++
                                 info("mOldDeviceListSize: " + mOldDeviceListSize)
                             }
-
-
                         }
                     }
             )
-
         }
-
     }
 
     override fun onResume() {
@@ -203,7 +179,6 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
 
     override fun onPause() {
-
         if (::mHeatMapView.isInitialized) {
             val mgr = MapStateManager(activity!!.baseContext, MAPS_NAME)
             mgr.saveMapState(mHeatMap)
@@ -215,18 +190,16 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
 
     override fun onStop() {
-        if (!mDisposable.isDisposed) {
+        if (!mDisposable.isDisposed)
             mDisposable.clear()
-        }
         super.onStop()
         mHeatMapView.onStop()
     }
 
 
     override fun onDestroy() {
-        if (!mDisposable.isDisposed) {
+        if (!mDisposable.isDisposed)
             mDisposable.dispose()
-        }
         mHeatMapView.onPause()
         mHeatMapView.onDestroy()
         if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
@@ -240,9 +213,8 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
 
     override fun onDestroyView() {
-        if (!mDisposable.isDisposed) {
+        if (!mDisposable.isDisposed)
             mDisposable.dispose()
-        }
         mHeatMapView.onPause()
         super.onDestroyView()
         info("MAP onDestroyView")
@@ -278,7 +250,6 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
     override fun onMapReady(mapM: GoogleMap) {
         mHeatMap = mapM
-
         mHeatMap.uiSettings.isCompassEnabled = true
         mHeatMap.uiSettings.isIndoorLevelPickerEnabled = true
         mHeatMap.uiSettings.isZoomControlsEnabled = true
@@ -296,22 +267,17 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
             mHeatMap.mapType = mgr.savedMapType
         }
 
-        // Add existing points to map
         initHeatMap()
     }
 
 
     private fun addHeatMap(list: List<WeightedLatLng>) {
-
-        // Create the gradient.
         val colors = intArrayOf(Color.rgb(102, 225, 0), // green
                 Color.rgb(255, 0, 0)    // red
         )
 
         val startPoints = floatArrayOf(0.0625f, 1f)
-
         val gradient = Gradient(colors, startPoints)
-
 
         mProvider = HeatmapTileProvider.Builder()
                 .weightedData(list)
@@ -323,9 +289,7 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
 
     private fun initHeatMap() {
-
         doAsync {
-
             val listAllDevices = mViewModel.getDeviceList(MAX_DEVICE).blockingFirst()
 
             info("Size of list before: " + listAllDevices.size)
@@ -333,9 +297,7 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
             val geo: MutableList<WeightedLatLng> = mutableListOf()
 
             if (listAllDevices.isNotEmpty()) {
-
                 listAllDevices.forEach {
-
                     val gsonBuilder = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
                     val data = gsonBuilder.fromJson(it.data, IOIOData::class.java)
                     //val pm01 = data!!.pm01Value
@@ -358,26 +320,20 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
                 uiThread {
                     info("Size of list after: " + geo.size)
-                    if(geo.isNotEmpty()){
+                    if (geo.isNotEmpty()) {
                         addHeatMap(geo)
                     }
                 }
-
             } else {
                 info("No list of Device objects returned")
             }
-
-
         }
-
-
     }
-
 
     companion object {
         private const val MAPS_NAME = "HEAT_MAP_HIST"
         private const val DEFAULT_ZOOM = 15.0f
         private const val MAX_DEVICE_ADD = 100L
-        private const val MAX_DEVICE= 10000L
+        private const val MAX_DEVICE = 10000L
     }
 }

@@ -23,15 +23,9 @@ class HourAxisValueFormatter(private val referenceTimestamp: Long // minimum tim
      * before being drawn. For performance reasons, avoid excessive calculations
      * and memory allocations inside this method.
      */
-
     override fun getFormattedValue(value: Float, axis: AxisBase): String {
-        // convertedTimestamp = originalTimestamp - referenceTimestamp
         val convertedTimestamp = value.toLong()
-
-        // Retrieve original timestamp
         val originalTimestamp = referenceTimestamp + convertedTimestamp
-
-        // Convert timestamp to hour:minute
         return getHour(originalTimestamp)
     }
 
@@ -42,6 +36,5 @@ class HourAxisValueFormatter(private val referenceTimestamp: Long // minimum tim
         } catch (ex: Exception) {
             return "xx"
         }
-
     }
 }

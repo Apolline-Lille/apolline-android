@@ -5,25 +5,16 @@ import android.arch.persistence.room.*
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
 import io.reactivex.Flowable
 import science.apolline.models.Device
-import io.reactivex.Single
 
 /**
  * Created by sparow on 11/5/17.
  */
-
 @Dao
 interface SensorDao {
 
     @Transaction
-    @Query("SELECT * FROM Device ORDER BY date asc")
-    fun getAll(): Flowable<List<Device>>
-
-    @Transaction
     @Query("SELECT * FROM Device ORDER BY date desc LIMIT :nbDevice")
     fun getLastEntries(nbDevice: Long): Flowable<List<Device>>
-
-    @Query("SELECT * FROM Device WHERE id IN (:sensorIds)")
-    fun loadAllByIds(sensorIds: IntArray): List<Device>
 
     @Transaction
     @Query("SELECT * FROM Device WHERE isSync=0 ORDER BY date ASC LIMIT :nbDevice")
@@ -54,7 +45,4 @@ interface SensorDao {
 
     @Update(onConflict = REPLACE)
     fun update(vararg device: Device)
-
-    @Delete
-    fun delete(vararg device: Device)
 }
