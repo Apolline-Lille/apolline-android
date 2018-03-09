@@ -132,7 +132,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                             }
                     }
                 } catch (e: IOException) {
-                    e.printStackTrace() // TODO: Replace by logging
+                    info("Unable to start IOIOService: " + e.printStackTrace())
                 }
 
                 Thread.sleep(freq.toLong())
@@ -172,10 +172,16 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
         val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        if (Build.VERSION.SDK_INT >= 26) {
-            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
-            channel.description = "Apolline notification channel"
-            notificationManager.createNotificationChannel(channel)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
+            } else {
+                null
+            }
+            if (channel != null) {
+                channel.description = "Apolline notification channel"
+                notificationManager.createNotificationChannel(channel)
+            }
         }
 
         n = NotificationCompat.Builder(applicationContext, CHANNEL_ID)

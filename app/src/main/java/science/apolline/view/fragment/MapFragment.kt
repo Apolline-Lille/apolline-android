@@ -30,6 +30,7 @@ import com.google.maps.android.heatmaps.HeatmapTileProvider
 import com.google.maps.android.heatmaps.WeightedLatLng
 import org.jetbrains.anko.info
 import com.google.maps.android.heatmaps.Gradient
+import io.reactivex.Observable
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import science.apolline.root.FragmentLifecycle
@@ -41,11 +42,11 @@ import science.apolline.root.FragmentLifecycle
 
 
 class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoLogger {
+
     private lateinit var mProvider: HeatmapTileProvider
     private lateinit var mOverlay: TileOverlay
     private lateinit var mHeatMapView: MapView
     private lateinit var mOldGeoHash: String
-
     private lateinit var mHeatMap: GoogleMap
     private lateinit var mDisposable: CompositeDisposable
     private lateinit var mViewModel: SensorViewModel
@@ -91,16 +92,13 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     }
 
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
     override fun onStart() {
         super.onStart()
         mHeatMapView.onStart()
 
         if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
             mDisposable.add(mLocationProvider.getUpdatedLocation(mRequest)
+                    .onExceptionResumeNext(Observable.empty())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnError {
@@ -140,7 +138,6 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                                             //val pm01 = data!!.pm01Value
                                             val pm25 = data.pm2_5Value
                                             //val pm10 = data.pm10Value
-
                                             val geoHashStr = it.position?.geohash
                                             if (geoHashStr == null || geoHashStr == "no") {
                                                 // info("geohash null or no")
@@ -173,18 +170,20 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     }
 
     override fun onResume() {
-        mHeatMapView.onResume()
+        if (::mHeatMapView.isInitialized)
+            mHeatMapView.onResume()
+
         super.onResume()
     }
 
 
     override fun onPause() {
+
         if (::mHeatMapView.isInitialized) {
             val mgr = MapStateManager(activity!!.baseContext, MAPS_NAME)
             mgr.saveMapState(mHeatMap)
+            mHeatMapView.onPause()
         }
-        mHeatMapView.onPause()
-
         super.onPause()
     }
 
@@ -192,21 +191,26 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     override fun onStop() {
         if (!mDisposable.isDisposed)
             mDisposable.clear()
+
+        if (::mHeatMapView.isInitialized)
+            mHeatMapView.onStop()
+
         super.onStop()
-        mHeatMapView.onStop()
     }
 
 
     override fun onDestroy() {
         if (!mDisposable.isDisposed)
             mDisposable.dispose()
-        mHeatMapView.onPause()
-        mHeatMapView.onDestroy()
-        if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
-            mHeatMap.isMyLocationEnabled = false
-            mHeatMap.clear()
-        }
 
+        if (::mHeatMapView.isInitialized) {
+            mHeatMapView.onPause()
+            mHeatMapView.onDestroy()
+            if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
+                mHeatMap.isMyLocationEnabled = false
+                mHeatMap.clear()
+            }
+        }
         super.onDestroy()
         info("MAP onDestroy")
     }
@@ -215,15 +219,20 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     override fun onDestroyView() {
         if (!mDisposable.isDisposed)
             mDisposable.dispose()
-        mHeatMapView.onPause()
+
+        if (::mHeatMapView.isInitialized)
+            mHeatMapView.onPause()
+
         super.onDestroyView()
         info("MAP onDestroyView")
     }
 
 
     override fun onLowMemory() {
+        if (::mHeatMapView.isInitialized)
+            mHeatMapView.onLowMemory()
+
         super.onLowMemory()
-        mHeatMapView.onLowMemory()
     }
 
     override fun onPauseFragment() {
@@ -250,24 +259,25 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
     override fun onMapReady(mapM: GoogleMap) {
         mHeatMap = mapM
-        mHeatMap.uiSettings.isCompassEnabled = true
-        mHeatMap.uiSettings.isIndoorLevelPickerEnabled = true
-        mHeatMap.uiSettings.isZoomControlsEnabled = true
-        mHeatMap.isIndoorEnabled = true
-        mHeatMap.isBuildingsEnabled = true
-        mHeatMap.isTrafficEnabled = true
-        mHeatMap.mapType = GoogleMap.MAP_TYPE_TERRAIN
+        if (::mHeatMapView.isInitialized) {
+            mHeatMap.uiSettings.isCompassEnabled = true
+            mHeatMap.uiSettings.isIndoorLevelPickerEnabled = true
+            mHeatMap.uiSettings.isZoomControlsEnabled = true
+            mHeatMap.isIndoorEnabled = true
+            mHeatMap.isBuildingsEnabled = true
+            mHeatMap.isTrafficEnabled = false
+            mHeatMap.mapType = GoogleMap.MAP_TYPE_TERRAIN
 
-        val mgr = MapStateManager(context!!.applicationContext, MAPS_NAME)
-        val position = mgr.savedCameraPosition
+            val mgr = MapStateManager(context!!.applicationContext, MAPS_NAME)
+            val position = mgr.savedCameraPosition
 
-        if (position != null) {
-            val update = CameraUpdateFactory.newCameraPosition(position)
-            mHeatMap.moveCamera(update)
-            mHeatMap.mapType = mgr.savedMapType
+            if (position != null) {
+                val update = CameraUpdateFactory.newCameraPosition(position)
+                mHeatMap.moveCamera(update)
+                mHeatMap.mapType = mgr.savedMapType
+            }
+            initHeatMap()
         }
-
-        initHeatMap()
     }
 
 
@@ -291,11 +301,8 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     private fun initHeatMap() {
         doAsync {
             val listAllDevices = mViewModel.getDeviceList(MAX_DEVICE).blockingFirst()
-
             info("Size of list before: " + listAllDevices.size)
-
             val geo: MutableList<WeightedLatLng> = mutableListOf()
-
             if (listAllDevices.isNotEmpty()) {
                 listAllDevices.forEach {
                     val gsonBuilder = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
@@ -303,14 +310,11 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                     //val pm01 = data!!.pm01Value
                     val pm25 = data.pm2_5Value
                     //val pm10 = data.pm10Value
-
                     val geoHashStr = it.position?.geohash
-
                     if (geoHashStr == null || geoHashStr == "no") {
                         // info("geohash null or no")
                     } else {
-                        val lonLat = WeightedLatLng(GeoHashHelper.decode(geoHashStr), pm25.toDouble())
-                        geo.add(lonLat)
+                        geo.add(WeightedLatLng(GeoHashHelper.decode(geoHashStr), pm25.toDouble()))
                     }
                 }
 

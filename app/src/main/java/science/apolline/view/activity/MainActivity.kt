@@ -46,17 +46,11 @@ import science.apolline.view.fragment.ViewPagerFragment
 class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks, AnkoLogger {
 
     private val mJobManager by instance<JobManager>()
-
     private val mFragmentViewPager by instance<ViewPagerFragment>()
-
     private val mWakeLock: WakeLock by with(this as AppCompatActivity).instance()
-
     private val mWifiLock: WifiLock by with(this as AppCompatActivity).instance()
-
     private var mBluetoothAdapter: BluetoothAdapter? = null
-
     private lateinit var mRequestLocationAlert: AlertDialog
-
 
     @SuppressLint("MissingSuperCall")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,25 +69,19 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         navigationView.setNavigationItemSelectedListener(this)
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-
         // Request enable Bluetooth
         checkBlueToothState()
-
         // Check permissions
         checkPermissions()
-
         // Request disable Doze Mode
         CheckUtility.requestDozeMode(this)
-
         // Request enable location
         mRequestLocationAlert = CheckUtility.requestLocation(this)
 
         // Launch AutoSync
         SyncJobScheduler.setAutoSync(INFLUXDB_SYNC_FREQ, this)
 
-
         replaceFragment(mFragmentViewPager)
-
     }
 
 
@@ -124,7 +112,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-
 
         if (CheckUtility.isNetworkConnected(this)) {
             mJobManager.addJobInBackground(SyncInfluxDBJob())
@@ -173,7 +160,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
     private fun checkPermissions(): Boolean {
         if (!EasyPermissions.hasPermissions(this, *PERMISSIONS_ARRAY)) {
-            EasyPermissions.requestPermissions(this, "Geolocation and writing permissions are necessary for the proper functioning of the application", REQUEST_CODE_PERMISSIONS_ARRAY,
+            EasyPermissions.requestPermissions(this, "Geolocation, read phone state and writing permissions are necessary for the proper functioning of the application", REQUEST_CODE_PERMISSIONS_ARRAY,
                     Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
             return false
         }
