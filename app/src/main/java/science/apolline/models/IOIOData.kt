@@ -30,7 +30,7 @@ class IOIOData : IntfSensorData {
     val tempCelcius: Float
         get() = tempKelvin - 273.15f
 
-    constructor() {}
+    constructor()
 
     protected constructor(`in`: Parcel) {
         pm01Value = `in`.readInt()
@@ -100,7 +100,8 @@ class IOIOData : IntfSensorData {
     enum class Units constructor(val value: String) {
         CONCENTRATION_UG_M3("µg/m3"),
         PERCENTAGE("%"),
-        TEMPERATURE_KELVIN("K");
+        TEMPERATURE_CELSIUS("°C"),
+        TEMPERATURE_KELVIN("°K");
     }
 
 
@@ -125,7 +126,8 @@ class IOIOData : IntfSensorData {
         addNestedJsonArray(obj, "pm.5.above", pm5Above, Units.CONCENTRATION_UG_M3)
         addNestedJsonArray(obj, "pm.10.above", pm10Above, Units.CONCENTRATION_UG_M3)
 
-        addNestedJsonArray(obj, "temperature", tempKelvin, Units.TEMPERATURE_KELVIN)
+        addNestedJsonArray(obj, "temperature.c", tempCelcius, Units.TEMPERATURE_CELSIUS)
+        addNestedJsonArray(obj, "temperature.k", tempKelvin, Units.TEMPERATURE_KELVIN)
         addNestedJsonArray(obj, "humidity", rh, Units.PERCENTAGE)
         addNestedJsonArray(obj, "humidity.compensated", rht, Units.PERCENTAGE)
 

@@ -22,6 +22,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.jobs.MoveViewJob
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.salomonbrys.kodein.android.appKodein
+import com.github.salomonbrys.kodein.instance
 import com.google.gson.GsonBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -41,14 +42,14 @@ import science.apolline.utils.DataExport.exportToCsv
 import science.apolline.utils.DataExport.exportToJson
 import science.apolline.utils.HourAxisValueFormatter
 import science.apolline.root.RootFragment
+import science.apolline.service.database.SensorDao
 import science.apolline.viewModel.SensorViewModel
-import java.io.IOException
 
 
 class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifecycle, AnkoLogger {
 
     private var mReferenceTimestamp: Long = MIN_TIMESTAMP
-
+    private val mSensorDao by instance<SensorDao>()
     private lateinit var mDataList: List<ILineDataSet>
     private lateinit var mDisposable: CompositeDisposable
     private lateinit var mViewModel: SensorViewModel
@@ -70,13 +71,13 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
         mDisposable = CompositeDisposable()
 
         floating_action_menu_json.setOnClickListener {
-            exportToJson(activity!!.application)
+            exportToJson(activity!!.application, mSensorDao)
         }
         floating_action_menu_csv.setOnClickListener {
-            exportToCsv(activity!!.application)
+            exportToCsv(activity!!.application, mSensorDao)
         }
         floating_action_menu_share.setOnClickListener {
-            exportShareCsv(activity!!.application)
+            exportShareCsv(activity!!.application, mSensorDao)
         }
 
         fragment_ioio_progress_pm1.setTextMode(TextMode.VALUE)
@@ -226,6 +227,12 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
                         val pm01 = data!!.pm01Value
                         val pm25 = data.pm2_5Value
                         val pm10 = data.pm10Value
+
+                        val tempC = data.tempCelcius
+                        val tempK = data.tempKelvin
+                        val humidComp = data.rht
+
+                        info("temperature is: " + tempC +"c and K: " +tempK+" rht :" + humidComp)
 
                         fragment_ioio_progress_pm1.setValueAnimated(pm01.toFloat())
                         fragment_ioio_progress_pm2.setValueAnimated(pm25.toFloat())

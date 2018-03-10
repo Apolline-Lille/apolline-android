@@ -27,7 +27,7 @@ class DataDeserializer : JsonDeserializer<IOIOData> {
         ioio.pm2_5Above = json.getAsJsonArray("pm.2_5.above").get(0).asInt
         ioio.pm2_5Value = json.getAsJsonArray("pm.2_5.value").get(0).asInt
         ioio.pm5Above = json.getAsJsonArray("pm.5.above").get(0).asInt
-        ioio.tempKelvin = json.getAsJsonArray("temperature").get(0).asFloat
+        ioio.tempKelvin = json.getAsJsonArray("temperature.k").get(0).asFloat
         ioio.rh = json.getAsJsonArray("humidity").get(0).asFloat
         ioio.rht = json.getAsJsonArray("humidity.compensated").get(0).asDouble
 

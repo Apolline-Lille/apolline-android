@@ -2,7 +2,6 @@ package science.apolline.utils
 
 import android.content.Context
 import android.os.Environment.getExternalStorageDirectory
-import science.apolline.service.database.AppDatabase
 import java.io.File
 import java.io.FileWriter
 import com.google.gson.GsonBuilder
@@ -16,6 +15,7 @@ import com.google.gson.JsonObject
 import es.dmoral.toasty.Toasty
 import science.apolline.R
 import org.jetbrains.anko.*
+import science.apolline.service.database.SensorDao
 
 
 /**
@@ -40,11 +40,10 @@ object DataExport : AnkoLogger {
         return headerArray.toTypedArray()
     }
 
-    fun exportToJson(context: Context) {
+    fun exportToJson(context: Context, sensorDao: SensorDao) {
         doAsync {
-            val sensorDao = AppDatabase.getInstance(context).sensorDao()
             val dataList = sensorDao.dumpSensor()
-            info("List size: "+dataList.size.toString())
+            info("List size: " + dataList.size.toString())
             val fw = FileWriter(filename("json"))
             val gson = GsonBuilder().setPrettyPrinting().create()
             val jsonFile = gson.toJson(dataList)
@@ -56,16 +55,16 @@ object DataExport : AnkoLogger {
         }
     }
 
-    fun exportToCsv(context: Context) {
+    fun exportToCsv(context: Context, sensorDao: SensorDao) {
         doAsync {
-            val sensorDao = AppDatabase.getInstance(context).sensorDao()
             val dataList = sensorDao.dumpSensor()
-            info("List size: "+dataList.size.toString())
+            info("List size: " + dataList.size.toString())
             val entries: MutableList<Array<String>> = mutableListOf()
             entries.add(toHeader(dataList[0].data))
             dataList.forEach {
                 entries.add(it.toArray())
             }
+
             CSVWriter(FileWriter(filename("csv"))).use { writer -> writer.writeAll(entries) }
 
             uiThread {
@@ -74,24 +73,23 @@ object DataExport : AnkoLogger {
         }
     }
 
-    fun exportShareCsv(context: Context) {
+    fun exportShareCsv(context: Context, sensorDao: SensorDao) {
         doAsync {
-            val sensorDao = AppDatabase.getInstance(context).sensorDao()
             val dataList = sensorDao.dumpSensor()
-            info("List size: "+dataList.size.toString())
+            info("List size: " + dataList.size.toString())
             val entries: MutableList<Array<String>> = mutableListOf()
-            entries.add(toHeader(dataList[0].data))
+            entries.add(toHeader(dataList.last().data))
             dataList.forEach {
                 entries.add(it.toArray())
             }
             CSVWriter(FileWriter(filename("csv"))).use { writer -> writer.writeAll(entries) }
 
             uiThread {
-                val file = File(localFolder(),"data.csv")
-                val uri :Uri
-                uri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
+                val file = File(localFolder(), "data.csv")
+                val uri: Uri
+                uri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                     Uri.fromFile(file)
-                }else{
+                } else {
                     FileProvider.getUriForFile(context, "science.apolline.fileprovider", file)
                 }
 
@@ -107,8 +105,7 @@ object DataExport : AnkoLogger {
     }
 
     private fun filename(extension: String): String {
-        val filenameCSV = localFolder().toString() + "/" + "data.$extension"
-        return filenameCSV
+        return localFolder().toString() + "/" + "data.$extension"
     }
 
     private fun localFolder(): File {

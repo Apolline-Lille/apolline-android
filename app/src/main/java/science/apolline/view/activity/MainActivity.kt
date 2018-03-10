@@ -37,12 +37,10 @@ import science.apolline.R
 import science.apolline.service.sensor.IOIOService
 import science.apolline.service.synchronisation.SyncInfluxDBJob
 import science.apolline.utils.SyncJobScheduler.cancelAutoSync
-import science.apolline.view.fragment.IOIOFragment
 import science.apolline.root.RootActivity
 import science.apolline.utils.CheckUtility
 import science.apolline.utils.SyncJobScheduler
 import science.apolline.view.fragment.ViewPagerFragment
-import java.io.IOException
 
 
 class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks, AnkoLogger {
