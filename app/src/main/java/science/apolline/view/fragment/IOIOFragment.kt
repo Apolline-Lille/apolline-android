@@ -42,6 +42,7 @@ import science.apolline.utils.DataExport.exportToJson
 import science.apolline.utils.HourAxisValueFormatter
 import science.apolline.root.RootFragment
 import science.apolline.viewModel.SensorViewModel
+import java.io.IOException
 
 
 class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifecycle, AnkoLogger {
@@ -49,9 +50,7 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
     private var mReferenceTimestamp: Long = MIN_TIMESTAMP
 
     private lateinit var mDataList: List<ILineDataSet>
-
     private lateinit var mDisposable: CompositeDisposable
-
     private lateinit var mViewModel: SensorViewModel
 
 
@@ -205,18 +204,6 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
 
     private fun now() = System.currentTimeMillis() / 1000
 
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        activity!!.startService(Intent(activity, IOIOService::class.java))
-        info("onAttach")
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        info("onDetach")
-    }
-
     override fun onValueSelected(e: Entry, h: Highlight) {
         chart.setDrawMarkers(true)
     }
@@ -260,13 +247,11 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
     }
 
     override fun onPause() {
-        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onPause()
         info("onPause")
     }
 
     override fun onStop() {
-        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onStop()
         info("onStop")
     }
@@ -274,8 +259,6 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
     override fun onDestroyView() {
         if (!mDisposable.isDisposed)
             mDisposable.dispose()
-
-        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onDestroyView()
         info("onDestroyView")
     }
@@ -284,18 +267,20 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
     override fun onDestroy() {
         if (!mDisposable.isDisposed)
             mDisposable.dispose()
-
-        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onDestroy()
         info("onDestroy")
     }
 
     override fun onPauseFragment() {
-        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         info("IOIO onPauseFragment")
     }
 
     override fun onResumeFragment() {
+
+        if (!IOIOService.getServiceStatus()) {
+            activity!!.stopService(Intent(activity, IOIOService::class.java))
+            activity!!.startService(Intent(activity!!.applicationContext, IOIOService::class.java))
+        }
         info("IOIO onResumeFragment")
     }
 

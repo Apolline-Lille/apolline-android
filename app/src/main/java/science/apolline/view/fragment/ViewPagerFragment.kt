@@ -1,5 +1,7 @@
 package science.apolline.view.fragment
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -16,6 +18,9 @@ import science.apolline.R
 import science.apolline.root.FragmentLifecycle
 import science.apolline.root.RootFragment
 import android.support.v4.view.ViewPager.OnPageChangeListener
+import org.jetbrains.anko.info
+import science.apolline.service.sensor.IOIOService
+import java.io.IOException
 
 
 /**
@@ -28,6 +33,8 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
     private val mFragmentMaps by instance<MapFragment>()
 
     private lateinit var mAdapter: Adapter
+
+    private var mServiceStatus: Boolean = false
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -93,4 +100,26 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
             titles.add(title)
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        info("ViewPager onDestroyView")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        info("ViewPager onDestroyView")
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        activity!!.startService(Intent(activity, IOIOService::class.java))
+    }
+
+    companion object {
+        fun getServiceStatus(): Boolean {
+            return IOIOService.getServiceStatus()
+        }
+    }
+
 }

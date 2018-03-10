@@ -132,12 +132,13 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                             }
                     }
                 } catch (e: IOException) {
-                    info("Unable to start IOIOService: " + e.printStackTrace())
+                    setServiceStatus(false)
+                    error("Unable to start IOIOService: " + e.printStackTrace())
                 }
-
                 Thread.sleep(freq.toLong())
                 info("Position Hash :" + position.geohash)
                 persistData(data, position)
+                setServiceStatus(true)
             }
         }
     }
@@ -163,6 +164,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
         super.onDestroy()
         if (!disposable.isDisposed)
             disposable.dispose()
+        setServiceStatus(false)
         info("onDestroy")
     }
 
@@ -199,6 +201,17 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
     }
 
     companion object {
+
+        private var mServiceStatus: Boolean = false
+
+        fun getServiceStatus():Boolean{
+            return mServiceStatus
+        }
+
+        fun setServiceStatus(status:Boolean){
+            mServiceStatus = status
+        }
+
         private const val SERVICE_ID: Int = 101
         private const val CHANNEL_ID = "science.apolline"
         private const val CHANNEL_NAME = "Apolline"

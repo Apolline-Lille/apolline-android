@@ -45,9 +45,9 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
     private lateinit var mProvider: HeatmapTileProvider
     private lateinit var mOverlay: TileOverlay
-    private lateinit var mHeatMapView: MapView
+    private var mHeatMapView: SupportMapFragment? = null
     private lateinit var mOldGeoHash: String
-    private lateinit var mHeatMap: GoogleMap
+    private var mHeatMap: GoogleMap? = null
     private lateinit var mDisposable: CompositeDisposable
     private lateinit var mViewModel: SensorViewModel
     private lateinit var mLocationProvider: ReactiveLocationProvider
@@ -68,15 +68,18 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v: View = inflater.inflate(R.layout.fragment_map, container, false)
 
-        mHeatMapView = v.findViewById(R.id.fragment_mapview) as MapView
-        mHeatMapView.getMapAsync(this)
-        mHeatMapView.onCreate(savedInstanceState)
-        mHeatMapView.onResume()
-
-        try {
-            MapsInitializer.initialize(activity!!.applicationContext)
-        } catch (e: Exception) {
-            e.printStackTrace()
+        mHeatMapView = childFragmentManager.findFragmentById(R.id.fragment_mapview) as? SupportMapFragment
+        if (mHeatMapView != null) {
+            mHeatMapView!!.getMapAsync(this)
+            mHeatMapView.apply {
+                this!!.onCreate(savedInstanceState)
+                this.onResume()
+            }
+            try {
+                MapsInitializer.initialize(activity!!.applicationContext)
+            } catch (e: Exception) {
+                error("Can't init Maps: "+e.printStackTrace())
+            }
         }
 
         return v
@@ -94,7 +97,21 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
     override fun onStart() {
         super.onStart()
-        mHeatMapView.onStart()
+
+        if (mHeatMapView != null && (mHeatMap != null)) {
+            mHeatMapView.apply {
+                this!!.onStart()
+                this.onResume()
+            }
+
+            if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
+                mHeatMap.apply {
+                    this!!.isMyLocationEnabled = true
+                    clear()
+                }
+            }
+
+        }
 
         if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
             mDisposable.add(mLocationProvider.getUpdatedLocation(mRequest)
@@ -102,15 +119,19 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnError {
-                        mHeatMap.uiSettings.isMyLocationButtonEnabled = false
+                        mHeatMap?.uiSettings?.isMyLocationButtonEnabled = false
                         error("Android reactive location error" + it.toString())
                     }
                     .subscribe { t ->
-                        if (!mHeatMap.isMyLocationEnabled) {
-                            mHeatMap.isMyLocationEnabled = true
-                            mHeatMap.uiSettings.isMyLocationButtonEnabled = true
+                        if (mHeatMap != null) {
+                            if (!mHeatMap!!.isMyLocationEnabled) {
+                                mHeatMap.apply {
+                                    this!!.isMyLocationEnabled = true
+                                    uiSettings.isMyLocationButtonEnabled = true
+                                }
+                            }
+                            mHeatMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(t.latitude, t.longitude), DEFAULT_ZOOM))
                         }
-                        mHeatMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(t.latitude, t.longitude), DEFAULT_ZOOM))
                     }
             )
 
@@ -123,8 +144,8 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                             mFirstDeviceListSize = true
                         } else {
                             val diff = it - mOldDeviceListSize
-
                             info("diff :" + diff)
+
                             if (diff == 0L) {
                                 val gsonBuilder = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
                                 val geo: MutableList<WeightedLatLng> = mutableListOf()
@@ -170,47 +191,46 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     }
 
     override fun onResume() {
-        if (::mHeatMapView.isInitialized)
-            mHeatMapView.onResume()
-
+        if (mHeatMapView != null) {
+            mHeatMapView!!.onResume()
+        }
         super.onResume()
     }
 
 
     override fun onPause() {
-
-        if (::mHeatMapView.isInitialized) {
+        super.onPause()
+        if (mHeatMapView != null && mHeatMap != null) {
             val mgr = MapStateManager(activity!!.baseContext, MAPS_NAME)
             mgr.saveMapState(mHeatMap)
-            mHeatMapView.onPause()
+            mHeatMapView!!.onPause()
         }
-        super.onPause()
     }
 
 
     override fun onStop() {
         if (!mDisposable.isDisposed)
             mDisposable.clear()
-
-        if (::mHeatMapView.isInitialized)
-            mHeatMapView.onStop()
-
         super.onStop()
+        if (mHeatMapView != null && (mHeatMap != null)) {
+            if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
+                mHeatMap.apply {
+                    this!!.isMyLocationEnabled = false
+                }
+            }
+            mHeatMapView.apply {
+                this!!.onPause()
+                this.onStop()
+            }
+
+            info("MAP onDestroyView cool")
+        }
     }
 
 
     override fun onDestroy() {
         if (!mDisposable.isDisposed)
             mDisposable.dispose()
-
-        if (::mHeatMapView.isInitialized) {
-            mHeatMapView.onPause()
-            mHeatMapView.onDestroy()
-            if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
-                mHeatMap.isMyLocationEnabled = false
-                mHeatMap.clear()
-            }
-        }
         super.onDestroy()
         info("MAP onDestroy")
     }
@@ -219,65 +239,92 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     override fun onDestroyView() {
         if (!mDisposable.isDisposed)
             mDisposable.dispose()
-
-        if (::mHeatMapView.isInitialized)
-            mHeatMapView.onPause()
-
         super.onDestroyView()
+        if (mHeatMapView != null && (mHeatMap != null)) {
+            if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
+                mHeatMap.apply {
+                    this!!.isMyLocationEnabled = false
+                    clear()
+                }
+            }
+            mHeatMapView.apply {
+                this!!.onPause()
+                this.onDestroy()
+            }
+
+
+            info("MAP onDestroyView cool")
+        }
         info("MAP onDestroyView")
     }
 
 
     override fun onLowMemory() {
-        if (::mHeatMapView.isInitialized)
-            mHeatMapView.onLowMemory()
-
         super.onLowMemory()
+        if (mHeatMapView != null) {
+            mHeatMapView!!.onLowMemory()
+        }
     }
 
     override fun onPauseFragment() {
-        if (::mHeatMapView.isInitialized) {
-            mHeatMapView.onPause()
-            if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
-                mHeatMap.isMyLocationEnabled = false
-                mHeatMap.uiSettings.isMyLocationButtonEnabled = false
+        if (mHeatMapView != null && mHeatMap != null) {
+            if (CheckUtility.checkFineLocationPermission(context!!.applicationContext)) {
+                mHeatMap.apply {
+                    this!!.isMyLocationEnabled = false
+                    uiSettings.isMyLocationButtonEnabled = false
+                }
             }
+            mHeatMapView!!.onPause()
         }
+
         info("MAP onPauseFragment")
     }
 
     override fun onResumeFragment() {
-        if (::mHeatMapView.isInitialized) {
-            mHeatMapView.onResume()
+        if (mHeatMapView != null && mHeatMap != null) {
+            mHeatMapView!!.onResume()
             if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
-                mHeatMap.isMyLocationEnabled = true
-                mHeatMap.uiSettings.isMyLocationButtonEnabled = true
+                mHeatMap.apply {
+                    this!!.isMyLocationEnabled = true
+                    uiSettings.isMyLocationButtonEnabled = true
+                }
+            } else {
+                mHeatMap.apply {
+                    this!!.isMyLocationEnabled = false
+                    uiSettings.isMyLocationButtonEnabled = false
+                }
             }
         }
         info("MAP onResumeFragment")
     }
 
-    override fun onMapReady(mapM: GoogleMap) {
+    override fun onMapReady(mapM: GoogleMap?) {
         mHeatMap = mapM
-        if (::mHeatMapView.isInitialized) {
-            mHeatMap.uiSettings.isCompassEnabled = true
-            mHeatMap.uiSettings.isIndoorLevelPickerEnabled = true
-            mHeatMap.uiSettings.isZoomControlsEnabled = true
-            mHeatMap.isIndoorEnabled = true
-            mHeatMap.isBuildingsEnabled = true
-            mHeatMap.isTrafficEnabled = false
-            mHeatMap.mapType = GoogleMap.MAP_TYPE_TERRAIN
+        if (mHeatMap != null) {
+            mHeatMap.apply {
+                this!!.uiSettings.isCompassEnabled = true
+                uiSettings.isIndoorLevelPickerEnabled = true
+                uiSettings.isZoomControlsEnabled = true
+                isIndoorEnabled = true
+                isBuildingsEnabled = true
+                isTrafficEnabled = false
+                mapType = GoogleMap.MAP_TYPE_TERRAIN
+            }
+
 
             val mgr = MapStateManager(context!!.applicationContext, MAPS_NAME)
             val position = mgr.savedCameraPosition
 
             if (position != null) {
                 val update = CameraUpdateFactory.newCameraPosition(position)
-                mHeatMap.moveCamera(update)
-                mHeatMap.mapType = mgr.savedMapType
+                mHeatMap.apply {
+                    this!!.moveCamera(update)
+                    mapType = mgr.savedMapType
+                }
             }
             initHeatMap()
         }
+
     }
 
 
@@ -294,7 +341,9 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                 .gradient(gradient)
                 .build()
         // Add a tile overlay to the map, using the heat map tile provider.
-        mOverlay = mHeatMap.addTileOverlay(TileOverlayOptions().tileProvider(mProvider))
+        if (mHeatMap != null)
+            mOverlay = mHeatMap!!.addTileOverlay(TileOverlayOptions().tileProvider(mProvider))
+
     }
 
 

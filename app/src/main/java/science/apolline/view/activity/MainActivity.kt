@@ -3,6 +3,7 @@ package science.apolline.view.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.PendingIntent.getActivity
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
@@ -41,6 +42,7 @@ import science.apolline.root.RootActivity
 import science.apolline.utils.CheckUtility
 import science.apolline.utils.SyncJobScheduler
 import science.apolline.view.fragment.ViewPagerFragment
+import java.io.IOException
 
 
 class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks, AnkoLogger {
@@ -130,8 +132,8 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
         when (groupId) {
             R.id.grp_capteur -> if (itemId == R.id.nav_ioio) {
-                val ioioFragment = IOIOFragment()
-                replaceFragment(ioioFragment)
+                val viewPagerFragment = ViewPagerFragment()
+                replaceFragment(viewPagerFragment)
             }
             else -> {
             }
@@ -218,22 +220,28 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == REQUEST_CODE_ENABLE_BLUETOOTH) {
-            if (resultCode == RESULT_OK && data != null) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_ENABLE_BLUETOOTH) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (!IOIOService.getServiceStatus()) {
+                    stopService(Intent(applicationContext, IOIOService::class.java))
+                    startService(Intent(applicationContext, IOIOService::class.java))
+                }
                 Toasty.success(applicationContext, "Bluetooth is Enabled.", Toast.LENGTH_SHORT, true).show()
             } else {
                 //checkBlueToothState()
                 Toasty.error(applicationContext, "Bluetooth NOT enabled", Toast.LENGTH_LONG, true).show()
             }
+
         }
     }
 
     companion object {
 
-        const val MY_PREFS_NAME = "MyPrefsFile"
         private val PERMISSIONS_ARRAY = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
         private const val REQUEST_CODE_PERMISSIONS_ARRAY = 100
-        private const val REQUEST_CODE_ENABLE_BLUETOOTH = 1
+        private const val REQUEST_CODE_ENABLE_BLUETOOTH = 101
         private const val INFLUXDB_SYNC_FREQ: Long = 60 // Minutes
 
     }
