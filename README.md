@@ -40,7 +40,6 @@ Supported sensors:
  * [Sonar-kotlin](https://github.com/arturbosch/sonar-kotlin) - Kotlin Sonarqube plugin (Unofficial)
  * [Detekt](https://github.com/arturbosch/detekt) - Kotlin static code analysis tool. It operates on the abstract syntax tree provided by the Kotlin compiler.
  * [JaCoCo](http://www.eclemma.org/jacoco/) - JaCoCo is a free code coverage library for Java, which has been created by the EclEmma team based on the lessons learned from using and integration existing libraries for many years.
-
 ## Download (Unreleased)
 
 <a href="https://play.google.com/store/apps/details?id=science.apolline"> <img src="https://storage.googleapis.com/support-kms-prod/9DB3D190FD6DC8155EEDBCDEB4942128BE6B" alt="Play Store" width="200" height="60"></a>
@@ -50,7 +49,7 @@ Supported sensors:
 Alphabetical order of last names
 
 * Moncef AOUDIA
-* Patrick BINCHATA
+* Patrick BINCHTA
 * Cyril Delegove
 * Guillaume Jean-Jaques SEM
 * Damien TOULOUSE
