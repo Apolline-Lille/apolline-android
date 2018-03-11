@@ -50,16 +50,21 @@
 
 
     <string name="progress_default">0</string>
-
     <string name="ioio_sensor_unit">µg/m3</string>
+    <string name="humidity_unit">%</string>
+    <string name="temperature_celsius">°C</string>
+    <string name="temperature_kelvin">°K</string>
 
     <string name="ioio_sensor_pm01">PM01</string>
     <string name="ioio_sensor_pm2_5">PM2.5</string>
     <string name="ioio_sensor_pm10">PM10</string>
+
+    <string name="ioio_sensor_rht">Humidity</string>
+    <string name="ioio_sensor_tmpk">Temperature</string>
+    <string name="ioio_sensor_tmpc">Temperature</string>
+
+
     <string name="title_activity_settings">Settings</string>
-
-
-
 
     <!-- Strings related to Settings -->
 

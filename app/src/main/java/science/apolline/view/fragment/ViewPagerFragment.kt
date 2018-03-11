@@ -30,6 +30,8 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
 
     private val mFragmentIOIO by instance<IOIOFragment>()
 
+    private val mFragmentChart by instance<ChartFragment>()
+
     private val mFragmentMaps by instance<MapFragment>()
 
     private lateinit var mAdapter: Adapter
@@ -48,7 +50,7 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
         setupViewPager(pager)
         tabs.setupWithViewPager(pager)
         pager.addOnPageChangeListener(pageChangeListener)
-        pager.offscreenPageLimit = 2
+        pager.offscreenPageLimit = 3
     }
 
     private val pageChangeListener = object : OnPageChangeListener {
@@ -76,8 +78,11 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
         val f1 = mFragmentIOIO
         mAdapter.addFragment(f1, "IOIO")
 
-        val f2 = mFragmentMaps
-        mAdapter.addFragment(f2, "MAP")
+        val f2 = mFragmentChart
+        mAdapter.addFragment(f2, "CHART")
+
+        val f3 = mFragmentMaps
+        mAdapter.addFragment(f3, "MAP")
 
         pager?.adapter = mAdapter
     }

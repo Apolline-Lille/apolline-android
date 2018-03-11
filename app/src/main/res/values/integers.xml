@@ -1,0 +1,13 @@
+<resources>
+
+    <integer name="max_value_pm1">25</integer>
+    <integer name="max_value_pm2_5">25</integer>
+    <integer name="max_value_pm10">40</integer>
+    <integer name="max_value_rht">100</integer>
+    <integer name="max_value_celsius">50</integer>
+    <integer name="max_value_kelvin">325</integer>
+
+</resources>
+
+
+

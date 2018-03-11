@@ -15,6 +15,7 @@ import science.apolline.service.networks.ApiUtils
 import science.apolline.service.synchronisation.SyncJobService
 import science.apolline.utils.CheckUtility.requestPartialWakeUp
 import science.apolline.utils.CheckUtility.requestWifiFullMode
+import science.apolline.view.fragment.ChartFragment
 import science.apolline.view.fragment.IOIOFragment
 import science.apolline.view.fragment.MapFragment
 import science.apolline.view.fragment.ViewPagerFragment
@@ -44,7 +45,7 @@ class KodeinConfInjector(context: Context) {
         }
 
         bind<IOIOFragment>() with provider { IOIOFragment() }
-
+        bind<ChartFragment>() with provider { ChartFragment() }
         bind<MapFragment>() with provider { MapFragment() }
 
         bind<ViewPagerFragment>() with provider {ViewPagerFragment() }

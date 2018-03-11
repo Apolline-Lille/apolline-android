@@ -215,6 +215,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
         private const val SERVICE_ID: Int = 101
         private const val CHANNEL_ID = "science.apolline"
         private const val CHANNEL_NAME = "Apolline"
+
         private const val DEVICE_NAME = "LOA"
     }
 }

@@ -5,4 +5,15 @@
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <item name="max_value_pm1" format="float" type="dimen">25.0</item>
+    <item name="max_value_pm2_5" format="float" type="dimen">25.0</item>
+    <item name="max_value_pm10" format="float" type="dimen">40.0</item>
+    <item name="max_value_rht" format="float" type="dimen">100.0</item>
+    <item name="max_value_celsius" format="float" type="dimen">50.0</item>
+    <item name="max_value_kelvin" format="float" type="dimen">325.0</item>
+
 </resources>
+
+
+

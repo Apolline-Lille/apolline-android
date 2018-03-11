@@ -47,19 +47,13 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     private lateinit var mOverlay: TileOverlay
     private lateinit var mOldGeoHash: String
     private lateinit var mMapFragment: SupportMapFragment
-
     private var mHeatMap: GoogleMap? = null
-
     private lateinit var mDisposable: CompositeDisposable
     private lateinit var mViewModel: SensorViewModel
     private lateinit var mLocationProvider: ReactiveLocationProvider
     private val mRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
             .setNumUpdates(5)
             .setInterval(1000)
-
-    private var mOldDeviceListSize: Long = 0L
-
-    private var mFirstDeviceListSize: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,59 +110,6 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                                 uiSettings.isMyLocationButtonEnabled = true
                             }
                             mHeatMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(t.latitude, t.longitude), DEFAULT_ZOOM))
-                        }
-                    }
-            )
-
-            mDisposable.add(mViewModel.getDeviceListSizeObserver()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
-                        if (!mFirstDeviceListSize) {
-                            mOldDeviceListSize = it
-                            mFirstDeviceListSize = true
-                        } else {
-                            val diff = it - mOldDeviceListSize
-                            info("diff :" + diff)
-
-                            if (diff == 0L) {
-                                val gsonBuilder = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
-                                val geo: MutableList<WeightedLatLng> = mutableListOf()
-
-                                doAsync {
-                                    val listForMap = mViewModel.getDeviceList(MAX_DEVICE_ADD).blockingFirst()
-
-                                    if (listForMap.isNotEmpty()) {
-                                        listForMap.forEach {
-                                            val data = gsonBuilder.fromJson(it.data, IOIOData::class.java)
-                                            //val pm01 = data!!.pm01Value
-                                            val pm25 = data.pm2_5Value
-                                            //val pm10 = data.pm10Value
-                                            val geoHashStr = it.position?.geohash
-                                            if (geoHashStr == null || geoHashStr == "no") {
-                                                // info("geohash null or no")
-                                            } else {
-                                                geo.add(WeightedLatLng(GeoHashHelper.decode(geoHashStr), pm25.toDouble()))
-                                            }
-                                        }
-
-                                        geo.toList().distinctBy {
-                                            it.point
-                                        }
-
-                                        uiThread {
-                                            info("Size of list after: " + geo.size)
-                                            addHeatMap(geo)
-                                            mOldDeviceListSize = 0L
-                                        }
-                                    } else {
-                                        info("Empty device list")
-                                    }
-                                }
-                            } else {
-                                mOldDeviceListSize++
-                                info("mOldDeviceListSize: " + mOldDeviceListSize)
-                            }
                         }
                     }
             )
@@ -249,14 +190,14 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                 uiSettings.isMyLocationButtonEnabled = false
             }
         }
-        mMapFragment.onPause()
+//        mMapFragment.onPause()
 
         info("MAP onPauseFragment")
     }
 
     override fun onResumeFragment() {
         if (mHeatMap != null) {
-            mMapFragment.onResume()
+//            mMapFragment.onResume()
             if (CheckUtility.checkFineLocationPermission(context!!.applicationContext) && CheckUtility.canGetLocation(context!!.applicationContext)) {
                 mHeatMap.apply {
                     this!!.isMyLocationEnabled = true
