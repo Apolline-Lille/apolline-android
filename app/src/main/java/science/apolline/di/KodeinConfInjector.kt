@@ -1,8 +1,10 @@
 package science.apolline.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.wifi.WifiManager.WifiLock
 import android.os.PowerManager.WakeLock
+import android.preference.PreferenceManager
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.config.Configuration
 import com.github.salomonbrys.kodein.*
@@ -36,6 +38,9 @@ class KodeinConfInjector(context: Context) {
 
         ApiUtils.setUrl(BuildConfig.INFLUXDB_URL)
         bind<ApiService>() with singleton { ApiUtils.apiService }
+
+
+        bind<SharedPreferences>() with singleton { PreferenceManager.getDefaultSharedPreferences(context) }
 
 
         bind<JobManager>() with singleton {

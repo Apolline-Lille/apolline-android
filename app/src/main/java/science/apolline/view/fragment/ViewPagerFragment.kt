@@ -21,6 +21,9 @@ import android.support.v4.view.ViewPager.OnPageChangeListener
 import org.jetbrains.anko.info
 import science.apolline.service.sensor.IOIOService
 import java.io.IOException
+import android.bluetooth.BluetoothAdapter
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
 
 
 /**
@@ -38,6 +41,14 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
 
     private var mServiceStatus: Boolean = false
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
+        activity!!.registerReceiver(mReceiver, filter)
+
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_viewpager, container, false)
@@ -108,6 +119,7 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        activity!!.unregisterReceiver(mReceiver)
         info("ViewPager onDestroyView")
     }
 
@@ -119,6 +131,29 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         activity!!.startService(Intent(activity, IOIOService::class.java))
+    }
+
+
+    private val mReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val action = intent.action
+
+            if (action == BluetoothAdapter.ACTION_STATE_CHANGED) {
+                val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR)
+                when (state) {
+                    BluetoothAdapter.STATE_OFF -> {
+                        info("Bluetooth off")
+                        activity!!.stopService(Intent(activity, IOIOService::class.java))
+                    }
+                    BluetoothAdapter.STATE_TURNING_OFF -> info("Turning Bluetooth off...")
+                    BluetoothAdapter.STATE_ON -> {info("Bluetooth on")
+                        activity!!.startService(Intent(activity, IOIOService::class.java))
+                    }
+                    BluetoothAdapter.STATE_TURNING_ON -> info("Turning Bluetooth on...")
+                }
+            }
+        }
     }
 
     companion object {

@@ -58,7 +58,7 @@ data class Device(
 
     fun toArray(): Array<String> {
         val objectArray = mutableListOf<String>()
-        objectArray.add(id.toString())
+        objectArray.add(uuid)
         objectArray.add(device)
         objectArray.add(date.toString())
         objectArray.add(position?.geohash.orEmpty())

@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.graphics.BitmapFactory
 import android.location.Location
@@ -40,21 +41,20 @@ import java.io.IOException
 import java.io.InputStream
 import science.apolline.utils.GeoHashHelper
 import science.apolline.view.activity.MainActivity
+import java.util.*
 
 
 class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     private val injector: KodeinInjector = KodeinInjector()
-
     private val sensorModel by injector.instance<SensorDao>()
-
+    private val locationProvider = ReactiveLocationProvider(this)
+    private val disposable = CompositeDisposable()
+    private var location: Location? = null
     internal var led = true
 
-    private val locationProvider = ReactiveLocationProvider(this)
+    private val mPrefs by injector.instance<SharedPreferences>()
 
-    private val disposable = CompositeDisposable()
-
-    private var location: Location? = null
 
     override fun createIOIOLooper(): IOIOLooper {
         injector.inject(appKodein())
@@ -144,6 +144,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
     }
 
     private fun persistData(data: IOIOData, pos: Position?) {
+        val DEVICE_NAME = mPrefs.getString("device_name","Apolline")
         val d1 = System.currentTimeMillis() * 1000000
         val device = Device(AndroidUuid.getAndroidUuid(), DEVICE_NAME, d1, pos, data.toJson(), 0)
         doAsync {
@@ -215,7 +216,5 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
         private const val SERVICE_ID: Int = 101
         private const val CHANNEL_ID = "science.apolline"
         private const val CHANNEL_NAME = "Apolline"
-
-        private const val DEVICE_NAME = "LOA"
     }
 }
