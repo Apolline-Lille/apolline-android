@@ -70,9 +70,9 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         navigationView.setNavigationItemSelectedListener(this)
 
         // Preferences.
-        mPrefs =  PreferenceManager.getDefaultSharedPreferences(this)
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
         //mPrefs = this.getSharedPreferences( IDENTIFIER, Context.MODE_PRIVATE)
-        INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency","60")).toLong()
+        INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
 
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
@@ -120,16 +120,27 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
-        if (CheckUtility.isNetworkConnected(this)) {
-            mJobManager.addJobInBackground(SyncInfluxDBJob())
-            info(mPrefs.all)
-            info("sync"+ mPrefs.getLong("sync_frequency ",60L).toString())
-            info("sync after $INFLUXDB_SYNC_FREQ")
+        when (item?.itemId) {
+            R.id.sync -> {
+                if (CheckUtility.isNetworkConnected(this)) {
+                    mJobManager.addJobInBackground(SyncInfluxDBJob())
+                    Toasty.info(applicationContext, "Synchronization in progress", Toast.LENGTH_SHORT, true).show()
+                } else {
+                    mJobManager.addJobInBackground(SyncInfluxDBJob())
+                    Toasty.warning(applicationContext, "No internet connection ! Synchronization job added to queue", Toast.LENGTH_LONG, true).show()
+                }
+                return true
+            }
 
-            Toasty.info(applicationContext, "Synchronization in progress", Toast.LENGTH_SHORT, true).show()
-        } else {
-            mJobManager.addJobInBackground(SyncInfluxDBJob())
-            Toasty.warning(applicationContext, "No internet connection ! Synchronization job added to queue", Toast.LENGTH_LONG, true).show()
+            R.id.start -> {
+                stopService(Intent(applicationContext, IOIOService::class.java))
+                startService(Intent(applicationContext, IOIOService::class.java))
+                return true
+            }
+            R.id.pause -> {
+                stopService(Intent(applicationContext, IOIOService::class.java))
+                return true
+            }
         }
         return true
     }
@@ -144,7 +155,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 val viewPagerFragment = ViewPagerFragment()
                 replaceFragment(viewPagerFragment)
             }
-            R.id.grp_fonction-> if (itemId == R.id.nav_setting) {
+            R.id.grp_fonction -> if (itemId == R.id.nav_setting) {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
             }
@@ -256,7 +267,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         private val PERMISSIONS_ARRAY = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
         private const val REQUEST_CODE_PERMISSIONS_ARRAY = 100
         private const val REQUEST_CODE_ENABLE_BLUETOOTH = 101
-        private const val IDENTIFIER = "science.apolline"
 
     }
 }

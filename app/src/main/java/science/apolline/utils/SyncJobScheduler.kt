@@ -19,12 +19,17 @@ object SyncJobScheduler : AnkoLogger {
     private lateinit var executor: ScheduledFuture<*>
 
     fun setAutoSync(time: Long, context: Context) {
-        executor = scheduler.scheduleAtFixedRate(
-                { syncTask(context) },
-                1,
-                time,
-                TimeUnit.MINUTES)
-        info("setAutoSync: "+ executor.isDone)
+        if (time > 0L) {
+            executor = scheduler.scheduleAtFixedRate(
+                    { syncTask(context) },
+                    1,
+                    time,
+                    TimeUnit.MINUTES)
+            info("setAutoSync: " + executor.isDone)
+        }else{
+            cancelAutoSync(true)
+            info("cancelAutoSync disabled by user")
+        }
     }
 
     fun cancelAutoSync(interrupt: Boolean): Boolean {
@@ -32,7 +37,7 @@ object SyncJobScheduler : AnkoLogger {
             executor.cancel(interrupt)
             return true
         }
-        info("cancelAutoSync: "+ executor.isCancelled)
+        info("cancelAutoSync: " + executor.isCancelled)
         return false
     }
 
