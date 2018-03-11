@@ -121,6 +121,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation "com.google.firebase:firebase-core:$gms_version"
+    implementation "com.android.support:support-v4:$appcompat_version"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -213,7 +214,6 @@ dependencies {
 
     // Floating Actions
     implementation 'com.github.clans:fab:1.6.4'
-
 
     // Circle View
     implementation 'com.github.jakob-grabner:Circle-Progress-View:v1.3'

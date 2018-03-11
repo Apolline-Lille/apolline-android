@@ -5,20 +5,6 @@
     android:layout_height="match_parent"
     xmlns:fab="http://schemas.android.com/tools">
 
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/fab_save"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_margin="@dimen/fab_margin"-->
-        <!--app:srcCompat="@drawable/ic_save_white_48dp"-->
-        <!--android:layout_gravity="bottom|end"/>-->
-
-    <!--<com.google.android.gms.maps.MapView-->
-        <!--android:id="@+id/fragment_mapview"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent"/>-->
-
     <fragment
         android:id="@+id/fragment_mapview"
         android:name="com.google.android.gms.maps.SupportMapFragment"

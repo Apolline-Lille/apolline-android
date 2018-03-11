@@ -80,9 +80,19 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
             exportShareCsv(activity!!.application, mSensorDao)
         }
 
-        fragment_ioio_progress_pm1.setTextMode(TextMode.VALUE)
-        fragment_ioio_progress_pm2.setTextMode(TextMode.VALUE)
-        fragment_ioio_progress_pm10.setTextMode(TextMode.VALUE)
+        fragment_ioio_progress_pm1.apply {
+            setTextMode(TextMode.VALUE)
+            setValue(0F)
+        }
+
+        fragment_ioio_progress_pm2.apply {
+            setTextMode(TextMode.VALUE)
+            setValue(0F)
+        }
+        fragment_ioio_progress_pm10.apply {
+            setTextMode(TextMode.VALUE)
+            setValue(0F)
+        }
 
         mDataList = createParticleGauges()
         configureParticleHistory()
@@ -254,11 +264,13 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
     }
 
     override fun onPause() {
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onPause()
         info("onPause")
     }
 
     override fun onStop() {
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onStop()
         info("onStop")
     }
@@ -266,6 +278,7 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
     override fun onDestroyView() {
         if (!mDisposable.isDisposed)
             mDisposable.dispose()
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onDestroyView()
         info("onDestroyView")
     }
@@ -279,11 +292,11 @@ class IOIOFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifec
     }
 
     override fun onPauseFragment() {
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         info("IOIO onPauseFragment")
     }
 
     override fun onResumeFragment() {
-
         if (!IOIOService.getServiceStatus()) {
             activity!!.stopService(Intent(activity, IOIOService::class.java))
             activity!!.startService(Intent(activity!!.applicationContext, IOIOService::class.java))

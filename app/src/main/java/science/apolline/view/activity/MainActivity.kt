@@ -6,17 +6,17 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent.getActivity
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.wifi.WifiManager.WifiLock
 import android.os.Bundle
 import android.os.PowerManager.WakeLock
+import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.GravityCompat
-import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
@@ -29,8 +29,6 @@ import com.birbit.android.jobqueue.JobManager
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.with
 import es.dmoral.toasty.Toasty
-import kotlinx.android.synthetic.main.activity_main_app_bar.*
-import kotlinx.android.synthetic.main.activity_main_content.*
 import org.jetbrains.anko.*
 import pub.devrel.easypermissions.EasyPermissions
 import science.apolline.R
@@ -51,6 +49,9 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     private val mWifiLock: WifiLock by with(this as AppCompatActivity).instance()
     private var mBluetoothAdapter: BluetoothAdapter? = null
     private lateinit var mRequestLocationAlert: AlertDialog
+    private lateinit var mPrefs: SharedPreferences
+
+    private var INFLUXDB_SYNC_FREQ: Long = -1
 
     @SuppressLint("MissingSuperCall")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,6 +68,12 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
         val navigationView = findViewById<NavigationView>(R.id.nav_drawer)
         navigationView.setNavigationItemSelectedListener(this)
+
+        // Preferences.
+        mPrefs =  PreferenceManager.getDefaultSharedPreferences(this)
+        //mPrefs = this.getSharedPreferences( IDENTIFIER, Context.MODE_PRIVATE)
+        INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency","60")).toLong()
+
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         // Request enable Bluetooth
@@ -115,6 +122,10 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
         if (CheckUtility.isNetworkConnected(this)) {
             mJobManager.addJobInBackground(SyncInfluxDBJob())
+            info(mPrefs.all)
+            info("sync"+ mPrefs.getLong("sync_frequency ",60L).toString())
+            info("sync after $INFLUXDB_SYNC_FREQ")
+
             Toasty.info(applicationContext, "Synchronization in progress", Toast.LENGTH_SHORT, true).show()
         } else {
             mJobManager.addJobInBackground(SyncInfluxDBJob())
@@ -133,7 +144,12 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 val viewPagerFragment = ViewPagerFragment()
                 replaceFragment(viewPagerFragment)
             }
+            R.id.grp_fonction-> if (itemId == R.id.nav_setting) {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+            }
             else -> {
+
             }
         }
 
@@ -240,7 +256,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         private val PERMISSIONS_ARRAY = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
         private const val REQUEST_CODE_PERMISSIONS_ARRAY = 100
         private const val REQUEST_CODE_ENABLE_BLUETOOTH = 101
-        private const val INFLUXDB_SYNC_FREQ: Long = 60 // Minutes
+        private const val IDENTIFIER = "science.apolline"
 
     }
 }
