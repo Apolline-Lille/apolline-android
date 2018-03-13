@@ -10,12 +10,19 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.support.v4.content.FileProvider
+import android.text.format.DateFormat
+import android.text.format.DateFormat.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import com.google.gson.JsonObject
 import es.dmoral.toasty.Toasty
 import science.apolline.R
 import org.jetbrains.anko.*
+import science.apolline.models.Device
 import science.apolline.service.database.SensorDao
+import java.util.*
 
 
 /**
@@ -57,33 +64,17 @@ object DataExport : AnkoLogger {
 
     fun exportToCsv(context: Context, sensorDao: SensorDao) {
         doAsync {
-            val dataList = sensorDao.dumpSensor()
-            info("List size: " + dataList.size.toString())
-            val entries: MutableList<Array<String>> = mutableListOf()
-            entries.add(toHeader(dataList[0].data))
-            dataList.forEach {
-                entries.add(it.toArray())
-            }
-
-            CSVWriter(FileWriter(filename("csv"))).use { writer -> writer.writeAll(entries) }
-
+            createCsv(sensorDao.dumpSensor())
             uiThread {
                 Toasty.success(context, "Data exported to CSV with success!", Toast.LENGTH_SHORT, true).show()
             }
         }
     }
 
+
     fun exportShareCsv(context: Context, sensorDao: SensorDao) {
         doAsync {
-            val dataList = sensorDao.dumpSensor()
-            info("List size: " + dataList.size.toString())
-            val entries: MutableList<Array<String>> = mutableListOf()
-            entries.add(toHeader(dataList.last().data))
-            dataList.forEach {
-                entries.add(it.toArray())
-            }
-            CSVWriter(FileWriter(filename("csv"))).use { writer -> writer.writeAll(entries) }
-
+            createCsv(sensorDao.dumpSensor())
             uiThread {
                 val file = File(localFolder(), "data.csv")
                 val uri: Uri
@@ -114,4 +105,16 @@ object DataExport : AnkoLogger {
             folder.mkdir()
         return folder
     }
+
+    private fun createCsv(dataList: List<Device>) {
+        info("List size: " + dataList.size.toString())
+        val entries: MutableList<Array<String>> = mutableListOf()
+        entries.add(toHeader(dataList[0].data))
+        dataList.forEach {
+            entries.add(it.toArray())
+        }
+        CSVWriter(FileWriter(filename("csv"))).use { writer -> writer.writeAll(entries) }
+    }
+
 }
+

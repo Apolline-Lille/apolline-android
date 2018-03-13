@@ -21,6 +21,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.instance
 import com.google.gson.GsonBuilder
+import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -29,6 +30,7 @@ import kotlinx.android.synthetic.main.fragment_ioio.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import science.apolline.R
+import science.apolline.models.Device
 import science.apolline.models.IOIOData
 import science.apolline.root.FragmentLifecycle
 import science.apolline.utils.CustomMarkerView
@@ -82,7 +84,7 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
     }
 
 
-    private fun createParticleGauges() : List<ILineDataSet> {
+    private fun createParticleGauges() : List<LineDataSet> {
         val setPM1 = createParticleGauge("PM1", Color.rgb(48, 79, 254))
         val setPM2 = createParticleGauge("PM2.5", Color.rgb(0, 200, 83))
         val setPM10 = createParticleGauge("PM10", Color.rgb(213, 0, 0))
@@ -211,6 +213,12 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
         mDisposable.add(mViewModel.getDeviceList(MAX_DEVICE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .onExceptionResumeNext {
+                    Flowable.empty<Device>()
+                 }
+                .onErrorReturn {
+                    error("Error device list not found $it")
+                }
                 .subscribe {
                     if (it.isNotEmpty()) {
                         val device = it.first()
@@ -276,7 +284,6 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
     }
 
     companion object {
-        //TODO : allow user to change that value
         private const val MAX_VISIBLE_ENTRIES: Int = 100
         private const val MAX_REMOVED_ENTRIES: Int = 50
         private const val MAX_X_RANGE: Float = 40.0f

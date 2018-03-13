@@ -24,6 +24,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.instance
 import com.google.gson.GsonBuilder
+import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -32,6 +33,7 @@ import kotlinx.android.synthetic.main.fragment_ioio_content.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import science.apolline.R
+import science.apolline.models.Device
 import science.apolline.models.IOIOData
 import science.apolline.root.FragmentLifecycle
 import science.apolline.service.sensor.IOIOService
@@ -117,6 +119,12 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
         mDisposable.add(mViewModel.getDeviceList(MAX_DEVICE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .onExceptionResumeNext {
+                    Flowable.empty<Device>()
+                }
+                .onErrorReturn {
+                    error("Error device list not fount $it")
+                }
                 .subscribe {
                     if (it.isNotEmpty()) {
                         val device = it.first()

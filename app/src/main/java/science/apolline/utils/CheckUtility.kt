@@ -16,11 +16,14 @@ import android.provider.Settings
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
+import android.text.format.DateFormat
 import android.widget.Toast
 import es.dmoral.toasty.Toasty
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
-
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 /**
  * Created by sparow on 22/12/2017.
@@ -122,7 +125,7 @@ object CheckUtility : AnkoLogger {
             val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
             if (!pm.isIgnoringBatteryOptimizations(packageName)) {
                 intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                intent.data = Uri.parse("package:" + packageName)
+                intent.data = Uri.parse("package:$packageName")
                 context.startActivity(intent)
             }
         }
@@ -145,5 +148,10 @@ object CheckUtility : AnkoLogger {
         info("WiFi full mode is: " + wf.isHeld)
         return wf
     }
+
+    fun dateParser(timestamp: Long): String {
+        return Date(timestamp / 1000000).toString()
+    }
+
 
 }

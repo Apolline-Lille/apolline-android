@@ -9,6 +9,7 @@ import android.arch.persistence.room.*
 import com.google.gson.JsonObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import science.apolline.utils.CheckUtility
 
 
 @Entity
@@ -60,7 +61,7 @@ data class Device(
         val objectArray = mutableListOf<String>()
         objectArray.add(uuid)
         objectArray.add(device)
-        objectArray.add(date.toString())
+        objectArray.add(CheckUtility.dateParser(date))
         objectArray.add(position?.geohash.orEmpty())
         objectArray.add(position?.provider.orEmpty())
         objectArray.add(position?.transport.orEmpty())
