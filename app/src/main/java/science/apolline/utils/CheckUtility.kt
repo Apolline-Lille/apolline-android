@@ -16,14 +16,13 @@ import android.provider.Settings
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
-import android.text.format.DateFormat
 import android.widget.Toast
 import es.dmoral.toasty.Toasty
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
-import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
+import java.text.SimpleDateFormat
+
 
 /**
  * Created by sparow on 22/12/2017.
@@ -149,9 +148,20 @@ object CheckUtility : AnkoLogger {
         return wf
     }
 
-    fun dateParser(timestamp: Long): String {
-        return Date(timestamp / 1000000).toString()
+
+    fun newDate() : String {
+        val c = Calendar.getInstance().time
+        val df = SimpleDateFormat("dd-MMM-yyyy", Locale.FRANCE)
+        return df.format(c)
     }
+
+    fun dateParser(timestamp: Long): String {
+        val c = Date(timestamp / 1000000)
+        val df = SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.FRANCE)
+        return df.format(c)
+    }
+
+
 
 
 }

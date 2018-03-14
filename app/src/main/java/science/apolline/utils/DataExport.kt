@@ -41,7 +41,8 @@ object DataExport : AnkoLogger {
         headerArray.add("Transport")
 
         data!!.entrySet().iterator().forEach {
-            headerArray.add(it.key + "_" + it.value.asJsonArray[1].toString().replace("\"", ""))
+            val tmp = (it.key + "_" + it.value.asJsonArray[1]).replace(("\\.").toRegex(), "_")
+            headerArray.add(tmp.replace(("\"").toRegex(), ""))
         }
 
         return headerArray.toTypedArray()
@@ -76,7 +77,7 @@ object DataExport : AnkoLogger {
         doAsync {
             createCsv(sensorDao.dumpSensor())
             uiThread {
-                val file = File(localFolder(), "data.csv")
+                val file = File(localFolder(), "data_${CheckUtility.newDate()}.csv")
                 val uri: Uri
                 uri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                     Uri.fromFile(file)
@@ -96,7 +97,7 @@ object DataExport : AnkoLogger {
     }
 
     private fun filename(extension: String): String {
-        return localFolder().toString() + "/" + "data.$extension"
+        return localFolder().toString() + "/" + "data_${CheckUtility.newDate()}.$extension"
     }
 
     private fun localFolder(): File {

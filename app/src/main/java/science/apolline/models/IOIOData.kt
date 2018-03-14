@@ -99,6 +99,7 @@ class IOIOData : IntfSensorData {
 
     enum class Units constructor(val value: String) {
         CONCENTRATION_UG_M3("µg/m3"),
+        CONCENTRATION_ABOVE("#/0.1L"),
         PERCENTAGE("%"),
         TEMPERATURE_CELSIUS("°C"),
         TEMPERATURE_KELVIN("°K");
@@ -119,12 +120,12 @@ class IOIOData : IntfSensorData {
         addNestedJsonArray(obj, "pm.2_5.value", pm2_5Value, Units.CONCENTRATION_UG_M3)
         addNestedJsonArray(obj, "pm.10.value", pm10Value, Units.CONCENTRATION_UG_M3)
 
-        addNestedJsonArray(obj, "pm.0_3.above", pm0_3Above, Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.0_5.above", pm0_5Above, Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.1.above", pm1Above, Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.2_5.above", pm2_5Above, Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.5.above", pm5Above, Units.CONCENTRATION_UG_M3)
-        addNestedJsonArray(obj, "pm.10.above", pm10Above, Units.CONCENTRATION_UG_M3)
+        addNestedJsonArray(obj, "pm.0_3.above", pm0_3Above, Units.CONCENTRATION_ABOVE)
+        addNestedJsonArray(obj, "pm.0_5.above", pm0_5Above, Units.CONCENTRATION_ABOVE)
+        addNestedJsonArray(obj, "pm.1.above", pm1Above, Units.CONCENTRATION_ABOVE)
+        addNestedJsonArray(obj, "pm.2_5.above", pm2_5Above, Units.CONCENTRATION_ABOVE)
+        addNestedJsonArray(obj, "pm.5.above", pm5Above, Units.CONCENTRATION_ABOVE)
+        addNestedJsonArray(obj, "pm.10.above", pm10Above, Units.CONCENTRATION_ABOVE)
 
         addNestedJsonArray(obj, "temperature.c", tempCelcius, Units.TEMPERATURE_CELSIUS)
         addNestedJsonArray(obj, "temperature.k", tempKelvin, Units.TEMPERATURE_KELVIN)
