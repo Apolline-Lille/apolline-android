@@ -54,6 +54,26 @@ object CheckUtility : AnkoLogger {
         }
     }
 
+
+    private fun checkNetworkStatus(context: Context): String {
+
+        var networkStatus = ""
+        val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        //Check Wifi
+        val wifi = manager.activeNetworkInfo
+        //Check for mobile data
+        val mobile = manager.activeNetworkInfo
+
+        if (wifi.type == ConnectivityManager.TYPE_WIFI) {
+            networkStatus = "wifi"
+        } else if (mobile.type == ConnectivityManager.TYPE_MOBILE) {
+            networkStatus = "mobileData"
+        } else {
+            networkStatus = "noNetwork"
+        }
+        return networkStatus
+    }
+
     /**
      * To check device has internet
      *
@@ -76,9 +96,6 @@ object CheckUtility : AnkoLogger {
         return netInfo != null && wifiNetworkState
     }
 
-    fun checkCoarseLocationPermission(context: Context): Boolean {
-        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-    }
 
     fun checkFineLocationPermission(context: Context): Boolean {
         return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED

@@ -27,9 +27,11 @@ import com.birbit.android.jobqueue.JobManager
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.with
 import es.dmoral.toasty.Toasty
+import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import pub.devrel.easypermissions.EasyPermissions
+import science.apolline.BuildConfig
 import science.apolline.R
 import science.apolline.root.RootActivity
 import science.apolline.service.sensor.IOIOService
@@ -67,6 +69,9 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
         val navigationView = findViewById<NavigationView>(R.id.nav_drawer)
         navigationView.setNavigationItemSelectedListener(this)
+
+        val version = "Version: " + BuildConfig.VERSION_NAME
+        app_version.text = version
 
         // Preferences.
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -186,7 +191,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
     private fun checkPermissions(): Boolean {
         if (!EasyPermissions.hasPermissions(this, *PERMISSIONS_ARRAY)) {
-            EasyPermissions.requestPermissions(this, "Geolocation, read phone state and writing permissions are necessary for the proper functioning of the application", REQUEST_CODE_PERMISSIONS_ARRAY,
+            EasyPermissions.requestPermissions(this, "Location, read phone state and writing permissions are necessary for the proper working of Apolline", REQUEST_CODE_PERMISSIONS_ARRAY,
                     Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
             return false
         }
