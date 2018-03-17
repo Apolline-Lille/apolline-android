@@ -8,12 +8,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.preference.ListPreference
-import android.preference.Preference
-import android.preference.PreferenceActivity
-import android.preference.PreferenceFragment
-import android.preference.PreferenceManager
-import android.preference.RingtonePreference
+import android.preference.*
 import android.text.TextUtils
 import android.view.MenuItem
 import science.apolline.R
@@ -83,7 +78,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("device_name"))
+          bindPreferenceSummaryToValue(findPreference("device_name"))
+          bindPreferenceSummaryToValue(findPreference("device_uuid"))
 //            bindPreferenceSummaryToValue(findPreference("example_list"))
         }
 

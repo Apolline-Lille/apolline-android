@@ -1,6 +1,8 @@
 package science.apolline
 
 import android.app.Application
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import com.crashlytics.android.Crashlytics
 import com.github.salomonbrys.kodein.*
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -10,6 +12,7 @@ import com.squareup.leakcanary.LeakCanary
 import io.fabric.sdk.android.Fabric
 import science.apolline.di.KodeinConfInjector
 import science.apolline.service.synchronisation.SyncJobManager
+import java.util.*
 
 /**
  * Created by sparow on 05/02/18.
@@ -20,8 +23,26 @@ class ApollineApplication : Application(), KodeinAware {
 
     private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
+    private lateinit var mPrefs: SharedPreferences
+
+
     override fun onCreate() {
         super.onCreate()
+        // Preferences.
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
+        //mPrefs = this.getSharedPreferences( IDENTIFIER, Context.MODE_PRIVATE)
+        val existingUuid = mPrefs.getString("device_uuid", DEFAULT_UUID)
+
+        if (existingUuid == DEFAULT_UUID) {
+            val editor = mPrefs.edit()
+            with(editor) {
+                putString("device_uuid", UUID.randomUUID().toString())
+                apply()
+            }
+        }
+
+
+
         Logger.addLogAdapter(AndroidLogAdapter())
 
         Fabric.with(this, Crashlytics())
@@ -33,5 +54,9 @@ class ApollineApplication : Application(), KodeinAware {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
         LeakCanary.install(this)
         SyncJobManager.getJobManager(this)
+    }
+
+    companion object {
+        private const val DEFAULT_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff"
     }
 }

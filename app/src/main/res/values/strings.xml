@@ -120,6 +120,9 @@
     <string name="pref_title_device_name">Device name</string>
     <string name="pref_default_device_name">Apolline00</string>
 
+    <string name="pref_title_device_uuid">Device UUID</string>
+    <string name="pref_default_device_uuid">ffffffff-ffff-ffff-ffff-ffffffffffff</string>
+
     <string-array name="list_preference_entries">
         <item>Entry 1</item>
         <item>Entry 2</item>

@@ -35,13 +35,11 @@ import science.apolline.models.Device
 import science.apolline.models.IOIOData
 import science.apolline.models.Position
 import science.apolline.service.database.SensorDao
-import science.apolline.utils.AndroidUuid
 import science.apolline.utils.CheckUtility
 import java.io.IOException
 import java.io.InputStream
 import science.apolline.utils.GeoHashHelper
 import science.apolline.view.activity.MainActivity
-import java.util.*
 
 
 class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
@@ -55,9 +53,16 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     private val mPrefs by injector.instance<SharedPreferences>()
 
+    private var DEVICE_NAME= "Apolline00"
+    private var DEVICE_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff"
+
 
     override fun createIOIOLooper(): IOIOLooper {
         injector.inject(appKodein())
+
+        DEVICE_NAME= mPrefs.getString("device_name","Apolline00")
+        DEVICE_UUID = mPrefs.getString("device_uuid","ffffffff-ffff-ffff-ffff-ffffffffffff")
+
         return object : BaseIOIOLooper() {
             private val data = IOIOData()
             private var led: DigitalOutput? = null
@@ -144,9 +149,8 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
     }
 
     private fun persistData(data: IOIOData, pos: Position?) {
-        val DEVICE_NAME = mPrefs.getString("device_name","Apolline")
         val d1 = System.currentTimeMillis() * 1000000
-        val device = Device(AndroidUuid.getAndroidUuid(), DEVICE_NAME, d1, pos, data.toJson(), 0)
+        val device = Device(DEVICE_UUID, DEVICE_NAME, d1, pos, data.toJson(), 0)
         doAsync {
             sensorModel.insert(device)
             location = null

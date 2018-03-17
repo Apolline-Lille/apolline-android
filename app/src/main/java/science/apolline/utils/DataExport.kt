@@ -33,16 +33,30 @@ object DataExport : AnkoLogger {
 
     private fun toHeader(data: JsonObject?): Array<String> {
         val headerArray = mutableListOf<String>()
-        headerArray.add("SensorID")
-        headerArray.add("Device")
-        headerArray.add("Date")
-        headerArray.add("Geohash")
-        headerArray.add("Provider")
-        headerArray.add("Transport")
+        headerArray.apply {
+            add("SensorID")
+            add("Device")
+            add("Date")
+            add("Geohash")
+            add("Provider")
+            add("Transport")
+        }
 
         data!!.entrySet().iterator().forEach {
-            val tmp = (it.key + "_" + it.value.asJsonArray[1]).replace(("\\.").toRegex(), "_")
-            headerArray.add(tmp.replace(("\"").toRegex(), ""))
+
+            var tmp = it.key + "_" + it.value.asJsonArray[1]
+
+            if (tmp.contains(("#/0.1L").toRegex())) {
+                tmp = tmp.substringBefore("#/0.1L").replace(("\\.").toRegex(), "_")
+                tmp += "#/0.1L"
+            } else {
+                tmp = tmp.replace(("\\.").toRegex(), "_")
+            }
+            info(tmp)
+            tmp = tmp.replace(("\"|°").toRegex(), "")
+            tmp = tmp.replace(("µ").toRegex(), "u")
+            headerArray.add(tmp)
+
         }
 
         return headerArray.toTypedArray()

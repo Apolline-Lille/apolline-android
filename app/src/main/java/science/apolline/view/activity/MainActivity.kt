@@ -4,9 +4,7 @@ package science.apolline.view.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.PendingIntent.getActivity
 import android.bluetooth.BluetoothAdapter
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.wifi.WifiManager.WifiLock
@@ -29,15 +27,16 @@ import com.birbit.android.jobqueue.JobManager
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.with
 import es.dmoral.toasty.Toasty
-import org.jetbrains.anko.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import pub.devrel.easypermissions.EasyPermissions
 import science.apolline.R
+import science.apolline.root.RootActivity
 import science.apolline.service.sensor.IOIOService
 import science.apolline.service.synchronisation.SyncInfluxDBJob
-import science.apolline.utils.SyncJobScheduler.cancelAutoSync
-import science.apolline.root.RootActivity
 import science.apolline.utils.CheckUtility
 import science.apolline.utils.SyncJobScheduler
+import science.apolline.utils.SyncJobScheduler.cancelAutoSync
 import science.apolline.view.fragment.ViewPagerFragment
 
 
