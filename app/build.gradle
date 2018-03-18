@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'jacoco'
-
+apply plugin: 'com.akaita.android.easylauncher'
 
 
 android {
@@ -44,8 +44,8 @@ android {
             buildConfigField "String", "INFLUXDB_USR", '"' + properties.getProperty('influxdb_usr') + '"'
             buildConfigField "String", "INFLUXDB_PWD", '"' + properties.getProperty('influxdb_pwd') + '"'
 
+            buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'false'
             project.ext.sonarqube_url = '"' + properties.getProperty('sonarqube_url') + '"'
-
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
@@ -55,6 +55,7 @@ android {
             buildConfigField "String", "INFLUXDB_USR", '"' + influxdb_usr + '"'
             buildConfigField "String", "INFLUXDB_PWD", '"' + influxdb_pwd + '"'
 
+            buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'true'
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

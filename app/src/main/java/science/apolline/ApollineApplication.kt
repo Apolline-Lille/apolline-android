@@ -45,7 +45,11 @@ class ApollineApplication : Application(), KodeinAware {
 
         Logger.addLogAdapter(AndroidLogAdapter())
 
-        Fabric.with(this, Crashlytics())
+        if (BuildConfig.ENABLE_CRASHLYTICS) {
+            Fabric.with(this, Crashlytics())
+        }
+
+
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
