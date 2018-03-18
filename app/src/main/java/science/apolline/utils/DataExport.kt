@@ -38,6 +38,8 @@ object DataExport : AnkoLogger {
             add("Device")
             add("Date")
             add("Geohash")
+            add("Longitude")
+            add("Latitude")
             add("Provider")
             add("Transport")
         }
