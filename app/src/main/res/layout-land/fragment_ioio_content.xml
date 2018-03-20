@@ -6,357 +6,320 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/loa_background"
-    android:orientation="horizontal">
+    android:baselineAligned="false"
+    android:orientation="vertical">
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="1"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:weightSum="1">
+        android:orientation="horizontal">
 
-        <LinearLayout
+
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:baselineAligned="false"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <RelativeLayout
+            <at.grabner.circleprogress.CircleProgressView
+                android:id="@+id/fragment_ioio_progress_pm1"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.3"
-                android:orientation="horizontal">
-
-                <at.grabner.circleprogress.CircleProgressView
-                    android:id="@+id/fragment_ioio_progress_pm1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginTop="5dp"
-                    CircleProgressView:cpv_autoTextSize="true"
-                    CircleProgressView:cpv_barColor="@color/degraded_color1"
-                    CircleProgressView:cpv_barColor1="@color/degraded_color2"
-                    CircleProgressView:cpv_barColor2="@color/degraded_color3"
-                    CircleProgressView:cpv_barColor3="@color/degraded_color4"
-                    CircleProgressView:cpv_barWidth="10dp"
-                    CircleProgressView:cpv_innerContourSize="0dp"
-                    CircleProgressView:cpv_maxValue="@integer/max_value_pm1"
-                    CircleProgressView:cpv_outerContourSize="0dp"
-                    CircleProgressView:cpv_rimColor="@color/primary_light"
-                    CircleProgressView:cpv_rimWidth="5dp"
-                    CircleProgressView:cpv_seekMode="false"
-                    CircleProgressView:cpv_showUnit="true"
-                    CircleProgressView:cpv_spinColor="@color/primary"
-                    CircleProgressView:cpv_textColor="@color/primary_dark"
-                    CircleProgressView:cpv_textScale="1"
-                    CircleProgressView:cpv_unit="@string/ioio_sensor_unit"
-                    CircleProgressView:cpv_unitColor="@color/primary_dark"
-                    CircleProgressView:cpv_unitPosition="bottom"
-                    CircleProgressView:cpv_unitScale="1" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.3"
-                android:orientation="horizontal">
-
-                <at.grabner.circleprogress.CircleProgressView
-                    android:id="@+id/fragment_ioio_progress_pm2_5"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginTop="5dp"
-                    CircleProgressView:cpv_autoTextSize="true"
-                    CircleProgressView:cpv_barColor="@color/degraded_color1"
-                    CircleProgressView:cpv_barColor1="@color/degraded_color2"
-                    CircleProgressView:cpv_barColor2="@color/degraded_color3"
-                    CircleProgressView:cpv_barColor3="@color/degraded_color4"
-                    CircleProgressView:cpv_barWidth="10dp"
-                    CircleProgressView:cpv_innerContourSize="0dp"
-                    CircleProgressView:cpv_maxValue="@integer/max_value_pm2_5"
-                    CircleProgressView:cpv_outerContourSize="0dp"
-                    CircleProgressView:cpv_rimColor="@color/primary_light"
-                    CircleProgressView:cpv_rimWidth="5dp"
-                    CircleProgressView:cpv_seekMode="false"
-                    CircleProgressView:cpv_showUnit="true"
-                    CircleProgressView:cpv_spinColor="@color/primary"
-                    CircleProgressView:cpv_textColor="@color/primary_dark"
-                    CircleProgressView:cpv_textScale="1"
-                    CircleProgressView:cpv_unit="@string/ioio_sensor_unit"
-                    CircleProgressView:cpv_unitColor="@color/primary_dark"
-                    CircleProgressView:cpv_unitPosition="bottom"
-                    CircleProgressView:cpv_unitScale="1" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.3"
-                android:orientation="horizontal">
-
-                <at.grabner.circleprogress.CircleProgressView
-                    android:id="@+id/fragment_ioio_progress_pm10"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginTop="5dp"
-                    CircleProgressView:cpv_autoTextSize="true"
-                    CircleProgressView:cpv_barColor="@color/degraded_color1"
-                    CircleProgressView:cpv_barColor1="@color/degraded_color2"
-                    CircleProgressView:cpv_barColor2="@color/degraded_color3"
-                    CircleProgressView:cpv_barColor3="@color/degraded_color4"
-                    CircleProgressView:cpv_barWidth="10dp"
-                    CircleProgressView:cpv_innerContourSize="0dp"
-                    CircleProgressView:cpv_maxValue="@integer/max_value_pm10"
-                    CircleProgressView:cpv_outerContourSize="0dp"
-                    CircleProgressView:cpv_rimColor="@color/primary_light"
-                    CircleProgressView:cpv_rimWidth="5dp"
-                    CircleProgressView:cpv_seekMode="false"
-                    CircleProgressView:cpv_showUnit="true"
-                    CircleProgressView:cpv_spinColor="@color/primary"
-                    CircleProgressView:cpv_textColor="@color/primary_dark"
-                    CircleProgressView:cpv_textScale="1"
-                    CircleProgressView:cpv_unit="@string/ioio_sensor_unit"
-                    CircleProgressView:cpv_unitColor="@color/primary_dark"
-                    CircleProgressView:cpv_unitPosition="bottom"
-                    CircleProgressView:cpv_unitScale="1" />
-            </RelativeLayout>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/fragment_ioio_tv_pm1_label"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                CircleProgressView:cpv_autoTextSize="true"
+                CircleProgressView:cpv_barColor="@color/degraded_color1"
+                CircleProgressView:cpv_barColor1="@color/degraded_color2"
+                CircleProgressView:cpv_barColor2="@color/degraded_color3"
+                CircleProgressView:cpv_barColor3="@color/degraded_color4"
+                CircleProgressView:cpv_barWidth="10dp"
+                CircleProgressView:cpv_innerContourSize="0dp"
+                CircleProgressView:cpv_maxValue="@integer/max_value_pm1"
+                CircleProgressView:cpv_outerContourSize="0dp"
+                CircleProgressView:cpv_rimColor="@color/primary_light"
+                CircleProgressView:cpv_rimWidth="5dp"
+                CircleProgressView:cpv_seekMode="false"
+                CircleProgressView:cpv_showUnit="true"
+                CircleProgressView:cpv_spinColor="@color/primary"
+                CircleProgressView:cpv_textColor="@color/primary_dark"
+                CircleProgressView:cpv_textScale="1"
+                CircleProgressView:cpv_unit="@string/ioio_sensor_unit"
+                CircleProgressView:cpv_unitColor="@color/primary_dark"
+                CircleProgressView:cpv_unitPosition="bottom"
+                CircleProgressView:cpv_unitScale="1" />
 
             <TextView
                 android:id="@+id/fragment_ioio_tv_pm1_label"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:text="@string/ioio_sensor_pm01"
                 android:textColor="@color/loa_sensor_text_color3"
                 tools:textSize="30sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <at.grabner.circleprogress.CircleProgressView
+                android:id="@+id/fragment_ioio_progress_pm2_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/fragment_ioio_tv_pm2_label"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                CircleProgressView:cpv_autoTextSize="true"
+                CircleProgressView:cpv_barColor="@color/degraded_color1"
+                CircleProgressView:cpv_barColor1="@color/degraded_color2"
+                CircleProgressView:cpv_barColor2="@color/degraded_color3"
+                CircleProgressView:cpv_barColor3="@color/degraded_color4"
+                CircleProgressView:cpv_barWidth="10dp"
+                CircleProgressView:cpv_innerContourSize="0dp"
+                CircleProgressView:cpv_maxValue="@integer/max_value_pm2_5"
+                CircleProgressView:cpv_outerContourSize="0dp"
+                CircleProgressView:cpv_rimColor="@color/primary_light"
+                CircleProgressView:cpv_rimWidth="5dp"
+                CircleProgressView:cpv_seekMode="false"
+                CircleProgressView:cpv_showUnit="true"
+                CircleProgressView:cpv_spinColor="@color/primary"
+                CircleProgressView:cpv_textColor="@color/primary_dark"
+                CircleProgressView:cpv_textScale="1"
+                CircleProgressView:cpv_unit="@string/ioio_sensor_unit"
+                CircleProgressView:cpv_unitColor="@color/primary_dark"
+                CircleProgressView:cpv_unitPosition="bottom"
+                CircleProgressView:cpv_unitScale="1" />
 
             <TextView
-                android:id="@+id/fragment_ioio_tv_pm2_5_label"
+                android:id="@+id/fragment_ioio_tv_pm2_label"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:text="@string/ioio_sensor_pm2_5"
                 android:textColor="@color/loa_sensor_text_color2"
                 tools:textSize="30sp" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <at.grabner.circleprogress.CircleProgressView
+                android:id="@+id/fragment_ioio_progress_pm10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/fragment_ioio_tv_pm10_label"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                CircleProgressView:cpv_autoTextSize="true"
+                CircleProgressView:cpv_barColor="@color/degraded_color1"
+                CircleProgressView:cpv_barColor1="@color/degraded_color2"
+                CircleProgressView:cpv_barColor2="@color/degraded_color3"
+                CircleProgressView:cpv_barColor3="@color/degraded_color4"
+                CircleProgressView:cpv_barWidth="10dp"
+                CircleProgressView:cpv_innerContourSize="0dp"
+                CircleProgressView:cpv_maxValue="@integer/max_value_pm10"
+                CircleProgressView:cpv_outerContourSize="0dp"
+                CircleProgressView:cpv_rimColor="@color/primary_light"
+                CircleProgressView:cpv_rimWidth="5dp"
+                CircleProgressView:cpv_seekMode="false"
+                CircleProgressView:cpv_showUnit="true"
+                CircleProgressView:cpv_spinColor="@color/primary"
+                CircleProgressView:cpv_textColor="@color/primary_dark"
+                CircleProgressView:cpv_textScale="1"
+                CircleProgressView:cpv_unit="@string/ioio_sensor_unit"
+                CircleProgressView:cpv_unitColor="@color/primary_dark"
+                CircleProgressView:cpv_unitPosition="bottom"
+                CircleProgressView:cpv_unitScale="1" />
 
             <TextView
                 android:id="@+id/fragment_ioio_tv_pm10_label"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:text="@string/ioio_sensor_pm10"
                 android:textColor="@color/loa_sensor_text_color1"
                 tools:textSize="30sp" />
-        </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
 
 
-
-
-
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:baselineAligned="false"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
+            <at.grabner.circleprogress.CircleProgressView
+                android:id="@+id/fragment_ioio_progress_rht"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.3"
-                android:orientation="horizontal">
-
-                <at.grabner.circleprogress.CircleProgressView
-                    android:id="@+id/fragment_ioio_progress_rht"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginTop="5dp"
-                    CircleProgressView:cpv_autoTextSize="true"
-                    CircleProgressView:cpv_barColor="@color/degraded_color1"
-                    CircleProgressView:cpv_barColor1="@color/degraded_color2"
-                    CircleProgressView:cpv_barColor2="@color/degraded_color3"
-                    CircleProgressView:cpv_barColor3="@color/degraded_color4"
-                    CircleProgressView:cpv_barWidth="10dp"
-                    CircleProgressView:cpv_innerContourSize="0dp"
-                    CircleProgressView:cpv_maxValue="@integer/max_value_rht"
-                    CircleProgressView:cpv_outerContourSize="0dp"
-                    CircleProgressView:cpv_rimColor="@color/primary_light"
-                    CircleProgressView:cpv_rimWidth="5dp"
-                    CircleProgressView:cpv_seekMode="false"
-                    CircleProgressView:cpv_showUnit="true"
-                    CircleProgressView:cpv_spinColor="@color/primary"
-                    CircleProgressView:cpv_textColor="@color/primary_dark"
-                    CircleProgressView:cpv_textScale="1"
-                    CircleProgressView:cpv_unit="@string/humidity_unit"
-                    CircleProgressView:cpv_unitColor="@color/primary_dark"
-                    CircleProgressView:cpv_unitPosition="bottom"
-                    CircleProgressView:cpv_unitScale="1" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.3"
-                android:orientation="horizontal">
-
-                <at.grabner.circleprogress.CircleProgressView
-                    android:id="@+id/fragment_ioio_progress_tmpk"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginTop="5dp"
-                    CircleProgressView:cpv_autoTextSize="true"
-                    CircleProgressView:cpv_barColor="@color/degraded_color1"
-                    CircleProgressView:cpv_barColor1="@color/degraded_color2"
-                    CircleProgressView:cpv_barColor2="@color/degraded_color3"
-                    CircleProgressView:cpv_barColor3="@color/degraded_color4"
-                    CircleProgressView:cpv_barWidth="10dp"
-                    CircleProgressView:cpv_innerContourSize="0dp"
-                    CircleProgressView:cpv_maxValue="@integer/max_value_kelvin"
-                    CircleProgressView:cpv_outerContourSize="0dp"
-                    CircleProgressView:cpv_rimColor="@color/primary_light"
-                    CircleProgressView:cpv_rimWidth="5dp"
-                    CircleProgressView:cpv_seekMode="false"
-                    CircleProgressView:cpv_showUnit="true"
-                    CircleProgressView:cpv_spinColor="@color/primary"
-                    CircleProgressView:cpv_textColor="@color/primary_dark"
-                    CircleProgressView:cpv_textScale="1"
-                    CircleProgressView:cpv_unit="@string/temperature_kelvin"
-                    CircleProgressView:cpv_unitColor="@color/primary_dark"
-                    CircleProgressView:cpv_unitPosition="bottom"
-                    CircleProgressView:cpv_unitScale="1" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.3"
-                android:orientation="horizontal">
-
-                <at.grabner.circleprogress.CircleProgressView
-                    android:id="@+id/fragment_ioio_progress_tmpc"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginTop="5dp"
-                    CircleProgressView:cpv_autoTextSize="true"
-                    CircleProgressView:cpv_barColor="@color/degraded_color1"
-                    CircleProgressView:cpv_barColor1="@color/degraded_color2"
-                    CircleProgressView:cpv_barColor2="@color/degraded_color3"
-                    CircleProgressView:cpv_barColor3="@color/degraded_color4"
-                    CircleProgressView:cpv_barWidth="10dp"
-                    CircleProgressView:cpv_innerContourSize="0dp"
-                    CircleProgressView:cpv_maxValue="@integer/max_value_celsius"
-                    CircleProgressView:cpv_outerContourSize="0dp"
-                    CircleProgressView:cpv_rimColor="@color/primary_light"
-                    CircleProgressView:cpv_rimWidth="5dp"
-                    CircleProgressView:cpv_seekMode="false"
-                    CircleProgressView:cpv_showUnit="true"
-                    CircleProgressView:cpv_spinColor="@color/primary"
-                    CircleProgressView:cpv_textColor="@color/primary_dark"
-                    CircleProgressView:cpv_textScale="1"
-                    CircleProgressView:cpv_unit="@string/temperature_celsius"
-                    CircleProgressView:cpv_unitColor="@color/primary_dark"
-                    CircleProgressView:cpv_unitPosition="bottom"
-                    CircleProgressView:cpv_unitScale="1" />
-            </RelativeLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:orientation="vertical">
+                android:layout_above="@+id/fragment_ioio_tv_rht_label"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                CircleProgressView:cpv_autoTextSize="true"
+                CircleProgressView:cpv_barColor="@color/degraded_color1"
+                CircleProgressView:cpv_barColor1="@color/degraded_color2"
+                CircleProgressView:cpv_barColor2="@color/degraded_color3"
+                CircleProgressView:cpv_barColor3="@color/degraded_color4"
+                CircleProgressView:cpv_barWidth="10dp"
+                CircleProgressView:cpv_innerContourSize="0dp"
+                CircleProgressView:cpv_maxValue="@integer/max_value_rht"
+                CircleProgressView:cpv_outerContourSize="0dp"
+                CircleProgressView:cpv_rimColor="@color/primary_light"
+                CircleProgressView:cpv_rimWidth="5dp"
+                CircleProgressView:cpv_seekMode="false"
+                CircleProgressView:cpv_showUnit="true"
+                CircleProgressView:cpv_spinColor="@color/primary"
+                CircleProgressView:cpv_textColor="@color/primary_dark"
+                CircleProgressView:cpv_textScale="1"
+                CircleProgressView:cpv_unit="@string/humidity_unit"
+                CircleProgressView:cpv_unitColor="@color/primary_dark"
+                CircleProgressView:cpv_unitPosition="bottom"
+                CircleProgressView:cpv_unitScale="1" />
 
             <TextView
                 android:id="@+id/fragment_ioio_tv_rht_label"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:text="@string/ioio_sensor_rht"
                 android:textColor="@color/loa_sensor_text_color3"
                 tools:textSize="30sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <at.grabner.circleprogress.CircleProgressView
+                android:id="@+id/fragment_ioio_progress_tmpk"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/fragment_ioio_tv_tmpk_label"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                CircleProgressView:cpv_autoTextSize="true"
+                CircleProgressView:cpv_barColor="@color/degraded_color1"
+                CircleProgressView:cpv_barColor1="@color/degraded_color2"
+                CircleProgressView:cpv_barColor2="@color/degraded_color3"
+                CircleProgressView:cpv_barColor3="@color/degraded_color4"
+                CircleProgressView:cpv_barWidth="10dp"
+                CircleProgressView:cpv_innerContourSize="0dp"
+                CircleProgressView:cpv_maxValue="@integer/max_value_kelvin"
+                CircleProgressView:cpv_outerContourSize="0dp"
+                CircleProgressView:cpv_rimColor="@color/primary_light"
+                CircleProgressView:cpv_rimWidth="5dp"
+                CircleProgressView:cpv_seekMode="false"
+                CircleProgressView:cpv_showUnit="true"
+                CircleProgressView:cpv_spinColor="@color/primary"
+                CircleProgressView:cpv_textColor="@color/primary_dark"
+                CircleProgressView:cpv_textScale="1"
+                CircleProgressView:cpv_unit="@string/temperature_kelvin"
+                CircleProgressView:cpv_unitColor="@color/primary_dark"
+                CircleProgressView:cpv_unitPosition="bottom"
+                CircleProgressView:cpv_unitScale="1" />
 
             <TextView
                 android:id="@+id/fragment_ioio_tv_tmpk_label"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:text="@string/ioio_sensor_tmpk"
                 android:textColor="@color/loa_sensor_text_color2"
                 tools:textSize="30sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <at.grabner.circleprogress.CircleProgressView
+                android:id="@+id/fragment_ioio_progress_tmpc"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/fragment_ioio_tv_tmpc_label"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                CircleProgressView:cpv_autoTextSize="true"
+                CircleProgressView:cpv_barColor="@color/degraded_color1"
+                CircleProgressView:cpv_barColor1="@color/degraded_color2"
+                CircleProgressView:cpv_barColor2="@color/degraded_color3"
+                CircleProgressView:cpv_barColor3="@color/degraded_color4"
+                CircleProgressView:cpv_barWidth="10dp"
+                CircleProgressView:cpv_innerContourSize="0dp"
+                CircleProgressView:cpv_maxValue="@integer/max_value_celsius"
+                CircleProgressView:cpv_outerContourSize="0dp"
+                CircleProgressView:cpv_rimColor="@color/primary_light"
+                CircleProgressView:cpv_rimWidth="5dp"
+                CircleProgressView:cpv_seekMode="false"
+                CircleProgressView:cpv_showUnit="true"
+                CircleProgressView:cpv_spinColor="@color/primary"
+                CircleProgressView:cpv_textColor="@color/primary_dark"
+                CircleProgressView:cpv_textScale="1"
+                CircleProgressView:cpv_unit="@string/temperature_celsius"
+                CircleProgressView:cpv_unitColor="@color/primary_dark"
+                CircleProgressView:cpv_unitPosition="bottom"
+                CircleProgressView:cpv_unitScale="1" />
 
             <TextView
                 android:id="@+id/fragment_ioio_tv_tmpc_label"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:text="@string/ioio_sensor_tmpc"
                 android:textColor="@color/loa_sensor_text_color1"
                 tools:textSize="30sp" />
-        </LinearLayout>
+        </RelativeLayout>
+
 
     </LinearLayout>
 
-    </LinearLayout>
 
-
-
-
-
-
+</LinearLayout>
