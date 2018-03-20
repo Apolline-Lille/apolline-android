@@ -2,9 +2,11 @@ package science.apolline.view.fragment
 
 import android.annotation.SuppressLint
 import android.arch.lifecycle.ViewModelProviders
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,12 +54,21 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
     private lateinit var mDataList: List<ILineDataSet>
     private lateinit var mDisposable: CompositeDisposable
     private lateinit var mViewModel: SensorViewModel
+    private lateinit var mPrefs: SharedPreferences
 
+
+    private var MAX_VISIBLE_ENTRIES: Int = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mViewModel = ViewModelProviders.of(this).get(SensorViewModel::class.java).init(appKodein())
         this.retainInstance = true
+
+        // Preferences.
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(activity!!.applicationContext)
+        //mPrefs = this.getSharedPreferences( IDENTIFIER, Context.MODE_PRIVATE)
+        MAX_VISIBLE_ENTRIES = (mPrefs.getString("visible_entries", "100")).toInt()
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -284,7 +295,6 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
     }
 
     companion object {
-        private const val MAX_VISIBLE_ENTRIES: Int = 100
         private const val MAX_REMOVED_ENTRIES: Int = 50
         private const val MAX_X_RANGE: Float = 40.0f
         private const val MAX_Y_RANGE: Float = 50.0f

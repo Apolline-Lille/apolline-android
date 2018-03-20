@@ -13,6 +13,9 @@
     <item name="max_value_celsius" format="float" type="dimen">50.0</item>
     <item name="max_value_kelvin" format="float" type="dimen">325.0</item>
 
+
+    <item name="chart_default_visible_entries" format="integer" type="dimen">100</item>
+
 </resources>
 
 

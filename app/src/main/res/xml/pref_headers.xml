@@ -13,8 +13,17 @@
         <!--android:title="@string/pref_header_notifications" />-->
 
     <header
+        android:fragment="science.apolline.view.activity.SettingsActivity$ChartPreferenceFragment"
+        android:icon="@drawable/ic_multiline_chart_black_24dp"
+        android:title="@string/pref_header_chart" />
+
+    <header
         android:fragment="science.apolline.view.activity.SettingsActivity$DataSyncPreferenceFragment"
         android:icon="@drawable/ic_sync_black_24dp"
         android:title="@string/pref_header_data_sync" />
+
+
+
+
 
 </preference-headers>
