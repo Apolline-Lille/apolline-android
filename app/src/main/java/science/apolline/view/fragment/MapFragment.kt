@@ -179,7 +179,6 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                 uiSettings.isIndoorLevelPickerEnabled = true
                 uiSettings.isZoomControlsEnabled = true
                 isIndoorEnabled = true
-                isBuildingsEnabled = true
                 isTrafficEnabled = false
                 mapType = GoogleMap.MAP_TYPE_TERRAIN
             }

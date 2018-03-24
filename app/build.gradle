@@ -110,7 +110,7 @@ project.ext {
     appcompat_version = '27.1.0'
     aac_version = '1.0.0'
     ioio_version = '5.07'
-    gms_version = '11.8.0'
+    gms_version = '12.0.0'
     retrofit_version = '2.3.0'
     anko_version = '0.10.3'
     kodein_version = '4.1.0'
