@@ -62,6 +62,8 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
         tabs.setupWithViewPager(pager)
         pager.addOnPageChangeListener(pageChangeListener)
         pager.offscreenPageLimit = 3
+
+        pager.setOnTouchListener { _, _ -> true  }
     }
 
     private val pageChangeListener = object : OnPageChangeListener {

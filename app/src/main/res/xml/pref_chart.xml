@@ -1,14 +1,14 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
-    <EditTextPreference
+    <com.yokkomi.commons.preference.seekbar.SeekBarPreference
         android:defaultValue="@dimen/chart_default_visible_entries"
         android:key="visible_entries"
-        android:inputType="number"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_chart_visible_entries" />
-
+        android:summary="@string/pref_summary_chart_visible_entries"
+        android:title="@string/pref_title_chart_visible_entries"
+        app:explain="@string/pref_summary_chart_visible_entries"
+        app:maxValue="200"
+        app:padding="3"
+        app:unit="@string/pref_unit_chart_visible_entries_unit" />
 
 </PreferenceScreen>

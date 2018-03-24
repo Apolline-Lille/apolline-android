@@ -51,6 +51,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     private var mBluetoothAdapter: BluetoothAdapter? = null
     private lateinit var mRequestLocationAlert: AlertDialog
     private lateinit var mPrefs: SharedPreferences
+    private lateinit var mPrefsListener: SharedPreferences.OnSharedPreferenceChangeListener
 
     private var INFLUXDB_SYNC_FREQ: Long = -1
 
@@ -75,7 +76,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
         // Preferences.
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
-        //mPrefs = this.getSharedPreferences( IDENTIFIER, Context.MODE_PRIVATE)
+//        mPrefs = this.getSharedPreferences(PREF_NAME, MODE_PRIVATE)
         INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
 
 
@@ -271,6 +272,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         private val PERMISSIONS_ARRAY = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
         private const val REQUEST_CODE_PERMISSIONS_ARRAY = 100
         private const val REQUEST_CODE_ENABLE_BLUETOOTH = 101
+//        private const val PREF_NAME = "ApollinePref"
 
     }
 }

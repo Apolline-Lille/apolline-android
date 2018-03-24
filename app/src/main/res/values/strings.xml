@@ -154,6 +154,14 @@
 
     <string name="pref_header_chart">Chart</string>
     <string name="pref_title_chart_visible_entries">Visible entries</string>
+    <string name="pref_summary_chart_visible_entries">Maximum available points</string>
+    <string name="pref_default_chart_visible_entries">100</string>
+    <string name="pref_unit_chart_visible_entries_unit">Points</string>
+
+    <!--<string name="pref_title_chart_range_y">Axe Y visibility</string>-->
+    <!--<string name="pref_title_chart_range_y_summary">Min &lt; Max  </string>-->
+    <!--<string name="pref_title_chart_range_y_unit">Points</string>-->
+
 
 
 </resources>

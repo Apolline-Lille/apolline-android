@@ -28,9 +28,10 @@ class ApollineApplication : Application(), KodeinAware {
 
     override fun onCreate() {
         super.onCreate()
-        // Preferences.
+
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
-        //mPrefs = this.getSharedPreferences( IDENTIFIER, Context.MODE_PRIVATE)
+//        mPrefs = this.getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+
         val existingUuid = mPrefs.getString("device_uuid", DEFAULT_UUID)
 
         if (existingUuid == DEFAULT_UUID) {
@@ -40,8 +41,6 @@ class ApollineApplication : Application(), KodeinAware {
                 apply()
             }
         }
-
-
 
         Logger.addLogAdapter(AndroidLogAdapter())
 
@@ -62,5 +61,6 @@ class ApollineApplication : Application(), KodeinAware {
 
     companion object {
         private const val DEFAULT_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff"
+//        private const val PREF_NAME = "ApollinePref"
     }
 }

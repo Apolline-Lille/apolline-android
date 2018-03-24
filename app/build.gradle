@@ -230,6 +230,8 @@ dependencies {
     // Google Maps heat map utility
     implementation 'com.google.maps.android:android-maps-utils:0.5'
 
+    // SeekBar preferences
+    implementation 'com.yokkomi:seekbar-preference:1.0'
 
 }
 

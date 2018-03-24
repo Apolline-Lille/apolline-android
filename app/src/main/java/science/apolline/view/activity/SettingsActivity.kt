@@ -79,8 +79,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("device_name"))
-            bindPreferenceSummaryToValue(findPreference("device_uuid"))
+            bindPreferenceSummaryToValue(findPreference("device_name"), STRING)
+            bindPreferenceSummaryToValue(findPreference("device_uuid"), STRING)
 //            bindPreferenceSummaryToValue(findPreference("example_list"))
         }
 
@@ -109,7 +109,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"))
+            bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"), STRING)
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -130,7 +130,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             addPreferencesFromResource(R.xml.pref_chart)
             setHasOptionsMenu(true)
 
-            bindPreferenceSummaryToValue(findPreference("visible_entries"))
+            bindPreferenceSummaryToValue(findPreference("visible_entries"), INTEGER)
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -159,7 +159,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("sync_frequency"))
+            bindPreferenceSummaryToValue(findPreference("sync_frequency"), STRING)
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -241,16 +241,28 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
          * @see .sBindPreferenceSummaryToValueListener
          */
-        private fun bindPreferenceSummaryToValue(preference: Preference) {
+        private fun bindPreferenceSummaryToValue(preference: Preference, type: String) {
             // Set the listener to watch for value changes.
             preference.onPreferenceChangeListener = sBindPreferenceSummaryToValueListener
 
-            // Trigger the listener immediately with the preference's
-            // current value.
-            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                    PreferenceManager
+            when (type) {
+                STRING -> {
+                    sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,PreferenceManager
                             .getDefaultSharedPreferences(preference.context)
                             .getString(preference.key, ""))
+                }
+
+                INTEGER -> {
+                    sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,PreferenceManager
+                            .getDefaultSharedPreferences(preference.context)
+                            .getInt(preference.key, 0))
+                }
+            }
+
         }
+
+        private const val INTEGER = "Integer"
+        private const val STRING = "String"
+
     }
 }

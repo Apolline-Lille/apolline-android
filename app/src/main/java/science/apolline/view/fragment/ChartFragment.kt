@@ -44,7 +44,6 @@ import science.apolline.utils.HourAxisValueFormatter
 import science.apolline.root.RootFragment
 import science.apolline.service.database.SensorDao
 import science.apolline.viewModel.SensorViewModel
-import kotlin.math.roundToLong
 
 
 class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLifecycle, AnkoLogger {
@@ -56,8 +55,8 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
     private lateinit var mViewModel: SensorViewModel
     private lateinit var mPrefs: SharedPreferences
 
-
     private var MAX_VISIBLE_ENTRIES: Int = 100
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +66,6 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
         // Preferences.
         mPrefs = PreferenceManager.getDefaultSharedPreferences(activity!!.applicationContext)
         //mPrefs = this.getSharedPreferences( IDENTIFIER, Context.MODE_PRIVATE)
-        MAX_VISIBLE_ENTRIES = (mPrefs.getString("visible_entries", "100")).toInt()
 
     }
 
@@ -95,7 +93,7 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
     }
 
 
-    private fun createParticleGauges() : List<LineDataSet> {
+    private fun createParticleGauges(): List<LineDataSet> {
         val setPM1 = createParticleGauge("PM1", Color.rgb(48, 79, 254))
         val setPM2 = createParticleGauge("PM2.5", Color.rgb(0, 200, 83))
         val setPM10 = createParticleGauge("PM10", Color.rgb(213, 0, 0))
@@ -177,36 +175,40 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
 
 
     private fun addValuesToHistory(inputData: IntArray) {
-        val data = chart.data
 
-        if (data != null) {
-            if (data.dataSetCount != 3)
-                for (temp in mDataList)
-                    data.addDataSet(temp)
+        if (MAX_VISIBLE_ENTRIES > 1) {
+            val data = chart.data
+            if (data != null) {
+                if (data.dataSetCount != 3)
+                    for (temp in mDataList)
+                        data.addDataSet(temp)
 
-            val now = now()
-            for (i in inputData.indices)
-                data.addEntry(Entry((now - mReferenceTimestamp).toFloat(), inputData[i].toFloat()), i)
+                val now = now()
+                for (i in inputData.indices)
+                    data.addEntry(Entry((now - mReferenceTimestamp).toFloat(), inputData[i].toFloat()), i)
 
-            data.dataSets.forEach {
-                if (it.entryCount >= MAX_VISIBLE_ENTRIES)
-                    for (i in 0 until MAX_REMOVED_ENTRIES)
-                        it.removeEntry(i)
+                val maxRemovedEntries = MAX_VISIBLE_ENTRIES / 2
+
+                data.dataSets.forEach {
+                    if (it.entryCount >= MAX_VISIBLE_ENTRIES)
+                        for (i in 0 until maxRemovedEntries)
+                            it.removeEntry(i)
+                }
+
+                data.notifyDataChanged()
+                // let the chart know it's data has changed
+                chart.notifyDataSetChanged()
+                // invalidate data in case of data removal du to max entryCount value
+                chart.invalidate()
             }
 
-            data.notifyDataChanged()
-            // let the chart know it's data has changed
-            chart.notifyDataSetChanged()
-            // invalidate data in case of data removal du to max entryCount value
-            chart.invalidate()
+            chart.setVisibleXRangeMaximum(MAX_X_RANGE)
+            chart.setVisibleYRangeMaximum(MAX_Y_RANGE, YAxis.AxisDependency.LEFT)
+
+            val count = chart.data.getDataSetByIndex(1).entryCount
+            val entry = chart.data.getDataSetByIndex(1).getEntryForIndex(count - 1)
+            chart.moveViewTo(entry.x, entry.y, YAxis.AxisDependency.LEFT)
         }
-
-        chart.setVisibleXRangeMaximum(MAX_X_RANGE)
-        chart.setVisibleYRangeMaximum(MAX_Y_RANGE, YAxis.AxisDependency.LEFT)
-
-        val count = chart.data.getDataSetByIndex(1).entryCount
-        val entry = chart.data.getDataSetByIndex(1).getEntryForIndex(count - 1)
-        chart.moveViewTo(entry.x, entry.y, YAxis.AxisDependency.LEFT)
     }
 
     private fun now() = System.currentTimeMillis() / 1000
@@ -220,13 +222,14 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
 
     override fun onStart() {
         super.onStart()
+        MAX_VISIBLE_ENTRIES = mPrefs.getInt("visible_entries", 100)
         chart.fitScreen()
         mDisposable.add(mViewModel.getDeviceList(MAX_DEVICE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .onExceptionResumeNext {
                     Flowable.empty<Device>()
-                 }
+                }
                 .onErrorReturn {
                     error("Error device list not found $it")
                 }
@@ -295,7 +298,7 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
     }
 
     companion object {
-        private const val MAX_REMOVED_ENTRIES: Int = 50
+
         private const val MAX_X_RANGE: Float = 40.0f
         private const val MAX_Y_RANGE: Float = 50.0f
         private const val MAX_Y_AXIS: Float = 3000.0f
