@@ -123,7 +123,7 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
                     Flowable.empty<Device>()
                 }
                 .onErrorReturn {
-                    error("Error device list not fount $it")
+                    error("Error device list not found $it")
                 }
                 .subscribe {
                     if (it.isNotEmpty()) {

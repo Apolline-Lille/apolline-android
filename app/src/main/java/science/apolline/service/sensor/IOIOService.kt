@@ -19,6 +19,7 @@ import com.github.salomonbrys.kodein.instance
 import com.google.android.gms.location.LocationRequest
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import ioio.lib.api.AnalogInput
 import ioio.lib.api.DigitalOutput
@@ -36,9 +37,11 @@ import science.apolline.models.IOIOData
 import science.apolline.models.Position
 import science.apolline.service.database.SensorDao
 import science.apolline.utils.CheckUtility
+import science.apolline.utils.DetectedActivityToString
 import java.io.IOException
 import java.io.InputStream
 import science.apolline.utils.GeoHashHelper
+import science.apolline.utils.ToMostProbableActivity
 import science.apolline.view.activity.MainActivity
 
 
@@ -53,15 +56,15 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     private val mPrefs by injector.instance<SharedPreferences>()
 
-    private var DEVICE_NAME= "Apolline00"
+    private var DEVICE_NAME = "Apolline00"
     private var DEVICE_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff"
 
 
     override fun createIOIOLooper(): IOIOLooper {
         injector.inject(appKodein())
 
-        DEVICE_NAME= mPrefs.getString("device_name","Apolline00")
-        DEVICE_UUID = mPrefs.getString("device_uuid","ffffffff-ffff-ffff-ffff-ffffffffffff")
+        DEVICE_NAME = mPrefs.getString("device_name", "Apolline00")
+        DEVICE_UUID = mPrefs.getString("device_uuid", "ffffffff-ffff-ffff-ffff-ffffffffffff")
 
         return object : BaseIOIOLooper() {
             private val data = IOIOData()
@@ -89,20 +92,36 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
             @Throws(ConnectionLostException::class, InterruptedException::class)
             override fun loop() {
+
+
                 try {
-                    if (CheckUtility.checkFineLocationPermission(applicationContext) && CheckUtility.canGetLocation(applicationContext))
-                        disposable.add(locationProvider.getUpdatedLocation(request)
-                                .onExceptionResumeNext(Observable.empty())
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(Schedulers.io())
-                                .subscribe { t ->
-                                    if (t == null)
-                                        info("Get location error")
-                                    else
-                                        position = Position(t.provider, GeoHashHelper.encode(t.latitude, t.longitude), "no")
-                                }
+                    if (CheckUtility.checkFineLocationPermission(applicationContext) && CheckUtility.canGetLocation(applicationContext)) {
+                        disposable.add(
+
+                                Observable.zip(
+                                        locationProvider.getUpdatedLocation(request).subscribeOn(Schedulers.io()),
+                                        locationProvider.getDetectedActivity(0)
+                                                .map(ToMostProbableActivity())
+                                                .map(DetectedActivityToString())
+                                                .subscribeOn(Schedulers.io()),
+                                        BiFunction<Location, String, Pair<Location, String>> { currentLocation, currentActivity ->
+                                            Pair(currentLocation, currentActivity)
+                                        }
+
+                                )
+                                        .onExceptionResumeNext(Observable.empty())
+                                        .onErrorReturn {
+                                            error("Error location pair not found $it")
+                                        }
+                                        .observeOn(Schedulers.io())
+                                        .subscribe { t ->
+                                            if (t == null)
+                                                info("Get location error")
+                                            else
+                                                position = Position(t.first.provider, GeoHashHelper.encode(t.first.latitude, t.first.longitude), t.second)
+                                        }
                         )
-                    else
+                    } else
                         position = Position()
 
                     val dataAvailability = this.inputStream!!.available()
@@ -209,11 +228,11 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
         private var mServiceStatus: Boolean = false
 
-        fun getServiceStatus():Boolean{
+        fun getServiceStatus(): Boolean {
             return mServiceStatus
         }
 
-        fun setServiceStatus(status:Boolean){
+        fun setServiceStatus(status: Boolean) {
             mServiceStatus = status
         }
 

@@ -41,7 +41,7 @@ object DataExport : AnkoLogger {
             add("Longitude")
             add("Latitude")
             add("Provider")
-            add("Transport")
+            add("Transport_:_Confidence")
         }
 
         data!!.entrySet().iterator().forEach {
