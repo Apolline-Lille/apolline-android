@@ -10,11 +10,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.support.v4.content.FileProvider
-import android.text.format.DateFormat
-import android.text.format.DateFormat.*
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import com.google.gson.JsonObject
 import es.dmoral.toasty.Toasty
@@ -22,7 +17,6 @@ import science.apolline.R
 import org.jetbrains.anko.*
 import science.apolline.models.Device
 import science.apolline.service.database.SensorDao
-import java.util.*
 
 
 /**
@@ -37,7 +31,7 @@ object DataExport : AnkoLogger {
             add("SensorID")
             add("Device")
             add("Date")
-            add("Geohash")
+//            add("Geohash")
             add("Longitude")
             add("Latitude")
             add("Provider")
@@ -68,7 +62,7 @@ object DataExport : AnkoLogger {
         doAsync {
             val dataList = sensorDao.dumpSensor()
             info("List size: " + dataList.size.toString())
-            val fw = FileWriter(filename("json"))
+            val fw = FileWriter(createFileName("json"))
             val gson = GsonBuilder().setPrettyPrinting().create()
             val jsonFile = gson.toJson(dataList)
             fw.write(jsonFile)
@@ -79,9 +73,9 @@ object DataExport : AnkoLogger {
         }
     }
 
-    fun exportToCsv(context: Context, sensorDao: SensorDao) {
+    fun exportToCsv(context: Context, sensorDao: SensorDao, multiple: Boolean) {
         doAsync {
-            createCsv(sensorDao.dumpSensor())
+            createCsv(sensorDao.dumpSensor(), multiple)
             uiThread {
                 Toasty.success(context, "Data exported to CSV with success!", Toast.LENGTH_SHORT, true).show()
             }
@@ -89,9 +83,9 @@ object DataExport : AnkoLogger {
     }
 
 
-    fun exportShareCsv(context: Context, sensorDao: SensorDao) {
+    fun exportShareCsv(context: Context, sensorDao: SensorDao, multiple: Boolean) {
         doAsync {
-            createCsv(sensorDao.dumpSensor())
+            createCsv(sensorDao.dumpSensor(), multiple)
             uiThread {
                 val file = File(localFolder(), "data_${CheckUtility.newDate()}.csv")
                 val uri: Uri
@@ -112,9 +106,15 @@ object DataExport : AnkoLogger {
         }
     }
 
-    private fun filename(extension: String): String {
-        return localFolder().toString() + "/" + "data_${CheckUtility.newDate()}.$extension"
+    private fun createFileName(extension: String): String {
+        return localFolder().toString() + "/" + "dump_data_${CheckUtility.newDate()}.$extension"
     }
+
+
+    private fun createMultiFileName(date: String, extension: String): String {
+        return localFolder().toString() + "/" + "data_$date.$extension"
+    }
+
 
     private fun localFolder(): File {
         val folder = File(getExternalStorageDirectory().toString() + "/Apolline")
@@ -123,14 +123,49 @@ object DataExport : AnkoLogger {
         return folder
     }
 
-    private fun createCsv(dataList: List<Device>) {
+
+    private fun createCsv(dataList: List<Device>, multiple: Boolean) {
         info("List size: " + dataList.size.toString())
         val entries: MutableList<Array<String>> = mutableListOf()
         entries.add(toHeader(dataList[0].data))
-        dataList.forEach {
-            entries.add(it.toArray())
+
+        if (multiple) {
+
+            val previousDateWithTime = dataList[1].toArray()[2]
+            var previousDate = previousDateWithTime.substring(0, previousDateWithTime.length - 9)
+
+            dataList.forEach {
+
+                val currentDateWithTime = it.toArray()[2]
+                val currentDate = currentDateWithTime.substring(0, currentDateWithTime.length - 9)
+
+                if (currentDate == previousDate) {
+                    entries.add(it.toArray())
+                } else {
+                    info("write to csv")
+
+                    CSVWriter(FileWriter(createMultiFileName(previousDate, "csv"))).use { writer ->
+                        writer.writeAll(entries)
+                    }
+                    previousDate = currentDate
+                    entries.clear()
+                }
+            }
+
+            val lastDateWithTime = dataList.last().toArray()[2]
+            val lastDate = lastDateWithTime.substring(0, lastDateWithTime.length - 9)
+
+            CSVWriter(FileWriter(createMultiFileName(lastDate, "csv"))).use { writer ->
+                writer.writeAll(entries)
+            }
+
+
+        } else {
+            dataList.forEach {
+                entries.add(it.toArray())
+            }
+            CSVWriter(FileWriter(createFileName("csv"))).use { writer -> writer.writeAll(entries) }
         }
-        CSVWriter(FileWriter(filename("csv"))).use { writer -> writer.writeAll(entries) }
     }
 
 }
