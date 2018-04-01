@@ -81,11 +81,14 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
         floating_action_menu_json.setOnClickListener {
             exportToJson(activity!!.application, mSensorDao)
         }
+        floating_action_menu_csv_multi.setOnClickListener {
+            exportToCsv(activity!!.application, mSensorDao, true)
+        }
         floating_action_menu_csv.setOnClickListener {
-            exportToCsv(activity!!.application, mSensorDao)
+            exportToCsv(activity!!.application, mSensorDao, false)
         }
         floating_action_menu_share.setOnClickListener {
-            exportShareCsv(activity!!.application, mSensorDao)
+            exportShareCsv(activity!!.application, mSensorDao, false)
         }
 
         mDataList = createParticleGauges()

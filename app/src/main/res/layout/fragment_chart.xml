@@ -84,6 +84,18 @@
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/floating_action_menu_csv_multi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_save_black_24dp"
+            android:tint="@android:color/white"
+            fab:fab_label="@string/export_csv_multi"
+            app:fab_colorNormal="@color/loa_orange"
+            app:fab_colorPressed="#E75043"
+            app:fab_colorRipple="#99FFFFFF"
+            fab:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/floating_action_menu_csv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

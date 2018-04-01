@@ -83,7 +83,7 @@ data class Device(
         objectArray.add(uuid)
         objectArray.add(device)
         objectArray.add(CheckUtility.dateParser(date))
-        objectArray.add(position?.geohash.orEmpty())
+//        objectArray.add(position?.geohash.orEmpty())
         objectArray.add(longitude.toString())
         objectArray.add(latitude.toString())
         objectArray.add(position?.provider.orEmpty())

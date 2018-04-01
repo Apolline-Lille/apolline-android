@@ -2,25 +2,11 @@ package science.apolline.view.fragment
 
 import android.annotation.SuppressLint
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
-import android.content.Intent
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import at.grabner.circleprogress.TextMode
-import com.github.mikephil.charting.components.Legend
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.highlight.Highlight
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import com.github.mikephil.charting.jobs.MoveViewJob
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.salomonbrys.kodein.android.appKodein
 import com.github.salomonbrys.kodein.instance
 import com.google.gson.GsonBuilder
@@ -36,17 +22,13 @@ import science.apolline.R
 import science.apolline.models.Device
 import science.apolline.models.IOIOData
 import science.apolline.root.FragmentLifecycle
-import science.apolline.service.sensor.IOIOService
-import science.apolline.utils.CustomMarkerView
 import science.apolline.utils.DataDeserializer
 import science.apolline.utils.DataExport.exportShareCsv
 import science.apolline.utils.DataExport.exportToCsv
 import science.apolline.utils.DataExport.exportToJson
-import science.apolline.utils.HourAxisValueFormatter
 import science.apolline.root.RootFragment
 import science.apolline.service.database.SensorDao
 import science.apolline.viewModel.SensorViewModel
-import kotlin.math.round
 import kotlin.math.roundToLong
 
 
@@ -75,11 +57,14 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
         floating_action_menu_json.setOnClickListener {
             exportToJson(activity!!.application, mSensorDao)
         }
+        floating_action_menu_csv_multi.setOnClickListener {
+            exportToCsv(activity!!.application, mSensorDao, true)
+        }
         floating_action_menu_csv.setOnClickListener {
-            exportToCsv(activity!!.application, mSensorDao)
+            exportToCsv(activity!!.application, mSensorDao, false)
         }
         floating_action_menu_share.setOnClickListener {
-            exportShareCsv(activity!!.application, mSensorDao)
+            exportShareCsv(activity!!.application, mSensorDao, false)
         }
 
         fragment_ioio_progress_pm1.apply {
@@ -111,7 +96,6 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
         }
 
     }
-
 
 
     override fun onStart() {
