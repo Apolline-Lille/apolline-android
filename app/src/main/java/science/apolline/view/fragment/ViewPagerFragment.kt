@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.github.salomonbrys.kodein.instance
 import kotlinx.android.synthetic.main.fragment_viewpager.*
-
 import org.jetbrains.anko.AnkoLogger
 import science.apolline.R
 import science.apolline.root.FragmentLifecycle
@@ -20,10 +19,10 @@ import science.apolline.root.RootFragment
 import android.support.v4.view.ViewPager.OnPageChangeListener
 import org.jetbrains.anko.info
 import science.apolline.service.sensor.IOIOService
-import java.io.IOException
 import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
+import com.github.mikephil.charting.jobs.MoveViewJob
 
 
 /**
@@ -119,13 +118,20 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
         }
     }
 
+    override fun onStop() {
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
+        super.onStop()
+    }
+
     override fun onDestroyView() {
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onDestroyView()
         activity!!.unregisterReceiver(mReceiver)
         info("ViewPager onDestroyView")
     }
 
     override fun onDestroy() {
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onDestroy()
         info("ViewPager onDestroyView")
     }

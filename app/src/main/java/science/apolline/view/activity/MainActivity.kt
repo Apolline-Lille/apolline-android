@@ -51,8 +51,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     private var mBluetoothAdapter: BluetoothAdapter? = null
     private lateinit var mRequestLocationAlert: AlertDialog
     private lateinit var mPrefs: SharedPreferences
-    private lateinit var mPrefsListener: SharedPreferences.OnSharedPreferenceChangeListener
-
+    private var SYNC_MOD = 2 // Wi-Fi only
     private var INFLUXDB_SYNC_FREQ: Long = -1
 
     @SuppressLint("MissingSuperCall")
@@ -76,9 +75,9 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
         // Preferences.
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
-//        mPrefs = this.getSharedPreferences(PREF_NAME, MODE_PRIVATE)
-        INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
 
+        SYNC_MOD = (mPrefs.getString("sync_mod", "2")).toInt()
+        INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         // Request enable Bluetooth
@@ -91,11 +90,16 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         mRequestLocationAlert = CheckUtility.requestLocation(this)
 
         // Launch AutoSync
-        SyncJobScheduler.setAutoSync(INFLUXDB_SYNC_FREQ, this)
+        SyncJobScheduler.setAutoSync(SYNC_MOD, INFLUXDB_SYNC_FREQ,this)
 
         replaceFragment(mFragmentViewPager)
     }
 
+    override fun onStart() {
+        super.onStart()
+        SYNC_MOD = (mPrefs.getString("sync_mod", "2")).toInt()
+        INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
+    }
 
     override fun onBackPressed() {
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
@@ -127,14 +131,38 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
         when (item?.itemId) {
             R.id.sync -> {
-                if (CheckUtility.isNetworkConnected(this)) {
-                    mJobManager.addJobInBackground(SyncInfluxDBJob())
-                    Toasty.info(applicationContext, "Synchronization in progress", Toast.LENGTH_SHORT, true).show()
-                } else {
-                    mJobManager.addJobInBackground(SyncInfluxDBJob())
-                    Toasty.warning(applicationContext, "No internet connection ! Synchronization job added to queue", Toast.LENGTH_LONG, true).show()
+                when (SYNC_MOD) {
+                    0 -> {
+                        info("User denied sync job")
+                        Toasty.warning(applicationContext, "Please enable synchronization from settings", Toast.LENGTH_LONG, true).show()
+                        return true
+                    }
+                    1 -> {
+
+                        if (CheckUtility.isNetworkConnected(this)) {
+                            mJobManager.addJobInBackground(SyncInfluxDBJob())
+                            Toasty.info(applicationContext, "Synchronization in progress (Mobile)", Toast.LENGTH_SHORT, true).show()
+                            return true
+                        }
+
+                    }
+                    2 -> {
+                        if (CheckUtility.isWifiNetworkConnected(this)) {
+                            mJobManager.addJobInBackground(SyncInfluxDBJob())
+                            Toasty.info(applicationContext, "Synchronization in progress (Wi-Fi)", Toast.LENGTH_SHORT, true).show()
+                            return true
+                        } else {
+                            Toasty.warning(applicationContext, "Please enable your Wi-Fi connection or change synchronization policy", Toast.LENGTH_SHORT, true).show()
+                        }
+                    }
+
+                    else -> {
+                        mJobManager.addJobInBackground(SyncInfluxDBJob())
+                        Toasty.warning(applicationContext, "No internet connection ! Synchronization job added to queue", Toast.LENGTH_LONG, true).show()
+                        return false
+                    }
+
                 }
-                return true
             }
 
             R.id.start -> {
@@ -272,7 +300,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         private val PERMISSIONS_ARRAY = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
         private const val REQUEST_CODE_PERMISSIONS_ARRAY = 100
         private const val REQUEST_CODE_ENABLE_BLUETOOTH = 101
-//        private const val PREF_NAME = "ApollinePref"
 
     }
 }

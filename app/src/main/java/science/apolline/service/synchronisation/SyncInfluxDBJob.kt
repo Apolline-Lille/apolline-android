@@ -1,10 +1,11 @@
 package science.apolline.service.synchronisation
 
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import android.widget.Toast
 import com.birbit.android.jobqueue.*
 import es.dmoral.toasty.Toasty
 import org.jetbrains.anko.*
-
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -14,6 +15,7 @@ import science.apolline.models.InfluxBody
 import science.apolline.service.database.AppDatabase
 import science.apolline.service.database.SensorDao
 import science.apolline.service.networks.ApiUtils
+import science.apolline.utils.CheckUtility
 import science.apolline.utils.CheckUtility.isNetworkConnected
 
 /**
@@ -27,14 +29,50 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
         .persist()), AnkoLogger {
 
     private lateinit var sensorModel: SensorDao
-
-
+    private var SYNC_MOD = 2 // Wi-Fi only
+    private lateinit var mPrefs: SharedPreferences
     override fun onAdded() {
         info("onAdded: ")
     }
 
     @Throws(Throwable::class)
     override fun onRun() {
+
+        // Preferences.
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        SYNC_MOD = (mPrefs.getString("sync_type", "2")).toInt()
+
+        info("SYNC_MOD: $SYNC_MOD")
+
+        when (SYNC_MOD) {
+            0 -> {
+                info("User denied sync job")
+            }
+            1 -> {
+                syncData()
+            }
+            2 -> {
+                if (CheckUtility.isWifiNetworkConnected(applicationContext))
+                    syncData()
+                else
+                    info("No Wi-Fi connection detected, sync job denied")
+            }
+        }
+        info("onRun: ")
+    }
+
+    override fun shouldReRunOnThrowable(throwable: Throwable, runCount: Int,
+                                        maxRunCount: Int): RetryConstraint {
+        return RetryConstraint.createExponentialBackoff(runCount, 1000)
+    }
+
+    override fun onCancel(@CancelReason cancelReason: Int, throwable: Throwable?) {
+        info("onCancel: ")
+    }
+
+
+    private fun syncData() {
+
         ApiUtils.setUrl(BuildConfig.INFLUXDB_URL)
         val api = ApiUtils.apiService
 
@@ -42,12 +80,12 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
             sensorModel = AppDatabase.getInstance(super.getApplicationContext()).sensorDao()
 
             var nbUnSynced: Long = sensorModel.getSensorNotSyncCount()
-            info("number of initial unsyncked is : $nbUnSynced")
+            info("number of initial unsynced is : $nbUnSynced")
 
             var attempt: Long = nbUnSynced / MAX_LENGTH
             if (nbUnSynced % MAX_LENGTH != 0L)
                 attempt++
-            info("Attempts " + attempt)
+            info("Attempts $attempt")
 
             for (i in 1..attempt) {
                 val dataNotSync = sensorModel.getUnSync(MAX_LENGTH)
@@ -62,7 +100,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
                     call.enqueue(object : Callback<InfluxBody> {
                         override fun onResponse(call: Call<InfluxBody>?, response: Response<InfluxBody>?) {
                             if (response != null && response.isSuccessful) {
-                                info("response success" + response)
+                                info("response success$response")
                                 doAsync {
                                     dataNotSync.forEach {
                                         it.isSync = 1
@@ -79,7 +117,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
                                     }
                                 }
                             } else {
-                                info("response failed " + response)
+                                info("response failed $response")
                             }
                         }
 
@@ -90,16 +128,6 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
                 }
             }
         }
-        info("onRun: ")
-    }
-
-    override fun shouldReRunOnThrowable(throwable: Throwable, runCount: Int,
-                                        maxRunCount: Int): RetryConstraint {
-        return RetryConstraint.createExponentialBackoff(runCount, 1000)
-    }
-
-    override fun onCancel(@CancelReason cancelReason: Int, throwable: Throwable?) {
-        info("onCancel: ")
     }
 
     companion object {
