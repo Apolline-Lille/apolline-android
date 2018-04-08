@@ -47,7 +47,6 @@ android {
             buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'false'
             project.ext.sonarqube_url = '"' + properties.getProperty('sonarqube_url') + '"'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            debuggable true
         }
 
         release {
@@ -58,6 +57,7 @@ android {
 
             buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'true'
             minifyEnabled false
+//            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
@@ -108,7 +108,7 @@ android {
 
 
 project.ext {
-    appcompat_version = '27.1.0'
+    appcompat_version = '27.1.1'
     aac_version = '1.0.0'
     ioio_version = '5.07'
     gms_version = '12.0.1'
