@@ -103,6 +103,8 @@
         <item>1 hour</item>
         <item>3 hours</item>
         <item>6 hours</item>
+        <item>12 hours</item>
+        <item>24 hours</item>
         <item>Never</item>
     </string-array>
     <string-array name="pref_sync_frequency_values">
@@ -114,9 +116,23 @@
         <item>60</item>
         <item>180</item>
         <item>360</item>
+        <item>720</item>
+        <item>1440</item>
         <item>-1</item>
     </string-array>
 
+    <string name="pref_title_sync_mod">Auto-synchronize data</string>
+    <string-array name="pref_sync_mod_titles">
+        <item>Do not auto-synchronize data.</item>
+        <item>Auto-synchronize data at any time.</item>
+        <item>Auto-synchronize data over Wi-Fi only.</item>
+    </string-array>
+
+    <string-array name="pref_sync_mod_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 
     <string name="pref_title_device_name">Device name</string>
     <string name="pref_default_device_name">Apolline00</string>

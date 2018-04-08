@@ -18,8 +18,8 @@ object SyncJobScheduler : AnkoLogger {
     private val scheduler = Executors.newSingleThreadScheduledExecutor()
     private lateinit var executor: ScheduledFuture<*>
 
-    fun setAutoSync(time: Long, context: Context) {
-        if (time > 0L) {
+    fun setAutoSync(mode: Int, time: Long, context: Context) {
+        if (time > 0L && mode != 0) {
             executor = scheduler.scheduleAtFixedRate(
                     { syncTask(context) },
                     1,

@@ -47,6 +47,7 @@ android {
             buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'false'
             project.ext.sonarqube_url = '"' + properties.getProperty('sonarqube_url') + '"'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
         }
 
         release {

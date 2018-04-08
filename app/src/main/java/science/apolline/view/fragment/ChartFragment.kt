@@ -287,6 +287,7 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
     override fun onDestroy() {
         if (!mDisposable.isDisposed)
             mDisposable.dispose()
+        MoveViewJob.getInstance(null, 0f, 0f, null, null)
         super.onDestroy()
         info("onDestroy")
     }
