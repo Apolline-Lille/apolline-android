@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".view.activity.SplashScreen"
+    tools:layout_editor_absoluteY="25dp"
+    tools:showIn="@layout/activity_splash_screen">
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="3">
+
+        <ImageView
+            android:id="@+id/banner_apolline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/splash_welcome"
+            android:src="@drawable/banner_apolline" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3.5">
+
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/selected_device_name_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center_horizontal"
+            android:text="@string/splash_welcome"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            app:autoSizeMaxTextSize="100sp"
+            app:autoSizeMinTextSize="12sp"
+            app:autoSizeStepGranularity="2sp"
+            app:autoSizeTextType="uniform"
+            tools:text="@string/splash_welcome" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        app:layout_constraintTop_toBottomOf="@+id/banner_apolline">
+
+
+
+
+        <com.szugyi.circlemenu.view.CircleLayout
+            android:id="@+id/circle_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center_horizontal"
+            app:firstChildPosition="North"
+            app:radius="140dp">
+
+            <include
+                layout="@layout/circle_menu_items"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </com.szugyi.circlemenu.view.CircleLayout>
+
+
+        <com.skyfishjy.library.RippleBackground
+            android:id="@+id/ripple_scan_view"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/circle_background"
+            app:rb_color="#0099CC"
+            app:rb_duration="3000"
+            app:rb_radius="32dp"
+            app:rb_rippleAmount="6"
+            app:rb_scale="6">
+
+            <ImageView
+                android:id="@+id/centerImage"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_centerInParent="true"
+                android:contentDescription="@string/scan_device_name"
+                android:src="@drawable/ic_scan_smartphone" />
+
+        </com.skyfishjy.library.RippleBackground>
+
+    </RelativeLayout>
+
+</LinearLayout>

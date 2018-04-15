@@ -261,7 +261,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     private fun checkBlueToothState() {
 
         if (mBluetoothAdapter == null) {
-            Toasty.error(applicationContext, "Bluetooth NOT support", Toast.LENGTH_SHORT, true).show()
+            Toasty.error(applicationContext, "Bluetooth NOT supported.", Toast.LENGTH_SHORT, true).show()
         } else {
             if (mBluetoothAdapter!!.isEnabled) {
                 if (mBluetoothAdapter!!.isDiscovering) {
