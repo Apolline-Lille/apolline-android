@@ -42,6 +42,9 @@ Supported sensors:
  * [JaCoCo](http://www.eclemma.org/jacoco/) - JaCoCo is a free code coverage library for Java, which has been created by the EclEmma team based on the lessons learned from using and integration existing libraries for many years.
  * [Easylauncher](https://github.com/arturbosch/sonar-kotlin) - Gradle plugin which modify the launcher icon of each of your app-variants using simple gradle rules. Add ribbons of any color, overlay your own images, change the colors of the icon.
  * [SeekBarPreference](https://github.com/x1306e6d/SeekBarPreference) - SeekBarPreference is an android library to help using preference with SeekBar.
+ * [RxBluetooth](https://github.com/IvBaranov/RxBluetooth) - Android reactive bluetooth library. Basically, RxBluetooth is just wrapper around android BluetoothAdapter.
+ * [Android-CircleMenu](https://github.com/szugyi/Android-CircleMenu) - Simple implementation of a circle menu for Android applications.
+
 ## Download (Unreleased)
 
 <a href="https://play.google.com/store/apps/details?id=science.apolline"> <img src="https://storage.googleapis.com/support-kms-prod/9DB3D190FD6DC8155EEDBCDEB4942128BE6B" alt="Play Store" width="200" height="60"></a>

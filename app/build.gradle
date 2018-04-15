@@ -142,6 +142,9 @@ project.ext {
     android_maps_utils_version = '0.5'
     seekbar_preference_version = '1.0'
     jacoco_version = '0.8.0'
+    ripple_view_version = '1.0.1'
+    circle_menu_version = '2.0.0'
+    rxbluetooth_version = '2.0.1'
 }
 
 
@@ -150,6 +153,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation "com.google.firebase:firebase-core:$gms_version"
     implementation "com.android.support:support-v4:$appcompat_version"
+    implementation "com.android.support:recyclerview-v7:$appcompat_version"
+    implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "com.android.support.test:runner:$runner_version"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_core_version"
@@ -260,6 +265,13 @@ dependencies {
     // SeekBar preferences
     implementation "com.yokkomi:seekbar-preference:$seekbar_preference_version"
 
+    // Ripple view
+    implementation "com.skyfishjy.ripplebackground:library:$ripple_view_version"
+
+    implementation "com.github.szugyi:Android-CircleMenu:$circle_menu_version"
+
+    implementation "com.github.ivbaranov:rxbluetooth2:$rxbluetooth_version"
+
 }
 
 repositories {
@@ -340,5 +352,3 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
 task sonarqube(dependsOn: 'jacocoTestReport')
 
 apply plugin: 'com.google.gms.google-services'
-
-

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:circle="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.szugyi.circlemenu.view.CircleImageView
+        android:id="@+id/main_calendar_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/circle_menu_shape_item"
+        android:tint="@color/icons"
+        android:visibility="invisible"
+        android:backgroundTint="@color/icons"
+        android:src="@drawable/ic_found_bluetooth_device"
+        circle:name="@string/splash_welcome" />
+
+</merge>

@@ -57,7 +57,7 @@ object CheckUtility : AnkoLogger {
 
     private fun checkNetworkStatus(context: Context): String {
 
-        var networkStatus = ""
+        val networkStatus: String
         val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         //Check Wifi
         val wifi = manager.activeNetworkInfo

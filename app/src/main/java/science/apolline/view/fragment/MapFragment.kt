@@ -43,7 +43,6 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     private lateinit var mOldGeoHash: String
     private lateinit var mMapFragment: SupportMapFragment
     private var mHeatMap: GoogleMap? = null
-    private lateinit var mDisposable: CompositeDisposable
     private lateinit var mViewModel: SensorViewModel
     private lateinit var mLocationProvider: ReactiveLocationProvider
 
@@ -76,7 +75,6 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mDisposable = CompositeDisposable()
         mLocationProvider = ReactiveLocationProvider(context)
         mOldGeoHash = ""
     }
