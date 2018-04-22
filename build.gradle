@@ -3,7 +3,7 @@
 buildscript {
 
     project.ext {
-        kotlin_version = '1.2.31'
+        kotlin_version = '1.2.40'
         gradle_version = '3.1.1'
         jacoco_version = '0.8.0'
         sonarqube_version = '2.6.2'

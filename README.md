@@ -44,6 +44,7 @@ Supported sensors:
  * [SeekBarPreference](https://github.com/x1306e6d/SeekBarPreference) - SeekBarPreference is an android library to help using preference with SeekBar.
  * [RxBluetooth](https://github.com/IvBaranov/RxBluetooth) - Android reactive bluetooth library. Basically, RxBluetooth is just wrapper around android BluetoothAdapter.
  * [Android-CircleMenu](https://github.com/szugyi/Android-CircleMenu) - Simple implementation of a circle menu for Android applications.
+ * [Android Ripple Background](https://github.com/skyfishjy/android-ripple-background) - A beautiful ripple animation. Gives ability to easily change its color, speed of wave, one ripple or multiple ripples.
 
 ## Download (Unreleased)
 
