@@ -14,9 +14,8 @@ function copyEnvVarsToSigningProperties {
 
     export KEYSTORE_AUTH
     echo "keystore.properties should exist at $KEYSTORE_AUTH"
-    sed -i -e "s/myStorePassword/'"$STORE_PASSWORD"'/g" $KEYSTORE_AUTH
-    sed -i -e "s/mykeyPassword/'"$KEY_PASSWORD"'/g" $KEYSTORE_AUTH
-    sed -i -e "s/myKeyAlias/'"$KEY_ALIAS"'/g" $KEYSTORE_AUTH
-    sed -i -e "s/storeFile/'"$STORE_FILE"'/g" $KEYSTORE_AUTH
-
+    sed -i -e "s/myStorePassword/"$STORE_PASSWORD"/g" $KEYSTORE_AUTH
+    sed -i -e "s/mykeyPassword/"$KEY_PASSWORD"/g" $KEYSTORE_AUTH
+    sed -i -e "s/myKeyAlias/"$KEY_ALIAS"/g" $KEYSTORE_AUTH
+    sed -i -e "s_myStoreFile_"${TRAVIS_BUILD_DIR}/${STORE_FILE}"_g" $KEYSTORE_AUTH
 }
