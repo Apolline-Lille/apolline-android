@@ -24,7 +24,7 @@ before_install:
   - mv ${TRAVIS_BUILD_DIR}/google-services.json ${TRAVIS_BUILD_DIR}/app/google-services.json
   - cp local.properties.ci local.properties
   - ls -all
-  - source scripts/writeToManifest.sh && copyEnvVarsToManifest
+  - source scripts/writeEnvVariables.sh.sh && copyEnvVarsToManifest && copyEnvVarsToSigningProperties
   - docker pull influxdb
   - docker run --name=influxdb -d -p 127.0.0.1:8086:8086 influxdb
   - docker ps -a
@@ -48,13 +48,12 @@ android:
 script:
   - android list target
   - curl -i -XPOST http://127.0.0.1:8086/query --data-urlencode "q=CREATE DATABASE test"
-  - "./gradlew clean test build"
+  - ./gradlew clean test build
 before_deploy:
   - cd app/build/outputs/apk/release
-  - jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore ${TRAVIS_BUILD_DIR}/ApollineKeystore.jks -storepass $STOREPASS -keypass $KEYPASS app-release-unsigned.apk $ALIAS
+  - jarsigner -verbose -tsa http://timestamp.comodoca.com/rfc3161 -sigalg SHA1withRSA -digestalg SHA1 -keystore ${TRAVIS_BUILD_DIR}/ApollineKeystore.jks -storepass $STORE_PASSWORD -keypass $KEY_PASSWORD app-release-unsigned.apk $KEY_ALIAS
   - jarsigner -verify app-release-unsigned.apk
-  - "${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/zipalign -v 4 app-release-unsigned.apk
-    Apolline.apk"
+  - ${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/zipalign -v 4 app-release-unsigned.apk Apolline.apk
 deploy:
   provider: releases
   skip_cleanup: true
