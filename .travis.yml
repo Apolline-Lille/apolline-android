@@ -24,7 +24,7 @@ before_install:
   - mv ${TRAVIS_BUILD_DIR}/google-services.json ${TRAVIS_BUILD_DIR}/app/google-services.json
   - cp local.properties.ci local.properties
   - ls -all
-  - source scripts/writeEnvVariables.sh.sh && copyEnvVarsToManifest && copyEnvVarsToSigningProperties
+  - source scripts/writeEnvVariables.sh && copyEnvVarsToManifest && copyEnvVarsToSigningProperties
   - docker pull influxdb
   - docker run --name=influxdb -d -p 127.0.0.1:8086:8086 influxdb
   - docker ps -a
