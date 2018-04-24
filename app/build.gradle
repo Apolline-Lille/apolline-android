@@ -7,6 +7,9 @@ apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'jacoco'
 apply plugin: 'com.akaita.android.easylauncher'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
 
@@ -24,6 +27,9 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
 
+        versionCode 17
+        versionName "2.4.0"
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -33,8 +39,17 @@ android {
         multiDexEnabled true
     }
 
-    buildTypes {
 
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
 
         debug {
             Properties properties = new Properties()
@@ -57,16 +72,17 @@ android {
 
             buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'true'
             minifyEnabled false
-//            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.release
         }
 
     }
 
-//    implementationOptions {
-//        targetCompatibility 1.8
-//        sourceCompatibility 1.8
-//    }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 
     testOptions {
 
@@ -93,16 +109,17 @@ android {
         multiDexEnabled true
     }
 
-    // Ensure the no-op dependency is always used in JVM tests.
-    configurations.all { config ->
-        if (config.name.contains('UnitTest')) {
-            config.resolutionStrategy.eachDependency { details ->
-                if (details.requested.group == 'com.squareup.leakcanary' && details.requested.name == 'leakcanary-android') {
-                    details.useTarget(group: details.requested.group, name: 'leakcanary-android-no-op', version: details.requested.version)
-                }
-            }
-        }
-    }
+//    flavorDimensions 'tier'
+//    productFlavors {
+//        development {
+//            dimension 'tier'
+//            applicationId "science.apolline"
+//        }
+//        production {
+//            dimension 'tier'
+//            applicationId "science.apolline"
+//        }
+//    }
 
 }
 
@@ -282,7 +299,6 @@ configurations {
         exclude module: 'commons-logging'
     }
 }
-
 
 
 jacoco {
