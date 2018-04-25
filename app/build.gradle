@@ -75,6 +75,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             signingConfig signingConfigs.release
+
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    def date = new Date()
+                    def formattedDate = date.format('dd-MM-yyyy')
+                    outputFileName = "Apolline-${variant.versionName}-${formattedDate}.apk"
+                }
+            }
         }
 
     }
