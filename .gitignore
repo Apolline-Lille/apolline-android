@@ -143,3 +143,9 @@ configuration\.tar
 \.idea/caches/build_file_checksums\.ser
 
 \.idea/caches/
+
+play_store_credentials\.json
+
+fastlane/README\.md
+
+fastlane/report\.xml
