@@ -45,7 +45,7 @@ Supported sensors:
  * [RxBluetooth](https://github.com/IvBaranov/RxBluetooth) - Android reactive bluetooth library. Basically, RxBluetooth is just wrapper around android BluetoothAdapter.
  * [Android-CircleMenu](https://github.com/szugyi/Android-CircleMenu) - Simple implementation of a circle menu for Android applications.
  * [Android Ripple Background](https://github.com/skyfishjy/android-ripple-background) - A beautiful ripple animation. Gives ability to easily change its color, speed of wave, one ripple or multiple ripples.
-
+ * [Fastlane](https://github.com/fastlane/fastlane) - Fastlane is a tool for iOS and Android developers to automate tedious tasks like generating screenshots, dealing with provisioning profiles, and releasing your application..
 ## Download (Unreleased)
 
 <a href="https://play.google.com/store/apps/details?id=science.apolline"> <img src="https://storage.googleapis.com/support-kms-prod/9DB3D190FD6DC8155EEDBCDEB4942128BE6B" alt="Play Store" width="200" height="60"></a>

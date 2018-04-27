@@ -50,15 +50,16 @@ script:
   - curl -i -XPOST http://127.0.0.1:8086/query --data-urlencode "q=CREATE DATABASE test"
   - ./gradlew clean test build
 before_deploy:
-  - bundle install && bundle update fastlane
   - cd app/build/outputs/apk/release
-  - ls -all
-  - bundle exec fastlane supply --apk Apolline*.apk
-  - mv Apolline*.apk Apolline.apk
+  - export APK_PATH_TEMP="$(pwd)/Apolline*.apk" && export APK_PATH=$(echo ${APK_PATH_TEMP}) && echo $APK_PATH
+  - cd ${TRAVIS_BUILD_DIR}
+  - bundle install && bundle update fastlane
+  - bundle exec fastlane beta
+  - bundle exec fastlane deploy
 deploy:
   provider: releases
   skip_cleanup: true
-  file: Apolline.apk
+  file: ${APK_PATH}
   api_key: $GH_TOKEN
   on:
     repo: Apolline-Lille/apolline-android

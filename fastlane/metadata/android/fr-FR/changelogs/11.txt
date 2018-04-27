@@ -1,0 +1,4 @@
+- Ajout des préférences utilisateur basiques.
+- Ajout des fonction "arrêt" et "démarrer" du service.
+- Amélioration de l'interface utilisateur.
+- Correction de quelques bugs.

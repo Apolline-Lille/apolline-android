@@ -5,7 +5,7 @@ function copyEnvVarsToManifest {
     export ANDROID_MANIFEST
     echo "AndroidManifest should exist at $ANDROID_MANIFEST"
     sed -i -e "s/\"\${google_map_api_key}\"/"\"$GOOGLE_MAP_API_KEY\""/g" $ANDROID_MANIFEST
-    sed -i -e "s/\"\${fabric_api_key}\"/"\"$FABRIC_API_KEY\""/g" $ANDROID_MANIFEST
+    sed -i -e "s/\"\${fabric_api_key}\"/"\"$FABRIC_API_TOKEN\""/g" $ANDROID_MANIFEST
 }
 
 function copyEnvVarsToSigningProperties {
@@ -20,6 +20,7 @@ function copyEnvVarsToSigningProperties {
 
 function copyEnvVarsToFastlaneConfiguration {
     FASTLANE_CREDENTIAL=${TRAVIS_BUILD_DIR}"/fastlane/Appfile"
+
     export FASTLANE_CREDENTIAL
     echo "Appfile should exist at $FASTLANE_CREDENTIAL"
     sed -i -e "s/\"\${secret_credentials}\"/"\"$FASTLANE_FILE\""/g" $FASTLANE_CREDENTIAL

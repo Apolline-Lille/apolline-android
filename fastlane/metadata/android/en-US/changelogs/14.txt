@@ -1,0 +1,4 @@
+- Add user activity detection.
+- Add chart settings.
+- Adjust landscape IOIO view from 3x2 to 2x3.
+- Fix some bugs.

@@ -1,0 +1,4 @@
+- Ajout de la longitude et la latitude à l'exportation CSV.
+- Affichage la version actuelle de l'application.
+- Ajout d'un générateur UUID propre.
+- Correction de quelques bugs.

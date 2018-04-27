@@ -1,0 +1,3 @@
+Apolline is an indoor / outdoor air pollution monitoring application that uses a dedicated sensor to collect particulate readings (PM1 / PM2.5 / PM10) from the ambient air.
+
+Apolline is developed by Inria and the University of Lille for research purposes.

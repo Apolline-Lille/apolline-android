@@ -1,0 +1,4 @@
+- Add longitude and latitude to CSV export.
+- Display current application version.
+- Add clean UUID generator.
+- Fix some bugs.
