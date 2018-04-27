@@ -1,0 +1,3 @@
+Apolline est une application de suivi de la pollution de l'air intérieur/extérieur qui utilise un capteur dédié pour collecter les relevés de particules (PM1/PM2.5/PM10) dans l'air ambiant.
+
+Apolline est développée par Inria et l'Université de Lille à des fins de recherche.

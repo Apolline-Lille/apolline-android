@@ -1,0 +1,3 @@
+- Ajout des politiques de synchronisation.
+- Ajout de l'exportation en plusieurs fichiers CSV (fichier / jour) => (ajoutée dans la version 2.3.4).
+- Correction de quelques bugs.

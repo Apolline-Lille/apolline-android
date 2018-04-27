@@ -1,0 +1,4 @@
+- Add basic user preferences.
+- Add stop and start service button.
+- Improve user interface.
+- Fix some bugs.

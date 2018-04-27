@@ -19,16 +19,21 @@ platform :android do
 
   desc "Submit a new Beta Build to Crashlytics Beta"
   lane :beta do
-    gradle(task: "clean assembleRelease")
-    crashlytics
-  
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
-  end
+     crashlytics(
+        api_token: ENV["FABRIC_API_TOKEN"],
+        build_secret: ENV["FABRIC_BUILD_SECRET"],
+        apk_path: ENV["APK_PATH"]
+      )
 
+  end
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
+    begin
+    supply(track: "production",
+           package_name: "science.apolline",
+           apk: ENV["APK_PATH"])
+    rescue => exception
+        on_error(exception)
+    end
   end
 end

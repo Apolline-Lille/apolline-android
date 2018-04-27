@@ -1,0 +1,4 @@
+- Ajout de la détection de l'activité de l'utilisateur.
+- Ajout des paramètres du graphe.
+- Ajustement de la vue IOIO paysage de 3x2 à 2x3.
+- Correction de quelques bugs.

@@ -1,0 +1,3 @@
+- Ajout d'un écran d'accueil.
+- Ajout de la gestion du Bluetooth intégrée.
+- Correction de quelques bugs.
