@@ -3,14 +3,13 @@
 buildscript {
 
     project.ext {
-        kotlin_version = '1.2.40'
+        kotlin_version = '1.2.41'
         gradle_version = '3.1.1'
         jacoco_version = '0.8.0'
         sonarqube_version = '2.6.2'
         fabric_version = '1.25.1'
-        gmss_version = '3.1.1'
+        gmss_version = '3.3.0'
         firebase_version = '1.1.5'
-        easylauncher_version = '1.1.0'
         sonarqube_url = hasProperty('SONARQUBE_URL') ? SONARQUBE_URL : System.getenv('SONARQUBE_URL')
     }
     repositories {
@@ -27,7 +26,6 @@ buildscript {
         classpath "com.google.firebase:firebase-plugins:$firebase_version"
         classpath "org.jacoco:org.jacoco.core:$jacoco_version"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqube_version"
-        classpath "com.akaita.android:easylauncher:$easylauncher_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
