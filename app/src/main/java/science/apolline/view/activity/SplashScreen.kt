@@ -19,6 +19,7 @@ import com.szugyi.circlemenu.view.CircleImageView
 import android.widget.Toast
 import android.view.View
 import android.view.animation.RotateAnimation
+import com.fondesa.kpermissions.extension.listeners
 import com.github.ivbaranov.rxbluetooth.RxBluetooth
 import com.github.salomonbrys.kodein.instance
 import es.dmoral.toasty.Toasty
@@ -27,11 +28,13 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.info
 import science.apolline.root.RootActivity
-import pub.devrel.easypermissions.EasyPermissions
 import com.github.ivbaranov.rxbluetooth.predicates.BtPredicate
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.request.PermissionRequest
 
 
-class SplashScreen : RootActivity(), EasyPermissions.PermissionCallbacks, AnkoLogger {
+class SplashScreen : RootActivity(), AnkoLogger {
+
 
     private val mRxBluetoothClient by instance<RxBluetooth>()
     private var mBluetoothAdapter: BluetoothAdapter? = null
@@ -39,6 +42,11 @@ class SplashScreen : RootActivity(), EasyPermissions.PermissionCallbacks, AnkoLo
     private var mDetectedDevices = hashMapOf<String, BluetoothDevice?>()
     private lateinit var mPrefs: SharedPreferences
     private var EXTRA_DEVICE_ADDRESS: String = "fffffff-ffff-ffff-ffff-ffffffffffff"
+
+    private val mRequestPermissions by lazy {
+        permissionsBuilder(Manifest.permission.ACCESS_FINE_LOCATION)
+                .build()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +74,7 @@ class SplashScreen : RootActivity(), EasyPermissions.PermissionCallbacks, AnkoLo
         }
 
         setCurrentItemText()
-        checkPermissions()
+        checkFineLocationPermission(mRequestPermissions)
         initBoundedDevices()
     }
 
@@ -304,28 +312,28 @@ class SplashScreen : RootActivity(), EasyPermissions.PermissionCallbacks, AnkoLo
     }
 
 
-    private fun checkPermissions(): Boolean {
-        if (!EasyPermissions.hasPermissions(this, *PERMISSIONS_ARRAY)) {
-            EasyPermissions.requestPermissions(this, "Location permission is necessary for the proper working of Apolline", REQUEST_CODE_PERMISSIONS_ARRAY,
-                    Manifest.permission.ACCESS_FINE_LOCATION)
-            return false
+    private fun checkFineLocationPermission(request: PermissionRequest) {
+        request.detachAllListeners()
+        request.send()
+        request.listeners {
+
+            onAccepted { permissions ->
+                Toasty.success(applicationContext, "ACCESS_FINE_LOCATION granted.", Toast.LENGTH_SHORT, true).show()
+            }
+
+            onDenied { permissions ->
+                Toasty.warning(applicationContext, "ACCESS_FINE_LOCATION denied.", Toast.LENGTH_SHORT, true).show()
+            }
+
+            onPermanentlyDenied { permissions ->
+                Toasty.error(applicationContext, "Fatal error, ACCESS_FINE_LOCATION permission permanently denied.", Toast.LENGTH_SHORT, true).show()
+            }
+
+            onShouldShowRationale { permissions, nonce ->
+                Toasty.warning(applicationContext, "Apolline will not work properly, please grant ACCESS_FINE_LOCATION permission.", Toast.LENGTH_LONG, true).show()
+            }
         }
-        return true
     }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-    }
-
-
-    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>?) {
-        finish()
-    }
-
-    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>?) {
-    }
-
 
     private fun checkBlueToothState() {
 
@@ -370,8 +378,6 @@ class SplashScreen : RootActivity(), EasyPermissions.PermissionCallbacks, AnkoLo
 
 
     companion object {
-        private val PERMISSIONS_ARRAY = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-        private const val REQUEST_CODE_PERMISSIONS_ARRAY = 100
         private const val REQUEST_CODE_ENABLE_BLUETOOTH = 101
     }
 

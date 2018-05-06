@@ -24,13 +24,15 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.birbit.android.jobqueue.JobManager
+import com.fondesa.kpermissions.extension.listeners
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.request.PermissionRequest
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.with
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
-import pub.devrel.easypermissions.EasyPermissions
 import science.apolline.BuildConfig
 import science.apolline.R
 import science.apolline.root.RootActivity
@@ -42,7 +44,7 @@ import science.apolline.utils.SyncJobScheduler.cancelAutoSync
 import science.apolline.view.fragment.ViewPagerFragment
 
 
-class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks, AnkoLogger {
+class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedListener, AnkoLogger {
 
     private val mJobManager by instance<JobManager>()
     private val mFragmentViewPager by instance<ViewPagerFragment>()
@@ -54,7 +56,13 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     private var SYNC_MOD = 2 // Wi-Fi only
     private var INFLUXDB_SYNC_FREQ: Long = -1
 
-    @SuppressLint("MissingSuperCall")
+    private val mRequestPermissions by lazy {
+        permissionsBuilder(Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                .build()
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -83,14 +91,14 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         // Request enable Bluetooth
         checkBlueToothState()
         // Check permissions
-        checkPermissions()
+        checkPermissions(mRequestPermissions)
         // Request disable Doze Mode
         CheckUtility.requestDozeMode(this)
         // Request enable location
         mRequestLocationAlert = CheckUtility.requestLocation(this)
 
         // Launch AutoSync
-        SyncJobScheduler.setAutoSync(SYNC_MOD, INFLUXDB_SYNC_FREQ,this)
+        SyncJobScheduler.setAutoSync(SYNC_MOD, INFLUXDB_SYNC_FREQ, this)
 
         replaceFragment(mFragmentViewPager)
     }
@@ -218,30 +226,32 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
-    private fun checkPermissions(): Boolean {
-        if (!EasyPermissions.hasPermissions(this, *PERMISSIONS_ARRAY)) {
-            EasyPermissions.requestPermissions(this, "Location, read phone state and writing permissions are necessary for the proper working of Apolline", REQUEST_CODE_PERMISSIONS_ARRAY,
-                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
-            return false
+    private fun checkPermissions(request: PermissionRequest) {
+        request.detachAllListeners()
+        request.send()
+        request.listeners {
+
+            onAccepted { permissions ->
+                info("granted" + permissions[0])
+                info("granted" + permissions.size)
+                Toasty.success(applicationContext, "READ_PHONE_STATE and ACCESS_FINE_LOCATION permissions granted.", Toast.LENGTH_SHORT, true).show()
+            }
+
+            onDenied { permissions ->
+                Toasty.error(applicationContext, "READ_PHONE_STATE and ACCESS_FINE_LOCATION permissions denied.", Toast.LENGTH_LONG, true).show()
+            }
+
+            onPermanentlyDenied { permissions ->
+                finish()
+            }
+
+            onShouldShowRationale { permissions, nonce ->
+                Toasty.info(applicationContext, "Apolline will not work, please grant READ_PHONE_STATE and  ACCESS_FINE_LOCATION permissions.", Toast.LENGTH_LONG, true).show()
+            }
         }
-        return true
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
 
-    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>?) {
-        finish()
-    }
-
-    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>?) {
-    }
-
-
-    @SuppressLint("MissingSuperCall")
     override fun onDestroy() {
         if (mWakeLock.isHeld) {
             mWakeLock.release()
@@ -296,10 +306,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     companion object {
-
-        private val PERMISSIONS_ARRAY = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
-        private const val REQUEST_CODE_PERMISSIONS_ARRAY = 100
         private const val REQUEST_CODE_ENABLE_BLUETOOTH = 101
-
     }
 }

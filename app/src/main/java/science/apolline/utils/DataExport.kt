@@ -62,11 +62,12 @@ object DataExport : AnkoLogger {
         doAsync {
             val dataList = sensorDao.dumpSensor()
             info("List size: " + dataList.size.toString())
-            val fw = FileWriter(createFileName("json"))
-            val gson = GsonBuilder().setPrettyPrinting().create()
-            val jsonFile = gson.toJson(dataList)
-            fw.write(jsonFile)
-
+            if (dataList.isNotEmpty()) {
+                val fw = FileWriter(createFileName("json"))
+                val gson = GsonBuilder().setPrettyPrinting().create()
+                val jsonFile = gson.toJson(dataList)
+                fw.write(jsonFile)
+            }
             uiThread {
                 Toasty.success(context, "Data exported to JSON with success!", Toast.LENGTH_SHORT, true).show()
             }
@@ -75,7 +76,11 @@ object DataExport : AnkoLogger {
 
     fun exportToCsv(context: Context, sensorDao: SensorDao, multiple: Boolean) {
         doAsync {
-            createCsv(sensorDao.dumpSensor(), multiple)
+            val dataList = sensorDao.dumpSensor()
+            info("List size: " + dataList.size.toString())
+            if (dataList.isNotEmpty()) {
+                createCsv(dataList, multiple)
+            }
             uiThread {
                 Toasty.success(context, "Data exported to CSV with success!", Toast.LENGTH_SHORT, true).show()
             }
@@ -85,7 +90,11 @@ object DataExport : AnkoLogger {
 
     fun exportShareCsv(context: Context, sensorDao: SensorDao, multiple: Boolean) {
         doAsync {
-            createCsv(sensorDao.dumpSensor(), multiple)
+            val dataList = sensorDao.dumpSensor()
+            info("List size: " + dataList.size.toString())
+            if (dataList.isNotEmpty()) {
+                createCsv(dataList, multiple)
+            }
             uiThread {
                 val file = File(localFolder(), "data_${CheckUtility.newDate()}.csv")
                 val uri: Uri

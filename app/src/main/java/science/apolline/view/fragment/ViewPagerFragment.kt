@@ -62,7 +62,7 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
         pager.addOnPageChangeListener(pageChangeListener)
         pager.offscreenPageLimit = 3
 
-        pager.setOnTouchListener { _, _ -> true  }
+        pager.setOnTouchListener { _, _ -> true }
     }
 
     private val pageChangeListener = object : OnPageChangeListener {
@@ -138,7 +138,7 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        activity!!.startService(Intent(activity, IOIOService::class.java))
+//        activity!!.startService(Intent(activity, IOIOService::class.java))
     }
 
 
@@ -155,8 +155,9 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
                         activity!!.stopService(Intent(activity, IOIOService::class.java))
                     }
                     BluetoothAdapter.STATE_TURNING_OFF -> info("Turning Bluetooth off...")
-                    BluetoothAdapter.STATE_ON -> {info("Bluetooth on")
-                        activity!!.startService(Intent(activity, IOIOService::class.java))
+                    BluetoothAdapter.STATE_ON -> {
+                        info("Bluetooth on")
+//                        activity!!.startService(Intent(activity, IOIOService::class.java))
                     }
                     BluetoothAdapter.STATE_TURNING_ON -> info("Turning Bluetooth on...")
                 }

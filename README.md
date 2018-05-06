@@ -28,7 +28,7 @@ Supported sensors:
  * [OpenCSV](opencsv.sourceforge.net) - General. opencsv is an easy-to-use CSV (comma-separated values) parser library for Java.
  * [Android Reactive Location](https://github.com/mcharmas/Android-ReactiveLocation) - Small library that wraps Google Play Services API in brilliant RxJava Observables reducing boilerplate to minimum.
  * [GeoHash](https://github.com/kungfoo/geohash-java) - Implementation of GeoHashes in java.
- * [EasyPermissions](https://github.com/googlesamples/easypermissions) - EasyPermissions is a wrapper library to simplify basic system permissions logic when targeting Android M or higher.
+ * [KPermissionsons](https://github.com/Fondesa/KPermissions) - An Android library totally written in Kotlin that helps to request runtime permissions. 
  * [LeakCanary](https://github.com/square/leakcanary) - A memory leak detection library for Android and Java.
  * [CrashLytics](https://try.crashlytics.com/) - Crash reporting solution.
  * [Firebase](https://firebase.google.com/docs/crash/) - Crash Reporting and performance solution.
@@ -40,7 +40,6 @@ Supported sensors:
  * [Sonar-kotlin](https://github.com/arturbosch/sonar-kotlin) - Kotlin Sonarqube plugin (Unofficial)
  * [Detekt](https://github.com/arturbosch/detekt) - Kotlin static code analysis tool. It operates on the abstract syntax tree provided by the Kotlin compiler.
  * [JaCoCo](http://www.eclemma.org/jacoco/) - JaCoCo is a free code coverage library for Java, which has been created by the EclEmma team based on the lessons learned from using and integration existing libraries for many years.
- * [Easylauncher](https://github.com/arturbosch/sonar-kotlin) - Gradle plugin which modify the launcher icon of each of your app-variants using simple gradle rules. Add ribbons of any color, overlay your own images, change the colors of the icon.
  * [SeekBarPreference](https://github.com/x1306e6d/SeekBarPreference) - SeekBarPreference is an android library to help using preference with SeekBar.
  * [RxBluetooth](https://github.com/IvBaranov/RxBluetooth) - Android reactive bluetooth library. Basically, RxBluetooth is just wrapper around android BluetoothAdapter.
  * [Android-CircleMenu](https://github.com/szugyi/Android-CircleMenu) - Simple implementation of a circle menu for Android applications.
