@@ -23,6 +23,7 @@ import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
 import com.github.mikephil.charting.jobs.MoveViewJob
+import science.apolline.utils.CheckUtility
 
 
 /**
@@ -138,7 +139,9 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-//        activity!!.startService(Intent(activity, IOIOService::class.java))
+        if(CheckUtility.checkReandPhoneStatePermission(activity!!.applicationContext)){
+            activity!!.startService(Intent(activity, IOIOService::class.java))
+        }
     }
 
 
@@ -157,7 +160,9 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
                     BluetoothAdapter.STATE_TURNING_OFF -> info("Turning Bluetooth off...")
                     BluetoothAdapter.STATE_ON -> {
                         info("Bluetooth on")
-//                        activity!!.startService(Intent(activity, IOIOService::class.java))
+                        if(CheckUtility.checkReandPhoneStatePermission(activity!!.applicationContext)){
+                            activity!!.startService(Intent(activity, IOIOService::class.java))
+                        }
                     }
                     BluetoothAdapter.STATE_TURNING_ON -> info("Turning Bluetooth on...")
                 }

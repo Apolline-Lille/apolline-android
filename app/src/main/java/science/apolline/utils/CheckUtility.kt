@@ -101,6 +101,10 @@ object CheckUtility : AnkoLogger {
         return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
+    fun checkReandPhoneStatePermission(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+    }
+
     fun canGetLocation(context: Context): Boolean {
         var gpsEnabled = false
         var networkEnabled = false

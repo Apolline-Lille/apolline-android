@@ -59,58 +59,87 @@ object DataExport : AnkoLogger {
     }
 
     fun exportToJson(context: Context, sensorDao: SensorDao) {
+        var isDone: Boolean
         doAsync {
             val dataList = sensorDao.dumpSensor()
             info("List size: " + dataList.size.toString())
-            if (dataList.isNotEmpty()) {
+            isDone = if (dataList.isNotEmpty()) {
                 val fw = FileWriter(createFileName("json"))
                 val gson = GsonBuilder().setPrettyPrinting().create()
                 val jsonFile = gson.toJson(dataList)
                 fw.write(jsonFile)
+                true
+            } else {
+                false
             }
+
             uiThread {
-                Toasty.success(context, "Data exported to JSON with success!", Toast.LENGTH_SHORT, true).show()
+                if (isDone) {
+                    Toasty.success(context, "Data exported to JSON with success!", Toast.LENGTH_SHORT, true).show()
+                } else {
+                    Toasty.error(context, "No data found, please collect some data before export", Toast.LENGTH_LONG, true).show()
+                }
             }
         }
     }
 
     fun exportToCsv(context: Context, sensorDao: SensorDao, multiple: Boolean) {
+        var isDone: Boolean
         doAsync {
             val dataList = sensorDao.dumpSensor()
             info("List size: " + dataList.size.toString())
-            if (dataList.isNotEmpty()) {
+            isDone = if (dataList.isNotEmpty()) {
                 createCsv(dataList, multiple)
+                true
+            } else {
+                false
             }
+
             uiThread {
-                Toasty.success(context, "Data exported to CSV with success!", Toast.LENGTH_SHORT, true).show()
+                if (isDone) {
+                    Toasty.success(context, "Data exported to CSV with success!", Toast.LENGTH_SHORT, true).show()
+                } else {
+                    Toasty.error(context, "No data found, please collect some data before export", Toast.LENGTH_LONG, true).show()
+                }
             }
         }
     }
 
 
     fun exportShareCsv(context: Context, sensorDao: SensorDao, multiple: Boolean) {
+        var isDone: Boolean
         doAsync {
             val dataList = sensorDao.dumpSensor()
             info("List size: " + dataList.size.toString())
-            if (dataList.isNotEmpty()) {
+            isDone = if (dataList.isNotEmpty()) {
                 createCsv(dataList, multiple)
+                true
+            } else {
+                false
             }
+
             uiThread {
-                val file = File(localFolder(), "data_${CheckUtility.newDate()}.csv")
-                val uri: Uri
-                uri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                    Uri.fromFile(file)
+                if (isDone) {
+                    val file = File(localFolder(), "data_${CheckUtility.newDate()}.csv")
+                    val uri: Uri
+                    uri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                        Uri.fromFile(file)
+                    } else {
+                        FileProvider.getUriForFile(context, "science.apolline.fileprovider", file)
+                    }
+
+                    val shareIntent = Intent()
+                    shareIntent.action = Intent.ACTION_SEND
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                    shareIntent.type = "text/plain"
+                    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    Toasty.success(context, "Data exported with success!", Toast.LENGTH_SHORT, true).show()
+                    context.startActivity(Intent.createChooser(shareIntent, context.resources.getText(R.string.send_to)))
                 } else {
-                    FileProvider.getUriForFile(context, "science.apolline.fileprovider", file)
+                    Toasty.error(context, "No data found, please collect some data before export", Toast.LENGTH_LONG, true).show()
                 }
 
-                val shareIntent = Intent()
-                shareIntent.action = Intent.ACTION_SEND
-                shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
-                shareIntent.type = "text/plain"
-                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                Toasty.success(context, "Data exported with success!", Toast.LENGTH_SHORT, true).show()
-                context.startActivity(Intent.createChooser(shareIntent, context.resources.getText(R.string.send_to)))
+
             }
         }
     }

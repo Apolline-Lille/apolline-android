@@ -22,8 +22,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_ioio.*
 import kotlinx.android.synthetic.main.fragment_ioio_content.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
+import org.jetbrains.anko.*
 import science.apolline.R
 import science.apolline.models.Device
 import science.apolline.models.IOIOData
@@ -43,7 +42,7 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
     private val mSensorDao by instance<SensorDao>()
     private lateinit var mDisposable: CompositeDisposable
     private lateinit var mViewModel: SensorViewModel
-    private var mIsWriteToExternalStorage = false
+    private var mIsWriteToExternalStoragePermissionGranted = false
 
     private val mRequestWriteToExternalStoragePermission by lazy {
         permissionsBuilder(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -68,7 +67,7 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
 
         floating_action_menu_json.setOnClickListener {
 
-            if (!mIsWriteToExternalStorage) {
+            if (!mIsWriteToExternalStoragePermissionGranted) {
                 checkWriteToExternalStoragePermission(mRequestWriteToExternalStoragePermission)
             } else {
                 exportToJson(activity!!.application, mSensorDao)
@@ -76,21 +75,21 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
 
         }
         floating_action_menu_csv_multi.setOnClickListener {
-            if (!mIsWriteToExternalStorage) {
+            if (!mIsWriteToExternalStoragePermissionGranted) {
                 checkWriteToExternalStoragePermission(mRequestWriteToExternalStoragePermission)
             } else {
                 exportToCsv(activity!!.application, mSensorDao, true)
             }
         }
         floating_action_menu_csv.setOnClickListener {
-            if (!mIsWriteToExternalStorage) {
+            if (!mIsWriteToExternalStoragePermissionGranted) {
                 checkWriteToExternalStoragePermission(mRequestWriteToExternalStoragePermission)
             } else {
                 exportToCsv(activity!!.application, mSensorDao, false)
             }
         }
         floating_action_menu_share.setOnClickListener {
-            if (!mIsWriteToExternalStorage) {
+            if (!mIsWriteToExternalStoragePermissionGranted) {
                 checkWriteToExternalStoragePermission(mRequestWriteToExternalStoragePermission)
             } else {
                 exportShareCsv(activity!!.application, mSensorDao, false)
@@ -138,6 +137,7 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
                 }
                 .onErrorReturn {
                     error("Error device list not found $it")
+                    emptyList()
                 }
                 .subscribe {
                     if (it.isNotEmpty()) {
@@ -218,23 +218,30 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
         request.listeners {
 
             onAccepted { permissions ->
-                mIsWriteToExternalStorage = true
+                mIsWriteToExternalStoragePermissionGranted = true
                 Toasty.success(activity!!.applicationContext, "WRITE_EXTERNAL_STORAGE permission granted.", Toast.LENGTH_SHORT, true).show()
             }
 
             onDenied { permissions ->
-                mIsWriteToExternalStorage = false
+                mIsWriteToExternalStoragePermissionGranted = false
                 Toasty.error(activity!!.applicationContext, "WRITE_EXTERNAL_STORAGE permission denied.", Toast.LENGTH_SHORT, true).show()
             }
 
             onPermanentlyDenied { permissions ->
-                mIsWriteToExternalStorage = false
-                Toasty.error(activity!!.applicationContext, "Fatal error, WRITE_EXTERNAL_STORAGE permission permanently denied.", Toast.LENGTH_SHORT, true).show()
+                mIsWriteToExternalStoragePermissionGranted = false
+                Toasty.error(activity!!.applicationContext, "Fatal error, WRITE_EXTERNAL_STORAGE permission permanently denied, please grant it manually", Toast.LENGTH_LONG, true).show()
             }
 
             onShouldShowRationale { permissions, nonce ->
-                mIsWriteToExternalStorage = false
-                Toasty.warning(activity!!.applicationContext, "Apolline couldn't export any file, please grant WRITE_EXTERNAL_STORAGE permission.", Toast.LENGTH_LONG, true).show()
+                mIsWriteToExternalStoragePermissionGranted = false
+
+                activity!!.alert("Apolline couldn't export any file, please grant WRITE_EXTERNAL_STORAGE permission.", "Request write permission") {
+                    yesButton {
+                        checkWriteToExternalStoragePermission(mRequestWriteToExternalStoragePermission)
+                    }
+                    noButton {}
+                }.show()
+
             }
         }
 
