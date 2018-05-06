@@ -231,17 +231,17 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         request.send()
         request.listeners {
 
-            onAccepted { permissions ->
+            onAccepted {
                 Toasty.success(applicationContext, "READ_PHONE_STATE and ACCESS_FINE_LOCATION permissions granted.", Toast.LENGTH_SHORT, true).show()
                 stopService(Intent(applicationContext, IOIOService::class.java))
                 startService(Intent(applicationContext, IOIOService::class.java))
             }
 
-            onDenied { permissions ->
+            onDenied {
                 Toasty.error(applicationContext, "READ_PHONE_STATE and ACCESS_FINE_LOCATION permissions denied.", Toast.LENGTH_LONG, true).show()
             }
 
-            onPermanentlyDenied { permissions ->
+            onPermanentlyDenied {
                 Toasty.error(applicationContext, "READ_PHONE_STATE and ACCESS_FINE_LOCATION permissions permanently denied, please grant it manually, Apolline will close in 10 seconds", Toast.LENGTH_LONG, true).show()
                 object : CountDownTimer(10000, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
@@ -254,7 +254,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 }.start()
             }
 
-            onShouldShowRationale { permissions, nonce ->
+            onShouldShowRationale { _, _ ->
 
                 alert("Apolline will not work, please grant READ_PHONE_STATE and ACCESS_FINE_LOCATION permissions.", "Request read phone state and location permissions") {
                     yesButton {

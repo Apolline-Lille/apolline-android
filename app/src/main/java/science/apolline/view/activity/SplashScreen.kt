@@ -31,6 +31,7 @@ import com.github.ivbaranov.rxbluetooth.predicates.BtPredicate
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.request.PermissionRequest
 import org.jetbrains.anko.*
+import science.apolline.utils.CheckUtility
 
 
 class SplashScreen : RootActivity(), AnkoLogger {
@@ -56,6 +57,8 @@ class SplashScreen : RootActivity(), AnkoLogger {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         mDisposable = CompositeDisposable()
 
+        mIsLocationPermissionGranted = CheckUtility.isWifiNetworkConnected(applicationContext)
+
         setContentView(R.layout.activity_splash_screen)
         ripple_scan_view.clipToOutline = true
         circle_layout.setOnItemSelectedListener {
@@ -65,7 +68,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
             pairCurrentDevice()
         }
         circle_layout.setOnCenterClickListener {
-            if(!mIsLocationPermissionGranted){
+            if (!mIsLocationPermissionGranted) {
                 checkFineLocationPermission(mRequestLocationPermission)
             } else {
                 checkBlueToothState()
@@ -179,9 +182,8 @@ class SplashScreen : RootActivity(), AnkoLogger {
 //        if (circle_layout.tag != null) {
         val view = circle_layout.selectedItem
         if (view is CircleImageView) {
-
+            Toasty.info(applicationContext, "Default PIN code for IOIO sensor is: 4545", Toast.LENGTH_LONG, true).show()
             mBluetoothAdapter!!.cancelDiscovery()
-
             selected_device_name_textview.text = view.name
             val deviceName = view.name
             val device = mDetectedDevices[deviceName]
@@ -203,14 +205,17 @@ class SplashScreen : RootActivity(), AnkoLogger {
 
     private fun addDeviceToCircleView(device: BluetoothDevice?) {
 
-
+        var isCompatible = false
         if (device != null) {
             info("device: $device")
-
-            val nameOrcode = if (device.name == null) {
-                device.address.toString()
+            val nameOrcode: String
+            if (device.name == null) {
+                nameOrcode = device.address.toString()
             } else {
-                device.name.toString()
+                nameOrcode = device.name.toString()
+                if (nameOrcode.toLowerCase().contains(regex = "^ioio.".toRegex())) {
+                    isCompatible = true
+                }
             }
 
             mDetectedDevices[nameOrcode] = device
@@ -218,45 +223,45 @@ class SplashScreen : RootActivity(), AnkoLogger {
             when (device.bluetoothClass.majorDeviceClass) {
 
                 BluetoothClass.Device.Major.AUDIO_VIDEO -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_audio_video)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_audio_video, isCompatible)
                 }
                 BluetoothClass.Device.Major.COMPUTER -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_computer)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_computer, isCompatible)
                 }
                 BluetoothClass.Device.Major.HEALTH -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_health)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_health, isCompatible)
                 }
 
                 BluetoothClass.Device.Major.IMAGING -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_imaging)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_imaging, isCompatible)
                 }
 
                 BluetoothClass.Device.Major.MISC -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_misc)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_misc, isCompatible)
                 }
 
                 BluetoothClass.Device.Major.NETWORKING -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_netwoking)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_netwoking, isCompatible)
                 }
 
                 BluetoothClass.Device.Major.PERIPHERAL -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_peripheral)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_peripheral, isCompatible)
                 }
 
                 BluetoothClass.Device.Major.TOY -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_toy)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_toy, isCompatible)
                 }
 
                 BluetoothClass.Device.Major.PHONE -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_phone)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_phone, isCompatible)
                 }
 
                 BluetoothClass.Device.Major.WEARABLE -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_wear)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_wear, isCompatible)
                 }
 
                 else -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_uncategorized)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_uncategorized, isCompatible)
                 }
 
             }
@@ -295,17 +300,20 @@ class SplashScreen : RootActivity(), AnkoLogger {
 
     }
 
-    private fun onAddClick(view: View, name: String, drawableId: Int) {
+    private fun onAddClick(view: View, name: String, drawableId: Int, compatible: Boolean) {
         val newMenu = CircleImageView(this)
         val currentDrawable = ContextCompat.getDrawable(this, drawableId)
         val willBeWhite = currentDrawable!!.constantState.newDrawable()
         newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item)
         willBeWhite.mutate().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-
         newMenu.setPadding(20, 20, 20, 20)
         newMenu.setImageDrawable(willBeWhite)
-
         newMenu.name = name
+
+        if (compatible) {
+            newMenu.setBackgroundResource(R.color.colorPrimary)
+        }
+
         circle_layout.addView(newMenu)
     }
 
@@ -322,17 +330,17 @@ class SplashScreen : RootActivity(), AnkoLogger {
         request.send()
         request.listeners {
 
-            onAccepted { permissions ->
+            onAccepted {
                 mIsLocationPermissionGranted = true
                 Toasty.success(applicationContext, "ACCESS_FINE_LOCATION granted.", Toast.LENGTH_SHORT, true).show()
             }
 
-            onDenied { permissions ->
+            onDenied {
                 mIsLocationPermissionGranted = false
                 Toasty.warning(applicationContext, "ACCESS_FINE_LOCATION denied.", Toast.LENGTH_SHORT, true).show()
             }
 
-            onPermanentlyDenied { permissions ->
+            onPermanentlyDenied {
                 mIsLocationPermissionGranted = false
                 Toasty.error(applicationContext, "ACCESS_FINE_LOCATION permission permanently denied, please grant it manually, Apolline will close in 10 seconds", Toast.LENGTH_LONG, true).show()
                 object : CountDownTimer(10000, 1000) {
@@ -341,12 +349,12 @@ class SplashScreen : RootActivity(), AnkoLogger {
                     }
 
                     override fun onFinish() {
-                       finish()
+                        finish()
                     }
                 }.start()
             }
 
-            onShouldShowRationale { permissions, nonce ->
+            onShouldShowRationale { _, _ ->
                 mIsLocationPermissionGranted = false
                 alert("Apolline will not work, please grant ACCESS_FINE_LOCATION permission.", "Request location permission") {
                     yesButton {

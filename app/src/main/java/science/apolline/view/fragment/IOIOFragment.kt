@@ -217,22 +217,22 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
         request.send()
         request.listeners {
 
-            onAccepted { permissions ->
+            onAccepted {
                 mIsWriteToExternalStoragePermissionGranted = true
                 Toasty.success(activity!!.applicationContext, "WRITE_EXTERNAL_STORAGE permission granted.", Toast.LENGTH_SHORT, true).show()
             }
 
-            onDenied { permissions ->
+            onDenied {
                 mIsWriteToExternalStoragePermissionGranted = false
                 Toasty.error(activity!!.applicationContext, "WRITE_EXTERNAL_STORAGE permission denied.", Toast.LENGTH_SHORT, true).show()
             }
 
-            onPermanentlyDenied { permissions ->
+            onPermanentlyDenied {
                 mIsWriteToExternalStoragePermissionGranted = false
                 Toasty.error(activity!!.applicationContext, "Fatal error, WRITE_EXTERNAL_STORAGE permission permanently denied, please grant it manually", Toast.LENGTH_LONG, true).show()
             }
 
-            onShouldShowRationale { permissions, nonce ->
+            onShouldShowRationale { _, _ ->
                 mIsWriteToExternalStoragePermissionGranted = false
 
                 activity!!.alert("Apolline couldn't export any file, please grant WRITE_EXTERNAL_STORAGE permission.", "Request write permission") {
