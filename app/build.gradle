@@ -163,7 +163,6 @@ project.ext {
     android_priority_jobqueue_version = '2.0.1'
     eventbus_version = '3.0.0'
     geohash_version = '1.3.0'
-    easypermission_version = '1.0.1'
     fab_version = '1.6.4'
     circle_progress_view_version = 'v1.3'
     toasty_version = '1.2.8'
@@ -173,6 +172,7 @@ project.ext {
     ripple_view_version = '1.0.1'
     circle_menu_version = '2.0.0'
     rxbluetooth_version = '2.0.1'
+    kpermissions_version = '1.0.0'
 }
 
 
@@ -255,9 +255,6 @@ dependencies {
     // Geohash
     implementation "ch.hsr:geohash:$geohash_version"
 
-    // Easy permission
-    implementation "pub.devrel:easypermissions:$easypermission_version"
-
     // LeakCanary
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_version"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leak_version"
@@ -299,6 +296,9 @@ dependencies {
 
     // Rx Bluetooth
     implementation "com.github.ivbaranov:rxbluetooth2:$rxbluetooth_version"
+
+    // KPermissions
+    implementation "com.github.fondesa:kpermissions:$kpermissions_version"
 
 }
 
