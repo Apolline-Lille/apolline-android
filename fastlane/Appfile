@@ -1,3 +1,2 @@
-json_key_file("play_store_credentials.json")
-#json_key_file("${secret_credentials}")
+json_key_file("${secret_credentials}")
 package_name("science.apolline")
