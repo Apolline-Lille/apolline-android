@@ -10,11 +10,11 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
 import science.apolline.R
 import kotlinx.android.synthetic.main.content_splash_screen.*
-import org.jetbrains.anko.AnkoLogger
 import com.szugyi.circlemenu.view.CircleImageView
 import android.widget.Toast
 import android.view.View
@@ -26,11 +26,11 @@ import es.dmoral.toasty.Toasty
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import org.jetbrains.anko.info
 import science.apolline.root.RootActivity
 import com.github.ivbaranov.rxbluetooth.predicates.BtPredicate
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.request.PermissionRequest
+import org.jetbrains.anko.*
 
 
 class SplashScreen : RootActivity(), AnkoLogger {
@@ -42,8 +42,9 @@ class SplashScreen : RootActivity(), AnkoLogger {
     private var mDetectedDevices = hashMapOf<String, BluetoothDevice?>()
     private lateinit var mPrefs: SharedPreferences
     private var EXTRA_DEVICE_ADDRESS: String = "fffffff-ffff-ffff-ffff-ffffffffffff"
+    private var mIsLocationPermissionGranted = false
 
-    private val mRequestPermissions by lazy {
+    private val mRequestLocationPermission by lazy {
         permissionsBuilder(Manifest.permission.ACCESS_FINE_LOCATION)
                 .build()
     }
@@ -64,7 +65,11 @@ class SplashScreen : RootActivity(), AnkoLogger {
             pairCurrentDevice()
         }
         circle_layout.setOnCenterClickListener {
-            checkBlueToothState()
+            if(!mIsLocationPermissionGranted){
+                checkFineLocationPermission(mRequestLocationPermission)
+            } else {
+                checkBlueToothState()
+            }
         }
         circle_layout.setOnRotationFinishedListener {
             val animation = RotateAnimation(0f, 360f, it.width.toFloat() / 2, it.height.toFloat() / 2)
@@ -74,7 +79,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
         }
 
         setCurrentItemText()
-        checkFineLocationPermission(mRequestPermissions)
+        checkFineLocationPermission(mRequestLocationPermission)
         initBoundedDevices()
     }
 
@@ -318,22 +323,44 @@ class SplashScreen : RootActivity(), AnkoLogger {
         request.listeners {
 
             onAccepted { permissions ->
+                mIsLocationPermissionGranted = true
                 Toasty.success(applicationContext, "ACCESS_FINE_LOCATION granted.", Toast.LENGTH_SHORT, true).show()
             }
 
             onDenied { permissions ->
+                mIsLocationPermissionGranted = false
                 Toasty.warning(applicationContext, "ACCESS_FINE_LOCATION denied.", Toast.LENGTH_SHORT, true).show()
             }
 
             onPermanentlyDenied { permissions ->
-                Toasty.error(applicationContext, "Fatal error, ACCESS_FINE_LOCATION permission permanently denied.", Toast.LENGTH_SHORT, true).show()
+                mIsLocationPermissionGranted = false
+                Toasty.error(applicationContext, "ACCESS_FINE_LOCATION permission permanently denied, please grant it manually, Apolline will close in 10 seconds", Toast.LENGTH_LONG, true).show()
+                object : CountDownTimer(10000, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
+
+                    }
+
+                    override fun onFinish() {
+                       finish()
+                    }
+                }.start()
             }
 
             onShouldShowRationale { permissions, nonce ->
-                Toasty.warning(applicationContext, "Apolline will not work properly, please grant ACCESS_FINE_LOCATION permission.", Toast.LENGTH_LONG, true).show()
+                mIsLocationPermissionGranted = false
+                alert("Apolline will not work, please grant ACCESS_FINE_LOCATION permission.", "Request location permission") {
+                    yesButton {
+                        checkFineLocationPermission(mRequestLocationPermission)
+                    }
+                    noButton {
+                        request.detachAllListeners()
+                    }
+                }.show()
+
             }
         }
     }
+
 
     private fun checkBlueToothState() {
 

@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.wifi.WifiManager.WifiLock
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.PowerManager.WakeLock
 import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
@@ -31,8 +32,7 @@ import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.with
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
+import org.jetbrains.anko.*
 import science.apolline.BuildConfig
 import science.apolline.R
 import science.apolline.root.RootActivity
@@ -232,9 +232,9 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         request.listeners {
 
             onAccepted { permissions ->
-                info("granted" + permissions[0])
-                info("granted" + permissions.size)
                 Toasty.success(applicationContext, "READ_PHONE_STATE and ACCESS_FINE_LOCATION permissions granted.", Toast.LENGTH_SHORT, true).show()
+                stopService(Intent(applicationContext, IOIOService::class.java))
+                startService(Intent(applicationContext, IOIOService::class.java))
             }
 
             onDenied { permissions ->
@@ -242,11 +242,29 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
             onPermanentlyDenied { permissions ->
-                finish()
+                Toasty.error(applicationContext, "READ_PHONE_STATE and ACCESS_FINE_LOCATION permissions permanently denied, please grant it manually, Apolline will close in 10 seconds", Toast.LENGTH_LONG, true).show()
+                object : CountDownTimer(10000, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
+
+                    }
+
+                    override fun onFinish() {
+                        finish()
+                    }
+                }.start()
             }
 
             onShouldShowRationale { permissions, nonce ->
-                Toasty.info(applicationContext, "Apolline will not work, please grant READ_PHONE_STATE and  ACCESS_FINE_LOCATION permissions.", Toast.LENGTH_LONG, true).show()
+
+                alert("Apolline will not work, please grant READ_PHONE_STATE and ACCESS_FINE_LOCATION permissions.", "Request read phone state and location permissions") {
+                    yesButton {
+                        checkPermissions(mRequestPermissions)
+                    }
+                    noButton {
+                        checkPermissions(mRequestPermissions)
+                    }
+                }.show()
+
             }
         }
     }
