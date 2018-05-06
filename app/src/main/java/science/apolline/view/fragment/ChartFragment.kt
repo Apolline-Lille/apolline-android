@@ -48,6 +48,7 @@ import science.apolline.utils.DataExport.exportToJson
 import science.apolline.utils.HourAxisValueFormatter
 import science.apolline.root.RootFragment
 import science.apolline.service.database.SensorDao
+import science.apolline.utils.CheckUtility
 import science.apolline.viewModel.SensorViewModel
 
 
@@ -76,7 +77,6 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
 
         // Preferences.
         mPrefs = PreferenceManager.getDefaultSharedPreferences(activity!!.applicationContext)
-        //mPrefs = this.getSharedPreferences( IDENTIFIER, Context.MODE_PRIVATE)
 
     }
 
@@ -89,16 +89,20 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
         super.onViewCreated(view, savedInstanceState)
         mDisposable = CompositeDisposable()
 
-        floating_action_menu_json.setOnClickListener {
 
+        floating_action_menu_json.setOnClickListener {
+            mIsWriteToExternalStoragePermissionGranted = CheckUtility.checkWriteToExternalStoragePermissionPermission (activity!!.applicationContext)
             if (!mIsWriteToExternalStoragePermissionGranted) {
+                info("test false")
                 checkWriteToExternalStoragePermission(mRequestWriteToExternalStoragePermission)
             } else {
+                info("test true")
                 exportToJson(activity!!.application, mSensorDao)
             }
 
         }
         floating_action_menu_csv_multi.setOnClickListener {
+            mIsWriteToExternalStoragePermissionGranted = CheckUtility.checkWriteToExternalStoragePermissionPermission (activity!!.applicationContext)
             if (!mIsWriteToExternalStoragePermissionGranted) {
                 checkWriteToExternalStoragePermission(mRequestWriteToExternalStoragePermission)
             } else {
@@ -106,6 +110,7 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
             }
         }
         floating_action_menu_csv.setOnClickListener {
+            mIsWriteToExternalStoragePermissionGranted = CheckUtility.checkWriteToExternalStoragePermissionPermission (activity!!.applicationContext)
             if (!mIsWriteToExternalStoragePermissionGranted) {
                 checkWriteToExternalStoragePermission(mRequestWriteToExternalStoragePermission)
             } else {
@@ -113,6 +118,7 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
             }
         }
         floating_action_menu_share.setOnClickListener {
+            mIsWriteToExternalStoragePermissionGranted = CheckUtility.checkWriteToExternalStoragePermissionPermission (activity!!.applicationContext)
             if (!mIsWriteToExternalStoragePermissionGranted) {
                 checkWriteToExternalStoragePermission(mRequestWriteToExternalStoragePermission)
             } else {
@@ -361,6 +367,7 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
                     }
                     noButton {}
                 }.show()
+
             }
         }
 

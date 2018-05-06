@@ -10,9 +10,7 @@ Supported sensors:
 ## Screenshots
 | | | |
 |:-------------------------:|:-------------------------:|:-------------------------:|
-|<img width="1604" alt="screenshot_20180228-172821__01" src="https://user-images.githubusercontent.com/22281426/36799845-59b7ca92-1cae-11e8-85e2-c64cd483b50e.jpg">|<img width="1604" alt="screenshot_20180228-172912__01" src="https://user-images.githubusercontent.com/22281426/36799840-5953c380-1cae-11e8-9334-0e53292e21a4.jpg">|<img width="1604" alt="screenshot_20180227-212536__01" src="https://user-images.githubusercontent.com/22281426/36799844-599a20fa-1cae-11e8-9dd9-62b4f698cf37.jpg">|
-
-<img width="1604" alt="screenshot_20180227-190110__01" src="https://user-images.githubusercontent.com/22281426/36799842-59791252-1cae-11e8-8254-044ce7f8dd7c.jpg">
+|<img width="1604" alt="screenshot_01" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png">|<img width="1604" alt="screenshot_02" src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png">|<img width="1604" alt="screenshot_03" src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png">|<img
 
 
 ## Libraries used

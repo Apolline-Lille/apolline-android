@@ -33,6 +33,7 @@ import science.apolline.utils.DataExport.exportToCsv
 import science.apolline.utils.DataExport.exportToJson
 import science.apolline.root.RootFragment
 import science.apolline.service.database.SensorDao
+import science.apolline.utils.CheckUtility
 import science.apolline.viewModel.SensorViewModel
 import kotlin.math.roundToLong
 
@@ -64,6 +65,8 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mDisposable = CompositeDisposable()
+
+        mIsWriteToExternalStoragePermissionGranted = CheckUtility.checkWriteToExternalStoragePermissionPermission (activity!!.applicationContext)
 
         floating_action_menu_json.setOnClickListener {
 
@@ -213,6 +216,7 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
 
     private fun checkWriteToExternalStoragePermission(request: PermissionRequest) {
 
+        info("check permission")
         request.detachAllListeners()
         request.send()
         request.listeners {

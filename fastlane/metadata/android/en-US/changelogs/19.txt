@@ -1,0 +1,3 @@
+- Fix progressive runtime permissions request.
+- Fix export menu behaviours.
+- Fix some bugs.

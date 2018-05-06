@@ -1,0 +1,3 @@
+- Correction de la demande progressive de permissions.
+- Correction des fonctions du menu d'exportation.
+- Correction de quelques bugs.
