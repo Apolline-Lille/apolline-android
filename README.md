@@ -10,7 +10,9 @@ Supported sensors:
 ## Screenshots
 | | | |
 |:-------------------------:|:-------------------------:|:-------------------------:|
-|<img width="1604" alt="screenshot_01" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png">|<img width="1604" alt="screenshot_02" src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png">|<img width="1604" alt="screenshot_03" src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png">|<img
+|<img width="1604" alt="screenshot_01" src="assets/1.png">|<img width="1604" alt="screenshot_02" src="assets/2.png">|<img width="1604" alt="screenshot_03" src="assets/3.png">|
+
+![screenshot_04](assets/4.png)
 
 
 ## Libraries used
