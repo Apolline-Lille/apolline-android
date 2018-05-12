@@ -149,6 +149,34 @@ class SplashScreen : RootActivity(), AnkoLogger {
                     }
                 })
 
+        mDisposable.add(mRxBluetoothClient.observeBondState()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.computation())
+                .subscribe { event ->
+                    when (event.state) {
+                        BluetoothDevice.BOND_NONE -> {
+                            info("device bound state BOND_NONE: " + event.bluetoothDevice.name)
+                        }
+                        BluetoothDevice.BOND_BONDING -> {
+                            info("device bound state BOND_BONDING: " + event.bluetoothDevice.name)
+                        }
+                        BluetoothDevice.BOND_BONDED -> {
+                            info("device bound state BOND_BONDED: " + event.bluetoothDevice.name)
+
+                            if (event.bluetoothDevice.name.toString().toLowerCase().contains(regex = "^ioio.".toRegex())) {
+                                val intent = Intent(this, MainActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
+
+                        }
+                        else -> {
+
+                        }
+
+                    }
+                })
+
     }
 
     override fun onStop() {
@@ -274,6 +302,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
 
         val boundedDevices = mBluetoothAdapter!!.bondedDevices
         var sensorCounter = 0
+        var currentCompatibleSensor: BluetoothDevice? = null
 
         if (boundedDevices.size > 0) {
 
@@ -282,14 +311,24 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 addDeviceToCircleView(device)
 
                 if (device.name.toString().toLowerCase().contains(regex = "^ioio.".toRegex())) {
+                    currentCompatibleSensor = device
                     sensorCounter++
                 }
             }
 
             if (sensorCounter == 1) {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
+
+                mDisposable.add(mRxBluetoothClient.observeConnectDevice(currentCompatibleSensor, currentCompatibleSensor!!.uuids[0].uuid)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.computation())
+                        .subscribe { event ->
+                            if (event.isConnected) {
+                                val intent = Intent(this, MainActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
+                        })
+
             } else {
                 info("There is multiple IOIO Paired sensors, please choose one")
             }
@@ -301,20 +340,18 @@ class SplashScreen : RootActivity(), AnkoLogger {
     }
 
     private fun onAddClick(view: View, name: String, drawableId: Int, compatible: Boolean) {
-        val newMenu = CircleImageView(this)
-        val currentDrawable = ContextCompat.getDrawable(this, drawableId)
-        val willBeWhite = currentDrawable!!.constantState.newDrawable()
-        newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item)
-        willBeWhite.mutate().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-        newMenu.setPadding(20, 20, 20, 20)
-        newMenu.setImageDrawable(willBeWhite)
-        newMenu.name = name
-
         if (compatible) {
-            newMenu.setBackgroundResource(R.color.colorPrimary)
+            val newMenu = CircleImageView(this)
+            val currentDrawable = ContextCompat.getDrawable(this, drawableId)
+            val willBeWhite = currentDrawable!!.constantState.newDrawable()
+            newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item)
+            willBeWhite.mutate().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+            newMenu.setPadding(20, 20, 20, 20)
+            newMenu.setImageDrawable(willBeWhite)
+            newMenu.name = name
+            //newMenu.setBackgroundResource(R.color.colorPrimary)
+            circle_layout.addView(newMenu)
         }
-
-        circle_layout.addView(newMenu)
     }
 
 
