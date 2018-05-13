@@ -63,4 +63,5 @@ deploy:
   api_key: $GH_TOKEN
   on:
     repo: Apolline-Lille/apolline-android
+    branch: master
     tags: true

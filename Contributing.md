@@ -11,9 +11,8 @@ As a contributor, here are the guidelines we would like you to follow:
 	 - [Commit subject](#subject)
 	 - [Commit body](#body)
 	 - [Commit footer](#footer)
- - [Branch](#branch)
-	 - [master branch](#master)
-	 - [feature branch](#feature)
+- [WorkFlow](#branch)
+	 - [GitFlow](#gitflow)
 
 
 ## <a name="commit"></a> Commit Message Guidelines
@@ -69,22 +68,12 @@ reference GitHub issues that this commit **Closes**.
 
 **Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines. The rest of the commit message is then used for this.
 
-## <a name="branch"></a>Branch
+## <a name="workflow"></a>WorkFlow
 
-### <a name="master"></a>master branch
-master is the production branch, you shouldn't push your change directly on master except for critical hot-fix
+### <a name="gitflow"></a> GitFlow
 
-### <a name="feature"></a>feature branch
-feature branche are created when working on a specific feature.
-when the development of the feature is finished please do as following:
+We adopt towards to [GitFlow](http://nvie.com/posts/a-successful-git-branching-model/) which is a Git workflow design that was first published and made popular by Vincent Driessen at nvie.
 
-commit your change (**don't push them**) then :
+Cheatsheet [GitFlow](https://danielkummer.github.io/git-flow-cheatsheet/)
 
-```
-git checkout featureBranch
-git rebase targetBranch
-```
-
-resolve your pentential conflict, 
-push your commit,
-create a new pull request on github (only if github don't find any conflict)
+Create a new pull request on github (only if github don't find any conflict).
