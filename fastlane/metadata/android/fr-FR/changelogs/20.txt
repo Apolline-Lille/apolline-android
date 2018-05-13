@@ -1,0 +1,2 @@
+- Ajout de l'affichage des périphériques Bluetooth compatible.
+- Correction de quelques bugs.
