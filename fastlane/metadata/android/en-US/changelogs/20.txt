@@ -1,0 +1,2 @@
+- Add display only compatibles Bluetooth devices.
+- Fix some bugs.
