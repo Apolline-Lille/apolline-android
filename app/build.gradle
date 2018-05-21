@@ -26,8 +26,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
 
-        versionCode 20
-        versionName "2.4.3"
+        versionCode 21
+        versionName "2.4.4"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -134,15 +134,16 @@ android {
 project.ext {
     appcompat_version = '27.1.1'
     aac_version = '1.0.0'
+    room_version = '1.0.0'
     ioio_version = '5.07'
     gms_maps_version = '15.0.1'
     gms_location_version = '15.0.1'
     firebase_core_version = '15.0.2'
     firebase_crash_version = '15.0.2'
-    firebase_perf_version = '15.1.0'
+    firebase_perf_version = '15.2.0'
     firebase_crashlytics_version = '2.9.1'
     retrofit_version = '2.4.0'
-    anko_version = '0.10.4'
+    anko_version = '0.10.5'
     kodein_version = '4.1.0'
     leak_version = '1.5.4'
     runner_version = '1.0.1'
@@ -223,11 +224,11 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
 
     // Room
-    kapt "android.arch.persistence.room:compiler:$aac_version"
-    implementation "android.arch.persistence.room:runtime:$aac_version"
-    implementation "android.arch.lifecycle:common-java8:$aac_version"
-    implementation "android.arch.persistence.room:rxjava2:$aac_version"
-    testImplementation "android.arch.persistence.room:testing:$aac_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    implementation "android.arch.lifecycle:common-java8:$room_version"
+    implementation "android.arch.persistence.room:rxjava2:$room_version"
+    testImplementation "android.arch.persistence.room:testing:$room_version"
 
     // LiveData
     implementation "android.arch.lifecycle:extensions:$aac_lifecycle_version"
@@ -236,6 +237,8 @@ dependencies {
     // Anko
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
     implementation "org.jetbrains.anko:anko-design:$anko_version"
+    implementation "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
+    implementation "org.jetbrains.anko:anko-sdk25:$anko_version"
 
     // OpenCSV
     implementation "com.opencsv:opencsv:$opencsv_version"

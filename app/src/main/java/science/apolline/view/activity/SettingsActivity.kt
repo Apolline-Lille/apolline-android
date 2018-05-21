@@ -79,7 +79,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("device_name"), STRING)
+            bindPreferenceSummaryToValue(findPreference("sensor_name"), STRING)
+            bindPreferenceSummaryToValue(findPreference("sensor_mac_address"), STRING)
             bindPreferenceSummaryToValue(findPreference("device_uuid"), STRING)
 //            bindPreferenceSummaryToValue(findPreference("example_list"))
         }

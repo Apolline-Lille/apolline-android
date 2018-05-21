@@ -10,13 +10,18 @@
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
     <EditTextPreference
         android:capitalize="words"
-        android:defaultValue="@string/pref_default_device_name"
+        android:defaultValue="@string/pref_default_sensor_name"
         android:inputType="textCapWords"
-        android:key="device_name"
+        android:key="sensor_name"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/pref_title_device_name" />
+        android:title="@string/pref_title_sensor_name" />
+
+    <Preference
+        android:key="sensor_mac_address"
+        android:summary="@string/pref_default_sensor_mac_address"
+        android:title="@string/pref_title_sensor_mac_address" />
 
     <Preference
         android:key="device_uuid"
