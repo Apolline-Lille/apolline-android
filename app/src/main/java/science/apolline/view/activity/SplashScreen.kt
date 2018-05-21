@@ -12,6 +12,7 @@ import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.preference.PreferenceManager
+import android.support.annotation.IdRes
 import android.support.v4.content.ContextCompat
 import science.apolline.R
 import kotlinx.android.synthetic.main.content_splash_screen.*
@@ -19,6 +20,7 @@ import com.szugyi.circlemenu.view.CircleImageView
 import android.widget.Toast
 import android.view.View
 import android.view.animation.RotateAnimation
+import android.widget.EditText
 import com.fondesa.kpermissions.extension.listeners
 import com.github.ivbaranov.rxbluetooth.RxBluetooth
 import com.github.salomonbrys.kodein.instance
@@ -42,8 +44,10 @@ class SplashScreen : RootActivity(), AnkoLogger {
     private lateinit var mDisposable: CompositeDisposable
     private var mDetectedDevices = hashMapOf<String, BluetoothDevice?>()
     private lateinit var mPrefs: SharedPreferences
-    private var EXTRA_DEVICE_ADDRESS: String = "fffffff-ffff-ffff-ffff-ffffffffffff"
     private var mIsLocationPermissionGranted = false
+
+    private var EXTRA_DEVICE_ADDRESS: String = "fffffff-ffff-ffff-ffff-ffffffffffff"
+    private var SENSOR_MAC_ADDRESS: String = "ff-ff-ff-ff-ff-ff"
 
     private val mRequestLocationPermission by lazy {
         permissionsBuilder(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -54,10 +58,11 @@ class SplashScreen : RootActivity(), AnkoLogger {
         super.onCreate(savedInstanceState)
         mPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         EXTRA_DEVICE_ADDRESS = mPrefs.getString("device_uuid", "ffffffff-ffff-ffff-ffff-ffffffffffff")
+        SENSOR_MAC_ADDRESS = mPrefs.getString("sensor_mac_address", "ff-ff-ff-ff-ff-ff")
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         mDisposable = CompositeDisposable()
 
-        mIsLocationPermissionGranted = CheckUtility.isWifiNetworkConnected(applicationContext)
+        mIsLocationPermissionGranted = CheckUtility.isWifiNetworkConnected(this)
 
         setContentView(R.layout.activity_splash_screen)
         ripple_scan_view.clipToOutline = true
@@ -117,37 +122,11 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
                 .subscribe { device ->
-                    addDeviceToCircleView(device)
+                    addDeviceToCircleView(device, isBounded = isBoundedDevice(device))
                 }
         )
 
-        mDisposable.add(mRxBluetoothClient.observeBondState()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.computation())
-                .subscribe { event ->
-                    when (event.state) {
-                        BluetoothDevice.BOND_NONE -> {
-                            info("device bound state BOND_NONE: " + event.bluetoothDevice.name)
-                        }
-                        BluetoothDevice.BOND_BONDING -> {
-                            info("device bound state BOND_BONDING: " + event.bluetoothDevice.name)
-                        }
-                        BluetoothDevice.BOND_BONDED -> {
-                            info("device bound state BOND_BONDED: " + event.bluetoothDevice.name)
 
-                            if (event.bluetoothDevice.name.toString().toLowerCase().contains(regex = "^ioio.".toRegex())) {
-                                val intent = Intent(this, MainActivity::class.java)
-                                startActivity(intent)
-                                finish()
-                            }
-
-                        }
-                        else -> {
-
-                        }
-
-                    }
-                })
 
         mDisposable.add(mRxBluetoothClient.observeBondState()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -164,9 +143,39 @@ class SplashScreen : RootActivity(), AnkoLogger {
                             info("device bound state BOND_BONDED: " + event.bluetoothDevice.name)
 
                             if (event.bluetoothDevice.name.toString().toLowerCase().contains(regex = "^ioio.".toRegex())) {
+
+                                val deviceMacAddress = event.bluetoothDevice!!.address.toString()
                                 val intent = Intent(this, MainActivity::class.java)
-                                startActivity(intent)
-                                finish()
+
+                                if (deviceMacAddress != SENSOR_MAC_ADDRESS) {
+                                    var sensorNameEditText: EditText? = null
+
+                                    alert {
+                                        title = "New sensor name"
+                                        customView {
+                                            sensorNameEditText = editText {
+                                                id = Id.alert_new_sensor
+                                                hint = "A-00"
+                                                padding = dip(20)
+                                            }
+                                        }
+
+                                        yesButton {
+                                            val sensorName = sensorNameEditText!!.text.toString()
+                                            mPrefs.edit().putString("sensor_mac_address", deviceMacAddress)
+                                                    .putString("sensor_name", sensorName)
+                                                    .apply()
+                                            startActivity(intent)
+                                            finish()
+                                        }
+
+                                        noButton {
+
+                                        }
+
+
+                                    }.show()
+                                }
                             }
 
                         }
@@ -176,7 +185,6 @@ class SplashScreen : RootActivity(), AnkoLogger {
 
                     }
                 })
-
     }
 
     override fun onStop() {
@@ -210,28 +218,62 @@ class SplashScreen : RootActivity(), AnkoLogger {
 //        if (circle_layout.tag != null) {
         val view = circle_layout.selectedItem
         if (view is CircleImageView) {
-            Toasty.info(applicationContext, "Default PIN code for IOIO sensor is: 4545", Toast.LENGTH_LONG, true).show()
             mBluetoothAdapter!!.cancelDiscovery()
             selected_device_name_textview.text = view.name
             val deviceName = view.name
             val device = mDetectedDevices[deviceName]
             val boundedDevices = mBluetoothAdapter!!.bondedDevices
 
-            if (boundedDevices.size > 0) {
-                if (boundedDevices.contains(device)) {
-                    val intent = Intent(this, MainActivity::class.java)
+//            if (boundedDevices.size > 0) {
+            if (boundedDevices.contains(device)) {
+                val deviceMacAddress = device!!.address.toString()
+                val intent = Intent(this, MainActivity::class.java)
+
+                if (deviceMacAddress != SENSOR_MAC_ADDRESS) {
+                    var sensorNameEditText: EditText? = null
+                    alert {
+                        title = "New sensor name"
+                        customView {
+                            sensorNameEditText = editText {
+                                id = Id.alert_new_sensor
+                                hint = "A-00"
+                                padding = dip(20)
+                            }
+                        }
+
+                        yesButton {
+                            val sensorName = sensorNameEditText!!.text.toString()
+                            mPrefs.edit().putString("sensor_mac_address", deviceMacAddress)
+                                    .putString("sensor_name", sensorName)
+                                    .apply()
+                            startActivity(intent)
+                            finish()
+                        }
+
+                        noButton {
+
+                        }
+
+
+                    }.show()
+
+                } else {
                     startActivity(intent)
                     finish()
                 }
+
+
             } else {
+                Toasty.info(applicationContext, "Default PIN code for IOIO sensor is: 4545", Toast.LENGTH_LONG, true).show()
                 device!!.createBond()
             }
+            //           }
         }
 
     }
 
 
-    private fun addDeviceToCircleView(device: BluetoothDevice?) {
+    private fun addDeviceToCircleView(device: BluetoothDevice?, isBounded: Boolean) {
 
         var isCompatible = false
         if (device != null) {
@@ -251,51 +293,56 @@ class SplashScreen : RootActivity(), AnkoLogger {
             when (device.bluetoothClass.majorDeviceClass) {
 
                 BluetoothClass.Device.Major.AUDIO_VIDEO -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_audio_video, isCompatible)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_audio_video, isCompatible, isBounded)
                 }
                 BluetoothClass.Device.Major.COMPUTER -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_computer, isCompatible)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_computer, isCompatible, isBounded)
                 }
                 BluetoothClass.Device.Major.HEALTH -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_health, isCompatible)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_health, isCompatible, isBounded)
                 }
 
                 BluetoothClass.Device.Major.IMAGING -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_imaging, isCompatible)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_imaging, isCompatible, isBounded)
                 }
 
                 BluetoothClass.Device.Major.MISC -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_misc, isCompatible)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_misc, isCompatible, isBounded)
                 }
 
                 BluetoothClass.Device.Major.NETWORKING -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_netwoking, isCompatible)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_netwoking, isCompatible, isBounded)
                 }
 
                 BluetoothClass.Device.Major.PERIPHERAL -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_peripheral, isCompatible)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_peripheral, isCompatible, isBounded)
                 }
 
                 BluetoothClass.Device.Major.TOY -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_toy, isCompatible)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_toy, isCompatible, isBounded)
                 }
 
                 BluetoothClass.Device.Major.PHONE -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_phone, isCompatible)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_phone, isCompatible, isBounded)
                 }
 
                 BluetoothClass.Device.Major.WEARABLE -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_wear, isCompatible)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_wear, isCompatible, isBounded)
                 }
 
                 else -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_uncategorized, isCompatible)
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_uncategorized, isCompatible, isBounded)
                 }
 
             }
 
         }
 
+    }
+
+    private fun isBoundedDevice(device: BluetoothDevice?): Boolean {
+        val boundedDevices = mBluetoothAdapter!!.bondedDevices
+        return boundedDevices.contains(device)
     }
 
     private fun initBoundedDevices() {
@@ -307,8 +354,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
         if (boundedDevices.size > 0) {
 
             boundedDevices.forEach { device ->
-
-                addDeviceToCircleView(device)
+                addDeviceToCircleView(device, isBounded = isBoundedDevice(device))
 
                 if (device.name.toString().toLowerCase().contains(regex = "^ioio.".toRegex())) {
                     currentCompatibleSensor = device
@@ -316,22 +362,22 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 }
             }
 
-            if (sensorCounter == 1) {
-
-                mDisposable.add(mRxBluetoothClient.observeConnectDevice(currentCompatibleSensor, currentCompatibleSensor!!.uuids[0].uuid)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.computation())
-                        .subscribe { event ->
-                            if (event.isConnected) {
-                                val intent = Intent(this, MainActivity::class.java)
-                                startActivity(intent)
-                                finish()
-                            }
-                        })
-
-            } else {
-                info("There is multiple IOIO Paired sensors, please choose one")
-            }
+//            if (sensorCounter == 1) {
+//
+//                mDisposable.add(mRxBluetoothClient.observeConnectDevice(currentCompatibleSensor, currentCompatibleSensor!!.uuids[0].uuid)
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribeOn(Schedulers.computation())
+//                        .subscribe { event ->
+//                            if (event.isConnected) {
+//                                val intent = Intent(this, MainActivity::class.java)
+//                                startActivity(intent)
+//                                finish()
+//                            }
+//                        })
+//
+//            } else {
+//                info("There is multiple IOIO Paired sensors, please choose one")
+//            }
 
         } else {
             info("No bounded devices")
@@ -339,12 +385,18 @@ class SplashScreen : RootActivity(), AnkoLogger {
 
     }
 
-    private fun onAddClick(view: View, name: String, drawableId: Int, compatible: Boolean) {
+    private fun onAddClick(view: View, name: String, drawableId: Int, compatible: Boolean, bounded: Boolean) {
         if (compatible) {
             val newMenu = CircleImageView(this)
             val currentDrawable = ContextCompat.getDrawable(this, drawableId)
             val willBeWhite = currentDrawable!!.constantState.newDrawable()
-            newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item)
+
+            if (bounded) {
+                newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item_bounded)
+            } else {
+                newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item)
+            }
+
             willBeWhite.mutate().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
             newMenu.setPadding(20, 20, 20, 20)
             newMenu.setImageDrawable(willBeWhite)
@@ -370,6 +422,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
             onAccepted {
                 mIsLocationPermissionGranted = true
                 Toasty.success(applicationContext, "ACCESS_FINE_LOCATION granted.", Toast.LENGTH_SHORT, true).show()
+//                checkBlueToothState()
             }
 
             onDenied {
@@ -400,6 +453,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
                     noButton {
                         request.detachAllListeners()
                     }
+
                 }.show()
 
             }
@@ -451,6 +505,11 @@ class SplashScreen : RootActivity(), AnkoLogger {
 
     companion object {
         private const val REQUEST_CODE_ENABLE_BLUETOOTH = 101
+    }
+
+    object Id {
+        @IdRes
+        val alert_new_sensor = View.generateViewId()
     }
 
 

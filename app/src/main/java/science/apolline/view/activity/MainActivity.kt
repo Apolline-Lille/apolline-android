@@ -116,6 +116,8 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         } else {
             val backStackEntryCount = supportFragmentManager.backStackEntryCount
             if (backStackEntryCount == 1) {
+                val intent = Intent(this, SplashScreen::class.java)
+                startActivity(intent)
                 finish()
             } else {
                 if (backStackEntryCount > 1) {

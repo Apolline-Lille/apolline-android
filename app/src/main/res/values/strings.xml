@@ -138,8 +138,11 @@
         <item>2</item>
     </string-array>
 
-    <string name="pref_title_device_name">Device name</string>
-    <string name="pref_default_device_name">Apolline00</string>
+    <string name="pref_title_sensor_name">Sensor name</string>
+    <string name="pref_default_sensor_name">Apolline00</string>
+
+    <string name="pref_title_sensor_mac_address">Sensor MAC Address</string>
+    <string name="pref_default_sensor_mac_address">ff-ff-ff-ff-ff-ff</string>
 
     <string name="pref_title_device_uuid">Device UUID</string>
     <string name="pref_default_device_uuid">ffffffff-ffff-ffff-ffff-ffffffffffff</string>
