@@ -116,6 +116,9 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         } else {
             val backStackEntryCount = supportFragmentManager.backStackEntryCount
             if (backStackEntryCount == 1) {
+                if (IOIOService.getServiceStatus()){
+                    stopService(Intent(applicationContext, IOIOService::class.java))
+                }
                 val intent = Intent(this, SplashScreen::class.java)
                 startActivity(intent)
                 finish()

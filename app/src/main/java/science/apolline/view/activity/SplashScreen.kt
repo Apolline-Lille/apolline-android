@@ -32,7 +32,9 @@ import science.apolline.root.RootActivity
 import com.github.ivbaranov.rxbluetooth.predicates.BtPredicate
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.request.PermissionRequest
+import ioio.lib.util.android.IOIOService
 import org.jetbrains.anko.*
+import science.apolline.service.sensor.IOIOService.Companion.getServiceStatus
 import science.apolline.utils.CheckUtility
 
 
@@ -56,6 +58,11 @@ class SplashScreen : RootActivity(), AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (getServiceStatus()){
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
         mPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         EXTRA_DEVICE_ADDRESS = mPrefs.getString("device_uuid", "ffffffff-ffff-ffff-ffff-ffffffffffff")
         SENSOR_MAC_ADDRESS = mPrefs.getString("sensor_mac_address", "ff-ff-ff-ff-ff-ff")
