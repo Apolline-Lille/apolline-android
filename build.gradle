@@ -3,23 +3,23 @@
 buildscript {
 
     project.ext {
-        kotlin_version = '1.2.41'
+        kotlin_version = '1.2.51'
         gradle_version = '3.1.1'
         jacoco_version = '0.8.0'
         sonarqube_version = '2.6.2'
-        fabric_version = '1.25.1'
+        fabric_version = '1.25.4'
         gmss_version = '3.3.0'
         firebase_version = '1.1.5'
         sonarqube_url = hasProperty('SONARQUBE_URL') ? SONARQUBE_URL : System.getenv('SONARQUBE_URL')
     }
     repositories {
-        jcenter()
         google()
         maven { url 'https://maven.fabric.io/public' }
+        jcenter()
     }
     dependencies {
 
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.2.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "io.fabric.tools:gradle:$fabric_version"
         classpath "com.google.gms:google-services:$gmss_version"
@@ -33,11 +33,11 @@ buildscript {
 
 allprojects {
     repositories {
-        jcenter()
         google()
         maven { url 'https://maven.google.com' }
         maven { url "https://jitpack.io" }
         maven { url 'https://maven.fabric.io/public' }
+        jcenter()
     }
 }
 

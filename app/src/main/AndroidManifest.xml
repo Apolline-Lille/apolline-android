@@ -8,8 +8,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_UPDATES" />
     <uses-permission android:name="com.example.androidmapsv2.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
@@ -17,6 +15,12 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    //extra permissions added for the blue sensor device
+    <uses-permission android:name="android.permission.ACCESS_COARSE_UPDATES" />
+    <uses-permission android:name="com.example.androidmapsv2.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -39,6 +43,7 @@
             android:required="false" />
 
         <service android:name=".service.sensor.IOIOService" />
+        <service android:name=".service.sensor.BluetoothLeService" />
         <service
             android:name=".service.synchronisation.SyncJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
@@ -47,17 +52,15 @@
             android:name=".view.activity.MainActivity"
             android:hardwareAccelerated="true"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="${fabric_api_key}"/>
+        <!-- <meta-data -->
+        <!-- android:name="io.fabric.ApiKey" -->
+        <!-- android:value="${fabric_api_key}"/> -->
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="${google_map_api_key}" />
-
+            android:value="AIzaSyAnCO9njYPfNfdGKNEbmt_UJ3_lMDYTAb8" />
         <meta-data
             android:name="firebase_performance_logcat_enabled"
             android:value="true" />
@@ -87,12 +90,24 @@
             android:name=".view.activity.SplashScreen"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".view.activity.Main2Activity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".view.activity.TestActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+
     </application>
 
 </manifest>

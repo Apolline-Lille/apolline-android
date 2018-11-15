@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">Apolline</string>
 
+    <string name="todo">TODO</string>
+
+    <string name="unknown_characteristic">Unknown characteristic</string>
+    <string name="unknown_service">Unknown service</string>
+    <string name="ble_not_supported">BLE is not supported</string>
+    <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
+
+
     <string name="splash_bluetooth_scan">Scanning in progress...</string>
     <string name="splash_welcome">Welcome to Apolline</string>
     <string name="splash_bluetooth_scan_finished">No device found</string>

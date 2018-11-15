@@ -22,8 +22,14 @@ import science.apolline.service.sensor.IOIOService
 import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
+import android.graphics.Color
 import com.github.mikephil.charting.jobs.MoveViewJob
+import com.squareup.haha.perflib.Main
 import science.apolline.utils.CheckUtility
+import science.apolline.view.activity.MainActivity
+import android.content.SharedPreferences
+import android.graphics.drawable.ColorDrawable
+import android.support.v4.content.ContextCompat
 
 
 /**
@@ -47,7 +53,6 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
 
         val filter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
         activity!!.registerReceiver(mReceiver, filter)
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -57,13 +62,20 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        var sensor_name = arguments!!.getString("sensor_name")
+
         mAdapter = Adapter(childFragmentManager)
         setupViewPager(pager)
+        if (sensor_name.toLowerCase().contains(regex = "^appa.".toRegex())) {
+            //not working
+            tabs.setBackgroundColor(Color.parseColor("#428aff"))
+        }
         tabs.setupWithViewPager(pager)
         pager.addOnPageChangeListener(pageChangeListener)
         pager.offscreenPageLimit = 3
 
         pager.setOnTouchListener { _, _ -> true }
+
     }
 
     private val pageChangeListener = object : OnPageChangeListener {
@@ -89,7 +101,7 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
     private fun setupViewPager(pager: ViewPager?) {
 
         val f1 = mFragmentIOIO
-        mAdapter.addFragment(f1, "IOIO")
+        mAdapter.addFragment(f1, "SENSOR")
 
         val f2 = mFragmentChart
         mAdapter.addFragment(f2, "CHART")
@@ -177,3 +189,4 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
     }
 
 }
+

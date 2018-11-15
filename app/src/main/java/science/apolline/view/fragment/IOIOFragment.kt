@@ -3,7 +3,9 @@ package science.apolline.view.fragment
 import android.Manifest
 import android.annotation.SuppressLint
 import android.arch.lifecycle.ViewModelProviders
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +38,15 @@ import science.apolline.service.database.SensorDao
 import science.apolline.utils.CheckUtility
 import science.apolline.viewModel.SensorViewModel
 import kotlin.math.roundToLong
+import android.content.Context.MODE_PRIVATE
+import android.content.Context
+import android.content.Intent
+import android.util.Log
+import com.squareup.haha.perflib.Main
+import science.apolline.service.sensor.BluetoothLeService
+import science.apolline.view.activity.Main2Activity
+import science.apolline.view.activity.MainActivity
+import java.util.*
 
 
 class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
@@ -44,6 +55,17 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
     private lateinit var mDisposable: CompositeDisposable
     private lateinit var mViewModel: SensorViewModel
     private var mIsWriteToExternalStoragePermissionGranted = false
+
+    var pm01 : Int = 0
+    var pm25 : Int = 0
+    var pm10 : Int = 0
+
+
+    private lateinit var mPrefs: SharedPreferences
+    private lateinit var deviceAddress : String
+    private lateinit var deviceName : String
+
+
 
     private val mRequestWriteToExternalStoragePermission by lazy {
         permissionsBuilder(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -55,6 +77,7 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
         super.onCreate(savedInstanceState)
         mViewModel = ViewModelProviders.of(this).get(SensorViewModel::class.java).init(appKodein())
         this.retainInstance = true
+        MainActivity.mFragment = this
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -65,6 +88,10 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mDisposable = CompositeDisposable()
+
+        mPrefs = this.activity!!.getSharedPreferences("pref", Context.MODE_PRIVATE)
+        deviceAddress = mPrefs.getString("sensor_mac_address","sensor_mac_address does not exist")
+        deviceName = mPrefs.getString("sensor_name", "sensor_name does not exist")
 
         mIsWriteToExternalStoragePermissionGranted = CheckUtility.checkWriteToExternalStoragePermissionPermission (activity!!.applicationContext)
 
@@ -132,52 +159,70 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
 
     override fun onStart() {
         super.onStart()
-        mDisposable.add(mViewModel.getDeviceList(MAX_DEVICE)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .onExceptionResumeNext {
-                    Flowable.empty<Device>()
-                }
-                .onErrorReturn {
-                    error("Error device list not found $it")
-                    emptyList()
-                }
-                .subscribe {
-                    if (it.isNotEmpty()) {
-                        val device = it.first()
-                        val gsonBuilder = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
-                        val data = gsonBuilder.fromJson(device.data, IOIOData::class.java)
-
-
-                        val pm01 = data!!.pm01Value
-                        val pm25 = data.pm2_5Value
-                        val pm10 = data.pm10Value
-                        val tempC = data.tempCelcius.roundToLong()
-                        val tempK = data.tempKelvin.roundToLong()
-                        val humidComp = data.rht.roundToLong()
-
-                        fragment_ioio_progress_pm1.setValueAnimated(pm01.toFloat())
-                        fragment_ioio_progress_pm2_5.setValueAnimated(pm25.toFloat())
-                        fragment_ioio_progress_pm10.setValueAnimated(pm10.toFloat())
-                        fragment_ioio_progress_rht.setValueAnimated(humidComp.toFloat())
-                        fragment_ioio_progress_tmpk.setValueAnimated(tempK.toFloat())
-                        fragment_ioio_progress_tmpc.setValueAnimated(tempC.toFloat())
-
-                    } else {
-                        fragment_ioio_progress_pm1.setValue(0.0f)
-                        fragment_ioio_progress_pm2_5.setValue(0.0f)
-                        fragment_ioio_progress_pm10.setValue(0.0f)
-                        fragment_ioio_progress_rht.setValue(0.0f)
-                        fragment_ioio_progress_tmpk.setValue(0.0f)
-                        fragment_ioio_progress_tmpc.setValue(0.0f)
-
+        if(this.deviceName.toLowerCase().contains(regex = "^ioio.".toRegex())) {
+            mDisposable.add(mViewModel.getDeviceList(MAX_DEVICE)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .onExceptionResumeNext {
+                        Flowable.empty<Device>()
                     }
-                })
+                    .onErrorReturn {
+                        error("Error device list not found $it")
+                        emptyList()
+                    }
+                    .subscribe {
+                        if (it.isNotEmpty()) {
+                            val device = it.first()
+                            val gsonBuilder = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
+                            val data = gsonBuilder.fromJson(device.data, IOIOData::class.java)
+
+                            // les valeurs etaient val ici
+                            pm01 = data!!.pm01Value
+                            pm25 = data.pm2_5Value
+                            pm10 = data.pm10Value
+                            val tempC = data.tempCelcius.roundToLong()
+                            val tempK = data.tempKelvin.roundToLong()
+                            val humidComp = data.rht.roundToLong()
+
+                            fragment_ioio_progress_pm1.setValueAnimated(pm01.toFloat())
+                            fragment_ioio_progress_pm2_5.setValueAnimated(pm25.toFloat())
+                            fragment_ioio_progress_pm10.setValueAnimated(pm10.toFloat())
+                            fragment_ioio_progress_rht.setValueAnimated(humidComp.toFloat())
+                            fragment_ioio_progress_tmpk.setValueAnimated(tempK.toFloat())
+                            fragment_ioio_progress_tmpc.setValueAnimated(tempC.toFloat())
+
+                        } else {
+                            fragment_ioio_progress_pm1.setValue(0.0f)
+                            fragment_ioio_progress_pm2_5.setValue(0.0f)
+                            fragment_ioio_progress_pm10.setValue(0.0f)
+                            fragment_ioio_progress_rht.setValue(0.0f)
+                            fragment_ioio_progress_tmpk.setValue(0.0f)
+                            fragment_ioio_progress_tmpc.setValue(0.0f)
+
+                        }
+                    })
+        }
+        else {
+
+            println("fragment blablahg " + MainActivity.mBluetoothLeService )
+            /*pm01 = MainActivity.mBluetoothLeService!!.appaData.pm01Value
+            pm25 = MainActivity.mBluetoothLeService!!.appaData.pm2_5Value
+            pm10 = MainActivity.mBluetoothLeService!!.appaData.pm10Value
+
+
+            fragment_ioio_progress_pm1.setValueAnimated(pm01.toFloat())
+            fragment_ioio_progress_pm2_5.setValueAnimated(pm25.toFloat())
+            fragment_ioio_progress_pm10.setValueAnimated(pm10.toFloat())
+            fragment_ioio_progress_rht.setValueAnimated(0.0f)
+            fragment_ioio_progress_tmpk.setValueAnimated(0.0f)
+            fragment_ioio_progress_tmpc.setValueAnimated(0.0f)*/
+        }
         info("onStart")
     }
 
     override fun onResume() {
         super.onResume()
+
         info("onResume")
     }
 
@@ -252,6 +297,7 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
     }
 
     companion object {
+        val TAG = "IOIOFragment"
         private const val MAX_DEVICE: Long = 10
     }
 }
