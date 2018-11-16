@@ -22,8 +22,9 @@
         android:icon="@drawable/ic_sync_black_24dp"
         android:title="@string/pref_header_data_sync" />
 
-
-
-
+    <header
+        android:fragment="science.apolline.view.activity.SettingsActivity$DataErasePreferenceFragment"
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:title="Delete synchronized data" />
 
 </preference-headers>

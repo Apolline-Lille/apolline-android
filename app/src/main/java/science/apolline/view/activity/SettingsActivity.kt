@@ -1,17 +1,24 @@
 package science.apolline.view.activity
 
 import android.annotation.TargetApi
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
+import android.os.*
 import android.preference.*
+import android.support.annotation.RequiresApi
 import android.text.TextUtils
 import android.view.MenuItem
+import android.widget.Toast
 import science.apolline.R
+import science.apolline.service.database.AppDatabase
+import science.apolline.service.database.SensorDao
+import java.lang.ref.WeakReference
+
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -62,6 +69,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 || ChartPreferenceFragment::class.java.name == fragmentName
                 || DataSyncPreferenceFragment::class.java.name == fragmentName
                 || NotificationPreferenceFragment::class.java.name == fragmentName
+                || DataErasePreferenceFragment::class.java.name == fragmentName
     }
 
     /**
@@ -173,6 +181,106 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             return super.onOptionsItemSelected(item)
         }
     }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    class DataErasePreferenceFragment : PreferenceFragment(){
+
+        @RequiresApi(Build.VERSION_CODES.M)
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+
+            val builder = AlertDialog.Builder(this.context)
+            var countSyncData = 0
+
+            if (this.context != null) {
+                //sensorModel = AppDatabase.getInstance(this.context).sensorDao()
+                //var res = sensorModel.getSensorSyncCount()
+                 countSyncData = GetCountSyncDataAsyncTask(this).execute().get()
+            }
+
+            // Set the alert dialog title
+            builder.setTitle("Delete synchronized data")
+
+            // Display a message on alert dialog
+            builder.setMessage("Do you want to delete all the synchronized data ? (" +
+                    countSyncData + ")")
+
+            // Set a positive button and its click listener on alert dialog
+            builder.setPositiveButton("YES"){dialog, which ->
+                // Do something when user press the positive button
+                DeleteDataSyncTask(this).execute()
+                Toast.makeText(this.context,"Synchonized data has been deleted",Toast.LENGTH_SHORT).show()
+            }
+
+            // Display a neutral button on alert dialog
+            builder.setNeutralButton("Cancel"){_,_ ->
+                Toast.makeText(this.context,"Synchronized data has been kept",Toast.LENGTH_SHORT).show()
+            }
+
+            // Finally, make the alert dialog using builder
+            val dialog: AlertDialog = builder.create()
+
+            // Display the alert dialog on app interface
+            dialog.show()
+        }
+
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            val id = item.itemId
+            if (id == android.R.id.home) {
+                startActivity(Intent(activity, SettingsActivity::class.java))
+                return true
+            }
+            return super.onOptionsItemSelected(item)
+        }
+    }
+
+
+    private class GetCountSyncDataAsyncTask(activity: DataErasePreferenceFragment) : AsyncTask<Void, Void, Int>() {
+        //Prevent leak
+        private val weakActivity: WeakReference<Activity>
+        private var mActivity : DataErasePreferenceFragment
+
+        init{
+            weakActivity = WeakReference(activity.activity)
+            mActivity = activity
+        }
+
+        @RequiresApi(Build.VERSION_CODES.M)
+        protected override fun doInBackground(vararg params:Void):Int {
+            val sensorModel = AppDatabase.getInstance(mActivity.context).sensorDao()
+            return sensorModel.getSensorSyncCount().toInt()
+        }
+
+        protected override fun onPostExecute(countSyncData:Int) {
+            val activity = weakActivity.get() ?: return
+            Toast.makeText(activity, "Count Data Sync : " + countSyncData.toString(), Toast.LENGTH_LONG).show()
+            activity.onBackPressed()
+        }
+    }
+
+    private class DeleteDataSyncTask(activity: DataErasePreferenceFragment) : AsyncTask<Void, Void, Int>() {
+        //Prevent leak
+        private val weakActivity: WeakReference<Activity>
+        private var mActivity : DataErasePreferenceFragment
+
+        init{
+            weakActivity = WeakReference(activity.activity)
+            mActivity = activity
+        }
+
+        @RequiresApi(Build.VERSION_CODES.M)
+        protected override fun doInBackground(vararg params:Void):Int {
+            val sensorModel = AppDatabase.getInstance(mActivity.context).sensorDao()
+            sensorModel.deleteDataSync()
+            return 1
+        }
+
+        protected override fun onPostExecute(result: Int?) {
+            val activity = weakActivity.get() ?: return
+            activity.onBackPressed()
+        }
+    }
+
 
     companion object {
 

@@ -23,6 +23,9 @@ interface SensorDao {
     @Query("SELECT count(*) FROM Device WHERE isSync=0")
     fun getSensorNotSyncCount(): Long
 
+    @Query("SELECT count(*) FROM Device WHERE isSync=1")
+    fun getSensorSyncCount(): Long
+
     @Query("SELECT count(*) FROM Device")
     fun getSensorCount(): Long
 
@@ -32,6 +35,9 @@ interface SensorDao {
     @Transaction
     @Query("SELECT * FROM Device WHERE id=:idDevice")
     fun getSensorById(idDevice: Long): LiveData<Device>
+
+    @Query("DELETE FROM Device WHERE isSync=1")
+    fun deleteDataSync()
 
     @Transaction
     @Query("SELECT * FROM Device")
