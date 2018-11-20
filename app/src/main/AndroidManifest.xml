@@ -54,9 +54,9 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
-        <!-- <meta-data -->
-        <!-- android:name="io.fabric.ApiKey" -->
-        <!-- android:value="${fabric_api_key}"/> -->
+<!--     <meta-data
+         android:name="io.fabric.ApiKey"
+         android:value="${fabric_api_key}"/>-->
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
@@ -96,16 +96,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".view.activity.Main2Activity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
-            android:name=".view.activity.TestActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-
         </activity>
 
     </application>
