@@ -18,7 +18,7 @@ android {
     def influxdb_pwd = hasProperty('INFLUXDB_PWD') ? INFLUXDB_PWD : System.getenv('INFLUXDB_PWD')
 
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.2'
 
 
     defaultConfig {
@@ -183,6 +183,7 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$firebase_core_version"
     implementation "com.android.support:support-v4:$appcompat_version"
     implementation "com.android.support:recyclerview-v7:$appcompat_version"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "com.android.support.test:runner:$runner_version"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_core_version"
