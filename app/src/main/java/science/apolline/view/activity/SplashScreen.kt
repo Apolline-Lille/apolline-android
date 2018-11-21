@@ -135,7 +135,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 .subscribeOn(Schedulers.computation())
                 .subscribe { device ->
                     addDeviceToCircleView(device, isBounded = isBoundedDevice(device))
-                    println("deviceeeee  " + device.name)
+
                     if(device.name != null) {
                         if (device.name.toLowerCase().contains(regex = "^ioio.".toRegex()) ||
                                 device.name.toLowerCase().contains(regex = "^appa.".toRegex())) {
@@ -186,7 +186,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
                 .subscribe { event ->
-                    println("event blabla ")
+
                     when (event.state) {
                         BluetoothDevice.BOND_NONE -> {
                             info("device bound state BOND_NONE: " + event.bluetoothDevice.name)
