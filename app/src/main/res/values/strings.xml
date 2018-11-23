@@ -1,4 +1,4 @@
-<resources>
+    <resources>
     <string name="app_name">Apolline</string>
 
     <string name="splash_bluetooth_scan">Scanning in progress...</string>
@@ -123,6 +123,20 @@
         <item>720</item>
         <item>1440</item>
         <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_collect_data_frequency">Collect data frequency</string>
+    <string-array name="pref_collect_data_frequency_titles">
+        <item>Toutes les secondes</item>
+        <item>Toutes les 2 secondes</item>
+        <item>Toutes les 5 secondes</item>
+        <item>Toutes les 10 secondes</item>
+    </string-array>
+    <string-array name="pref_collect_data_frequency_values">
+        <item>1000</item>
+        <item>2000</item>
+        <item>5000</item>
+        <item>10000</item>
     </string-array>
 
     <string name="pref_title_sync_mod">Auto-synchronize data</string>

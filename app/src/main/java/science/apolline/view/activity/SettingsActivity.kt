@@ -162,6 +162,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("sync_mod"), STRING)
             bindPreferenceSummaryToValue(findPreference("sync_frequency"), STRING)
+            bindPreferenceSummaryToValue(findPreference("collect_data_frequency"), STRING)
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

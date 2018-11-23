@@ -58,6 +58,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     private var DEVICE_NAME = "Apolline00"
     private var DEVICE_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff"
+    private var COLLECT_DATA_FREQ: Int = 1000
 
 
     override fun createIOIOLooper(): IOIOLooper {
@@ -65,6 +66,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
         DEVICE_NAME = mPrefs.getString("device_name", "Apolline00")
         DEVICE_UUID = mPrefs.getString("device_uuid", "ffffffff-ffff-ffff-ffff-ffffffffffff")
+        COLLECT_DATA_FREQ = mPrefs.getString("collect_data_frequency", "1000").toInt()
 
         return object : BaseIOIOLooper() {
             private val data = IOIOData()
@@ -73,7 +75,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
             private var inputStream: InputStream? = null
             private var inputTemp: AnalogInput? = null
             private var inputHum: AnalogInput? = null
-            private val freq = 1000
+            private val freq = COLLECT_DATA_FREQ
             private val request = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                     .setNumUpdates(5)
                     .setInterval(750)

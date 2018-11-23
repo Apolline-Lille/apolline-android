@@ -55,6 +55,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var mPrefs: SharedPreferences
     private var SYNC_MOD = 2 // Wi-Fi only
     private var INFLUXDB_SYNC_FREQ: Long = -1
+    private var COLLECT_DATA_FREQ: Long = 1000
 
     private val mRequestPermissions by lazy {
         permissionsBuilder(Manifest.permission.READ_PHONE_STATE,
@@ -86,6 +87,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
         SYNC_MOD = (mPrefs.getString("sync_mod", "2")).toInt()
         INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
+        COLLECT_DATA_FREQ = (mPrefs.getString("collect_data_frequency", "1000")).toLong()
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         // Request enable Bluetooth
@@ -107,6 +109,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         super.onStart()
         SYNC_MOD = (mPrefs.getString("sync_mod", "2")).toInt()
         INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
+        COLLECT_DATA_FREQ = (mPrefs.getString("collect_data_frequency", "1000")).toLong()
     }
 
     override fun onBackPressed() {
@@ -215,7 +218,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
-
     private fun replaceFragment(fragment: Fragment) {
         val backStateName = fragment.javaClass.name
 
@@ -273,7 +275,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             }
         }
     }
-
 
     override fun onDestroy() {
         if (mWakeLock.isHeld) {
