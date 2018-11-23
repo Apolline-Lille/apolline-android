@@ -12,8 +12,10 @@ import android.os.*
 import android.preference.*
 import android.support.annotation.RequiresApi
 import android.text.TextUtils
+import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
+import es.dmoral.toasty.Toasty
 import science.apolline.R
 import science.apolline.service.database.AppDatabase
 import science.apolline.service.database.SensorDao
@@ -209,12 +211,12 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             builder.setPositiveButton("YES"){dialog, which ->
                 // Do something when user press the positive button
                 DeleteDataSyncTask(this).execute()
-                Toast.makeText(this.context,"Synchonized data has been deleted",Toast.LENGTH_SHORT).show()
+                Toasty.info(this.context,"Synchonized data has been deleted",Toast.LENGTH_LONG,true).show()
             }
 
             // Display a neutral button on alert dialog
             builder.setNeutralButton("Cancel"){_,_ ->
-                Toast.makeText(this.context,"Synchronized data has been kept",Toast.LENGTH_SHORT).show()
+                Toasty.info(this.context,"Synchronized data has been kept",Toast.LENGTH_LONG,true).show()
             }
 
             // Finally, make the alert dialog using builder
@@ -253,7 +255,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
         protected override fun onPostExecute(countSyncData:Int) {
             val activity = weakActivity.get() ?: return
-            Toast.makeText(activity, "Count Data Sync : " + countSyncData.toString(), Toast.LENGTH_LONG).show()
+            Log.i("","Count Data Sync : " + countSyncData.toString())
             activity.onBackPressed()
         }
     }

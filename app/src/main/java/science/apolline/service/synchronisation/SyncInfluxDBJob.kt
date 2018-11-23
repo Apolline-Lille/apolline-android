@@ -104,7 +104,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
                                 doAsync {
                                     dataNotSync.forEach {
                                         it.isSync = 1
-                                        //Toasty.success(applicationContext, "isSync + 1", Toast.LENGTH_SHORT, true).show()
+                                        Toasty.success(applicationContext, "isSync + 1", Toast.LENGTH_SHORT, true).show()
                                     }
                                     uiThread {
                                         doAsync {
