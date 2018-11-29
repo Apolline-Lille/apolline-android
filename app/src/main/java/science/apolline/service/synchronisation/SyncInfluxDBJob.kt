@@ -12,8 +12,10 @@ import retrofit2.Response
 import science.apolline.utils.RequestParser
 import science.apolline.BuildConfig
 import science.apolline.models.InfluxBody
+import science.apolline.models.TimestampSync
 import science.apolline.service.database.AppDatabase
 import science.apolline.service.database.SensorDao
+import science.apolline.service.database.TimestampSyncDao
 import science.apolline.service.networks.ApiUtils
 import science.apolline.utils.CheckUtility
 import science.apolline.utils.CheckUtility.isNetworkConnected
@@ -29,6 +31,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
         .persist()), AnkoLogger {
 
     private lateinit var sensorModel: SensorDao
+    private lateinit var timestampModel: TimestampSyncDao
     private var SYNC_MOD = 2 // Wi-Fi only
     private lateinit var mPrefs: SharedPreferences
     override fun onAdded() {
@@ -78,6 +81,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
 
         if (super.getApplicationContext() != null && isNetworkConnected(super.getApplicationContext())) {
             sensorModel = AppDatabase.getInstance(super.getApplicationContext()).sensorDao()
+            timestampModel = AppDatabase.getInstance(super.getApplicationContext()).timestampSyncDao()
 
             var nbUnSynced: Long = sensorModel.getSensorNotSyncCount()
             info("number of initial unsynced is : $nbUnSynced")
@@ -88,6 +92,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
             info("Attempts $attempt")
 
             for (i in 1..attempt) {
+                var t = TimestampSync(System.currentTimeMillis())
                 val dataNotSync = sensorModel.getUnSync(MAX_LENGTH)
 
                 if (dataNotSync.isNotEmpty()) {
@@ -95,6 +100,8 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
 
                     val dataToSend = RequestParser.createRequestBody(dataNotSync)
                     info(dataToSend)
+
+
                     val call = api.savePost(BuildConfig.INFLUXDB_DBNAME, BuildConfig.INFLUXDB_USR, BuildConfig.INFLUXDB_PWD, dataToSend)
 
                     call.enqueue(object : Callback<InfluxBody> {
@@ -116,6 +123,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
                                             }
                                         }
                                     }
+                                    timestampModel.insert(t)
                                 }
                             } else {
                                 info("response failed $response")

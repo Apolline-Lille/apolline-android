@@ -21,9 +21,11 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import es.dmoral.toasty.Toasty
+import org.w3c.dom.Text
 import science.apolline.R
 import science.apolline.service.database.AppDatabase
 import java.lang.ref.WeakReference
+import java.util.*
 
 
 /**
@@ -211,14 +213,22 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 var nbDataUnsynchronized = QueryBDDAsyncTask(this).execute("getSensorNotSyncCount").get()
                 nbDataUnsynchronizedTxt.setText(nbDataUnsynchronized.toString())
 
+                var dateLastSyncTxt = view.findViewById<TextView>(R.id.date_last_sync)
+                var dateLastSync = QuerySynchro(this).execute("getLastSync").get()
+                dateLastSyncTxt.setText(Date(dateLastSync).toString())
+
+                Toast.makeText(view.context, dateLastSync.toString(), Toast.LENGTH_LONG).show()
+
+
+
                 var btnDeleteData = view.findViewById<Button>(R.id.button_delete_synchonized_data)
                 btnDeleteData.setOnClickListener{ view ->
                    showDeleteDataDialog()
                 }
+
                 return view
             }
             return super.onCreateView(inflater, container, savedInstanceState)
-
         }
 
         private fun showDeleteDataDialog() {
@@ -287,15 +297,41 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
                 else -> return 0
             }
-
-
-
             return sensorModel.getSensorSyncCount().toInt()
         }
 
         protected override fun onPostExecute(countSyncData:Int) {
             val activity = weakActivity.get() ?: return
             Log.i("","Count Data Sync : " + countSyncData.toString())
+            //activity.onBackPressed()
+        }
+    }
+
+
+    private class QuerySynchro(activity: DataErasePreferenceFragment) : AsyncTask<String, Void, Long>() {
+        //Prevent leak
+        private val weakActivity: WeakReference<Activity>
+        private var mActivity : DataErasePreferenceFragment
+
+        init{
+            weakActivity = WeakReference(activity.activity)
+            mActivity = activity
+        }
+
+        @RequiresApi(Build.VERSION_CODES.M)
+        protected override fun doInBackground(vararg params:String):Long {
+            val timestampModel = AppDatabase.getInstance(mActivity.context).timestampSyncDao()
+            when(params[0])
+            {
+                "getLastSync" -> return timestampModel.getLastSync()
+                else -> return 0
+            }
+            return timestampModel.getLastSync()
+        }
+
+        protected override fun onPostExecute(countSyncData:Long) {
+            val activity = weakActivity.get() ?: return
+            Log.i("","GetLastSync : " + countSyncData.toString())
             //activity.onBackPressed()
         }
     }
