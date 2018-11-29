@@ -13,12 +13,16 @@ import android.preference.*
 import android.support.annotation.RequiresApi
 import android.text.TextUtils
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import es.dmoral.toasty.Toasty
 import science.apolline.R
 import science.apolline.service.database.AppDatabase
-import science.apolline.service.database.SensorDao
 import java.lang.ref.WeakReference
 
 
@@ -187,17 +191,42 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     class DataErasePreferenceFragment : PreferenceFragment(){
 
-        @RequiresApi(Build.VERSION_CODES.M)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+        }
 
-            val builder = AlertDialog.Builder(this.context)
+        override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
+            if (inflater != null) {
+                var view = inflater.inflate(R.layout.fragment_delete_synchronized, container, false)
+
+                var nbDataStoreTxt = view.findViewById<TextView>(R.id.nb_data_saved)
+                var nbDataStore = QueryBDDAsyncTask(this).execute("getSensorCount").get()
+                nbDataStoreTxt.setText(nbDataStore.toString())
+
+                var nbDataSynchronizedTxt = view.findViewById<TextView>(R.id.nb_data_sync)
+                var nbDataSynchronized = QueryBDDAsyncTask(this).execute("getSensorSyncCount").get()
+                nbDataSynchronizedTxt.setText(nbDataSynchronized.toString())
+
+                var nbDataUnsynchronizedTxt = view.findViewById<TextView>(R.id.nb_data_unsync)
+                var nbDataUnsynchronized = QueryBDDAsyncTask(this).execute("getSensorNotSyncCount").get()
+                nbDataUnsynchronizedTxt.setText(nbDataUnsynchronized.toString())
+
+                var btnDeleteData = view.findViewById<Button>(R.id.button_delete_synchonized_data)
+                btnDeleteData.setOnClickListener{ view ->
+                   showDeleteDataDialog()
+                }
+                return view
+            }
+            return super.onCreateView(inflater, container, savedInstanceState)
+
+        }
+
+        private fun showDeleteDataDialog() {
+            val builder = AlertDialog.Builder(this.view.context)
             var countSyncData = 0
 
-            if (this.context != null) {
-                //sensorModel = AppDatabase.getInstance(this.context).sensorDao()
-                //var res = sensorModel.getSensorSyncCount()
-                 countSyncData = GetCountSyncDataAsyncTask(this).execute().get()
+            if (this.view.context != null) {
+                 countSyncData = QueryBDDAsyncTask(this).execute("getSensorSyncCount").get()
             }
 
             // Set the alert dialog title
@@ -210,21 +239,20 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // Set a positive button and its click listener on alert dialog
             builder.setPositiveButton("YES"){dialog, which ->
                 // Do something when user press the positive button
-                DeleteDataSyncTask(this).execute()
-                Toasty.info(this.context,"Synchonized data has been deleted",Toast.LENGTH_LONG,true).show()
+                QueryBDDAsyncTask(this).execute("deleteDataSync").get()
+                Toasty.info(this.view.context,"Synchonized data has been deleted",Toast.LENGTH_LONG,true).show()
             }
 
             // Display a neutral button on alert dialog
             builder.setNeutralButton("Cancel"){_,_ ->
-                Toasty.info(this.context,"Synchronized data has been kept",Toast.LENGTH_LONG,true).show()
+                Toasty.info(this.view.context,"Synchronized data has been kept",Toast.LENGTH_LONG,true).show()
             }
 
             // Finally, make the alert dialog using builder
             val dialog: AlertDialog = builder.create()
 
             // Display the alert dialog on app interface
-            dialog.show()
-        }
+            dialog.show()        }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
             val id = item.itemId
@@ -237,7 +265,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     }
 
 
-    private class GetCountSyncDataAsyncTask(activity: DataErasePreferenceFragment) : AsyncTask<Void, Void, Int>() {
+    private class QueryBDDAsyncTask(activity: DataErasePreferenceFragment) : AsyncTask<String, Void, Int>() {
         //Prevent leak
         private val weakActivity: WeakReference<Activity>
         private var mActivity : DataErasePreferenceFragment
@@ -248,41 +276,29 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         }
 
         @RequiresApi(Build.VERSION_CODES.M)
-        protected override fun doInBackground(vararg params:Void):Int {
+        protected override fun doInBackground(vararg params:String):Int {
             val sensorModel = AppDatabase.getInstance(mActivity.context).sensorDao()
+            when(params[0])
+            {
+                "getSensorCount" -> return sensorModel.getSensorCount().toInt()
+                "getSensorSyncCount" -> return sensorModel.getSensorSyncCount().toInt()
+                "getSensorNotSyncCount" -> return sensorModel.getSensorNotSyncCount().toInt()
+                "deleteDataSync" -> sensorModel.deleteDataSync()
+
+                else -> return 0
+            }
+
+
+
             return sensorModel.getSensorSyncCount().toInt()
         }
 
         protected override fun onPostExecute(countSyncData:Int) {
             val activity = weakActivity.get() ?: return
             Log.i("","Count Data Sync : " + countSyncData.toString())
-            activity.onBackPressed()
+            //activity.onBackPressed()
         }
     }
-
-    private class DeleteDataSyncTask(activity: DataErasePreferenceFragment) : AsyncTask<Void, Void, Int>() {
-        //Prevent leak
-        private val weakActivity: WeakReference<Activity>
-        private var mActivity : DataErasePreferenceFragment
-
-        init{
-            weakActivity = WeakReference(activity.activity)
-            mActivity = activity
-        }
-
-        @RequiresApi(Build.VERSION_CODES.M)
-        protected override fun doInBackground(vararg params:Void):Int {
-            val sensorModel = AppDatabase.getInstance(mActivity.context).sensorDao()
-            sensorModel.deleteDataSync()
-            return 1
-        }
-
-        protected override fun onPostExecute(result: Int?) {
-            val activity = weakActivity.get() ?: return
-            activity.onBackPressed()
-        }
-    }
-
 
     companion object {
 
