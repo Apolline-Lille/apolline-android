@@ -3,6 +3,7 @@ package science.apolline.view.activity
 import android.annotation.TargetApi
 import android.app.Activity
 import android.app.AlertDialog
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -21,9 +22,12 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import es.dmoral.toasty.Toasty
+import kotlinx.android.synthetic.main.activity_main_content.*
 import org.w3c.dom.Text
 import science.apolline.R
 import science.apolline.service.database.AppDatabase
+import science.apolline.utils.QueryBDDAsyncTask
+import science.apolline.utils.QuerySynchro
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -193,33 +197,22 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     class DataErasePreferenceFragment : PreferenceFragment(){
 
+        lateinit var nbDataStoreTxt : TextView
+        lateinit var nbDataSynchronizedTxt : TextView
+        lateinit var nbDataUnsynchronizedTxt : TextView
+        lateinit var dateLastSyncTxt : TextView
+
+
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+
         }
 
         override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
             if (inflater != null) {
                 var view = inflater.inflate(R.layout.fragment_delete_synchronized, container, false)
 
-                var nbDataStoreTxt = view.findViewById<TextView>(R.id.nb_data_saved)
-                var nbDataStore = QueryBDDAsyncTask(this).execute("getSensorCount").get()
-                nbDataStoreTxt.setText(nbDataStore.toString())
-
-                var nbDataSynchronizedTxt = view.findViewById<TextView>(R.id.nb_data_sync)
-                var nbDataSynchronized = QueryBDDAsyncTask(this).execute("getSensorSyncCount").get()
-                nbDataSynchronizedTxt.setText(nbDataSynchronized.toString())
-
-                var nbDataUnsynchronizedTxt = view.findViewById<TextView>(R.id.nb_data_unsync)
-                var nbDataUnsynchronized = QueryBDDAsyncTask(this).execute("getSensorNotSyncCount").get()
-                nbDataUnsynchronizedTxt.setText(nbDataUnsynchronized.toString())
-
-                var dateLastSyncTxt = view.findViewById<TextView>(R.id.date_last_sync)
-                var dateLastSync = QuerySynchro(this).execute("getLastSync").get()
-                dateLastSyncTxt.setText(Date(dateLastSync).toString())
-
-                Toast.makeText(view.context, dateLastSync.toString(), Toast.LENGTH_LONG).show()
-
-
+                setTextView(view)
 
                 var btnDeleteData = view.findViewById<Button>(R.id.button_delete_synchonized_data)
                 btnDeleteData.setOnClickListener{ view ->
@@ -251,6 +244,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 // Do something when user press the positive button
                 QueryBDDAsyncTask(this).execute("deleteDataSync").get()
                 Toasty.info(this.view.context,"Synchonized data has been deleted",Toast.LENGTH_LONG,true).show()
+
+                setTextView(this.view)
             }
 
             // Display a neutral button on alert dialog
@@ -262,7 +257,28 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             val dialog: AlertDialog = builder.create()
 
             // Display the alert dialog on app interface
-            dialog.show()        }
+            dialog.show()
+        }
+
+        private fun setTextView(view: View){
+            nbDataStoreTxt = view.findViewById<TextView>(R.id.nb_data_saved)
+            var nbDataStore = QueryBDDAsyncTask(this).execute("getSensorCount").get()
+            nbDataStoreTxt.setText(nbDataStore.toString())
+
+            nbDataSynchronizedTxt = view.findViewById<TextView>(R.id.nb_data_sync)
+            var nbDataSynchronized = QueryBDDAsyncTask(this).execute("getSensorSyncCount").get()
+            nbDataSynchronizedTxt.setText(nbDataSynchronized.toString())
+
+            nbDataUnsynchronizedTxt = view.findViewById<TextView>(R.id.nb_data_unsync)
+            var nbDataUnsynchronized = QueryBDDAsyncTask(this).execute("getSensorNotSyncCount").get()
+            nbDataUnsynchronizedTxt.setText(nbDataUnsynchronized.toString())
+
+            dateLastSyncTxt = view.findViewById<TextView>(R.id.date_last_sync)
+            var dateLastSync = QuerySynchro(this).execute("getLastSync").get()
+            dateLastSyncTxt.setText(Date(dateLastSync).toString())
+
+            Toast.makeText(view.context, dateLastSync.toString(), Toast.LENGTH_LONG).show()
+        }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
             val id = item.itemId
@@ -271,68 +287,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 return true
             }
             return super.onOptionsItemSelected(item)
-        }
-    }
-
-
-    private class QueryBDDAsyncTask(activity: DataErasePreferenceFragment) : AsyncTask<String, Void, Int>() {
-        //Prevent leak
-        private val weakActivity: WeakReference<Activity>
-        private var mActivity : DataErasePreferenceFragment
-
-        init{
-            weakActivity = WeakReference(activity.activity)
-            mActivity = activity
-        }
-
-        @RequiresApi(Build.VERSION_CODES.M)
-        protected override fun doInBackground(vararg params:String):Int {
-            val sensorModel = AppDatabase.getInstance(mActivity.context).sensorDao()
-            when(params[0])
-            {
-                "getSensorCount" -> return sensorModel.getSensorCount().toInt()
-                "getSensorSyncCount" -> return sensorModel.getSensorSyncCount().toInt()
-                "getSensorNotSyncCount" -> return sensorModel.getSensorNotSyncCount().toInt()
-                "deleteDataSync" -> sensorModel.deleteDataSync()
-
-                else -> return 0
-            }
-            return sensorModel.getSensorSyncCount().toInt()
-        }
-
-        protected override fun onPostExecute(countSyncData:Int) {
-            val activity = weakActivity.get() ?: return
-            Log.i("","Count Data Sync : " + countSyncData.toString())
-            //activity.onBackPressed()
-        }
-    }
-
-
-    private class QuerySynchro(activity: DataErasePreferenceFragment) : AsyncTask<String, Void, Long>() {
-        //Prevent leak
-        private val weakActivity: WeakReference<Activity>
-        private var mActivity : DataErasePreferenceFragment
-
-        init{
-            weakActivity = WeakReference(activity.activity)
-            mActivity = activity
-        }
-
-        @RequiresApi(Build.VERSION_CODES.M)
-        protected override fun doInBackground(vararg params:String):Long {
-            val timestampModel = AppDatabase.getInstance(mActivity.context).timestampSyncDao()
-            when(params[0])
-            {
-                "getLastSync" -> return timestampModel.getLastSync()
-                else -> return 0
-            }
-            return timestampModel.getLastSync()
-        }
-
-        protected override fun onPostExecute(countSyncData:Long) {
-            val activity = weakActivity.get() ?: return
-            Log.i("","GetLastSync : " + countSyncData.toString())
-            //activity.onBackPressed()
         }
     }
 

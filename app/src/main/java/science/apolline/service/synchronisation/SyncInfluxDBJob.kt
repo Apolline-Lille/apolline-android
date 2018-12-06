@@ -19,6 +19,8 @@ import science.apolline.service.database.TimestampSyncDao
 import science.apolline.service.networks.ApiUtils
 import science.apolline.utils.CheckUtility
 import science.apolline.utils.CheckUtility.isNetworkConnected
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by sparow on 19/01/2018.
@@ -83,7 +85,13 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
             sensorModel = AppDatabase.getInstance(super.getApplicationContext()).sensorDao()
             timestampModel = AppDatabase.getInstance(super.getApplicationContext()).timestampSyncDao()
 
-            var nbUnSynced: Long = sensorModel.getSensorNotSyncCount()
+            var t = TimestampSync(System.currentTimeMillis())
+
+            val lastSyncDate: Long = timestampModel.getLastSync()
+            var nbUnSynced: Long = sensorModel.getSensorNotSyncCountByDate(t.date  * 1000000, lastSyncDate  * 1000000)
+
+            info("actualDate ${t.date}")
+            info("last sync = $lastSyncDate")
             info("number of initial unsynced is : $nbUnSynced")
 
             var attempt: Long = nbUnSynced / MAX_LENGTH
@@ -92,8 +100,8 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
             info("Attempts $attempt")
 
             for (i in 1..attempt) {
-                var t = TimestampSync(System.currentTimeMillis())
-                val dataNotSync = sensorModel.getUnSync(MAX_LENGTH)
+                //val dataNotSync = sensorModel.getUnSync(MAX_LENGTH)
+                val dataNotSync = sensorModel.getUnSyncByDate(t.date  * 1000000 ,lastSyncDate * 1000000 ,MAX_LENGTH)
 
                 if (dataNotSync.isNotEmpty()) {
                     info("UnSync to sync is :" + dataNotSync.size)
