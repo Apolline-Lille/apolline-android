@@ -13,9 +13,9 @@ buildscript {
         sonarqube_url = hasProperty('SONARQUBE_URL') ? SONARQUBE_URL : System.getenv('SONARQUBE_URL')
     }
     repositories {
-        jcenter()
         google()
         maven { url 'https://maven.fabric.io/public' }
+        jcenter()
     }
     dependencies {
 
@@ -33,11 +33,11 @@ buildscript {
 
 allprojects {
     repositories {
-        jcenter()
         google()
         maven { url 'https://maven.google.com' }
         maven { url "https://jitpack.io" }
         maven { url 'https://maven.fabric.io/public' }
+        jcenter()
     }
 }
 

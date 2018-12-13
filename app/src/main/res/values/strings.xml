@@ -200,6 +200,11 @@
     <string name="scan_device_name">My PHONE</string>
     <string name="found_device_name">My Sensor</string>
     <string name="launch_scan_btn">Scan</string>
+    <string name="number_of_data_saved_in_phone">Number of data saved in phone :</string>
+    <string name="number_of_data_synchronized_send_to_server">Number of data synchronized (send to server) :</string>
+    <string name="number_of_data_unsynchronized">Number of data unsynchronized :</string>
+    <string name="date_of_last_synchronization_with_the_server">Date of last synchronization with the server :</string>
+    <string name="_0">0</string>
 
     <!--<string name="pref_title_chart_range_y">Axe Y visibility</string>-->
     <!--<string name="pref_title_chart_range_y_summary">Min &lt; Max  </string>-->

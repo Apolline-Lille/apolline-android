@@ -8,16 +8,18 @@ import android.content.Context
 import science.apolline.models.Device
 import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.migration.Migration
+import science.apolline.models.TimestampSync
 
 
 /**
  * Created by sparow on 11/5/17.
  */
-@Database(entities = [(Device::class)], version = 2, exportSchema = true)
+@Database(entities = [(Device::class), (TimestampSync::class)], version = 3, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun sensorDao(): SensorDao
+    abstract fun timestampSyncDao() : TimestampSyncDao
 
     companion object {
         var TEST_MODE = false
@@ -34,7 +36,7 @@ abstract class AppDatabase : RoomDatabase() {
                             .build()
                 } else {
                     Room.databaseBuilder(context, AppDatabase::class.java, databaseName)
-                            .addMigrations(MIGRATION_1_2)
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                             .build()
                 }
             return db!!
@@ -47,6 +49,12 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_1_2: Migration = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 // Since we didn't alter the table, there's nothing else to do here.
+            }
+        }
+
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE TimestampSync (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, date INTEGER NOT NULL);")
             }
         }
     }
