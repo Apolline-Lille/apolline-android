@@ -32,7 +32,7 @@ class QueryBDDAsyncTask(activity: SettingsActivity.DataErasePreferenceFragment) 
 
             else -> return 0
         }
-        return sensorModel.getSensorSyncCount().toInt()
+        return sensorModel.getSensorSyncCountByDate(timestampSyncDao.getLastSync() * 1000000).toInt()
     }
 
     protected override fun onPostExecute(countSyncData:Int) {

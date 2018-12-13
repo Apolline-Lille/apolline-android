@@ -117,10 +117,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
                             if (response != null && response.isSuccessful) {
                                 info("response success$response")
                                 doAsync {
-                                    dataNotSync.forEach {
-                                        it.isSync = 1
-//                                        Toasty.success(applicationContext, "isSync + 1", Toast.LENGTH_SHORT, true).show()
-                                    }
+
                                     uiThread {
                                         doAsync {
                                             sensorModel.update(*dataNotSync.toTypedArray())

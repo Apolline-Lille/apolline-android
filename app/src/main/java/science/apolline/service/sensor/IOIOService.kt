@@ -169,7 +169,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     private fun persistData(data: IOIOData, pos: Position?) {
         val d1 = System.currentTimeMillis() * 1000000
-        val device = Device(DEVICE_UUID, DEVICE_NAME, d1, pos, data.toJson(), 0)
+        val device = Device(DEVICE_UUID, DEVICE_NAME, d1, pos, data.toJson(),0)
         doAsync {
             sensorModel.insert(device)
             location = null
