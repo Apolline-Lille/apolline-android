@@ -2,7 +2,6 @@ package science.apolline.view.activity
 
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
@@ -55,7 +54,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var mPrefs: SharedPreferences
     private var SYNC_MOD = 2 // Wi-Fi only
     private var INFLUXDB_SYNC_FREQ: Long = -1
-    private var COLLECT_DATA_FREQ: Long = 1000
+    private var COLLECT_DATA_FREQ: Int = 2
 
     private val mRequestPermissions by lazy {
         permissionsBuilder(Manifest.permission.READ_PHONE_STATE,
@@ -84,10 +83,9 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
         // Preferences.
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
-
         SYNC_MOD = (mPrefs.getString("sync_mod", "2")).toInt()
         INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
-        COLLECT_DATA_FREQ = (mPrefs.getString("collect_data_frequency", "1000")).toLong()
+        COLLECT_DATA_FREQ = mPrefs.getString("collect_data_frequency", "2").toInt()
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         // Request enable Bluetooth
@@ -109,7 +107,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         super.onStart()
         SYNC_MOD = (mPrefs.getString("sync_mod", "2")).toInt()
         INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
-        COLLECT_DATA_FREQ = (mPrefs.getString("collect_data_frequency", "1000")).toLong()
+        COLLECT_DATA_FREQ = mPrefs.getString("collect_data_frequency", "2").toInt()
     }
 
     override fun onBackPressed() {

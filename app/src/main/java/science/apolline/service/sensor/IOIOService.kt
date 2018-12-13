@@ -58,7 +58,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     private var DEVICE_NAME = "Apolline00"
     private var DEVICE_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff"
-    private var COLLECT_DATA_FREQ: Int = 1000
+    private var COLLECT_DATA_FREQ: Int = 2
 
 
     override fun createIOIOLooper(): IOIOLooper {
@@ -66,7 +66,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
         DEVICE_NAME = mPrefs.getString("device_name", "Apolline00")
         DEVICE_UUID = mPrefs.getString("device_uuid", "ffffffff-ffff-ffff-ffff-ffffffffffff")
-        COLLECT_DATA_FREQ = mPrefs.getString("collect_data_frequency", "1000").toInt()
+  //      COLLECT_DATA_FREQ = (mPrefs.getString("collect_data_frequency", "2")).toInt()
 
         return object : BaseIOIOLooper() {
             private val data = IOIOData()
@@ -75,7 +75,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
             private var inputStream: InputStream? = null
             private var inputTemp: AnalogInput? = null
             private var inputHum: AnalogInput? = null
-            private val freq = COLLECT_DATA_FREQ
+  //          private val freq = COLLECT_DATA_FREQ * 1000
             private val request = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                     .setNumUpdates(5)
                     .setInterval(750)
@@ -94,7 +94,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
             @Throws(ConnectionLostException::class, InterruptedException::class)
             override fun loop() {
-
+                COLLECT_DATA_FREQ = (mPrefs.getString("collect_data_frequency", "2")).toInt()
 
                 try {
                     if (CheckUtility.checkFineLocationPermission(applicationContext) && CheckUtility.canGetLocation(applicationContext)) {
@@ -161,7 +161,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                     setServiceStatus(false)
                     error("Unable to start IOIOService: " + e.printStackTrace())
                 }
-                Thread.sleep(freq.toLong())
+                Thread.sleep((COLLECT_DATA_FREQ * 1000).toLong())
                 info("Position Hash :" + position.geohash)
                 persistData(data, position)
                 setServiceStatus(true)
