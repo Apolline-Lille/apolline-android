@@ -38,6 +38,8 @@ import science.apolline.utils.CheckUtility
 import science.apolline.viewModel.SensorViewModel
 import kotlin.math.roundToLong
 import android.content.Context
+import android.preference.PreferenceManager
+import android.widget.TextView
 import science.apolline.view.activity.MainActivity
 
 
@@ -48,9 +50,6 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
     private lateinit var mViewModel: SensorViewModel
     private var mIsWriteToExternalStoragePermissionGranted = false
 
-    var pm01 : Int = 0
-    var pm25 : Int = 0
-    var pm10 : Int = 0
 
 
     private lateinit var mPrefs: SharedPreferences
@@ -81,9 +80,10 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
         super.onViewCreated(view, savedInstanceState)
         mDisposable = CompositeDisposable()
 
-        mPrefs = this.activity!!.getSharedPreferences("pref", Context.MODE_PRIVATE)
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(activity)
         deviceAddress = mPrefs.getString("sensor_mac_address","sensor_mac_address does not exist")
-        deviceName = mPrefs.getString("sensor_name", "sensor_name does not exist")
+        deviceName =  mPrefs.getString("sensor_name", "sensor_name does not exist")
+
 
         mIsWriteToExternalStoragePermissionGranted = CheckUtility.checkWriteToExternalStoragePermissionPermission (activity!!.applicationContext)
 
@@ -151,7 +151,9 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
 
     override fun onStart() {
         super.onStart()
+        println("inside fragment " +this.deviceName)
         if(this.deviceName.toLowerCase().contains(regex = "^ioio.".toRegex())) {
+
             mDisposable.add(mViewModel.getDeviceList(MAX_DEVICE)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -168,10 +170,10 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
                             val gsonBuilder = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
                             val data = gsonBuilder.fromJson(device.data, IOIOData::class.java)
 
-
-                            pm01 = data!!.pm01Value
-                            pm25 = data.pm2_5Value
-                            pm10 = data.pm10Value
+                            println("inside fragment 2 " + data!!.pm01Value)
+                            val pm01 = data!!.pm01Value
+                            val pm25 = data.pm2_5Value
+                            val pm10 = data.pm10Value
                             val tempC = data.tempCelcius.roundToLong()
                             val tempK = data.tempKelvin.roundToLong()
                             val humidComp = data.rht.roundToLong()
@@ -195,6 +197,19 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
                     })
         }
         else {
+            sensorName.text = "sensor name : " + this.deviceName
+            fragment_ioio_progress_pm1.spin()
+            fragment_ioio_progress_pm1.setText("Loading...")
+            fragment_ioio_progress_pm2_5.spin()
+            fragment_ioio_progress_pm2_5.setText("Loading...")
+            fragment_ioio_progress_pm10.spin()
+            fragment_ioio_progress_pm10.setText("Loading...")
+            fragment_ioio_progress_rht.spin()
+            fragment_ioio_progress_rht.setText("Loading...")
+            fragment_ioio_progress_tmpk.spin()
+            fragment_ioio_progress_tmpk.setText("Loading...")
+            fragment_ioio_progress_tmpc.spin()
+            fragment_ioio_progress_tmpc.setText("Loading...")
 
 
         }

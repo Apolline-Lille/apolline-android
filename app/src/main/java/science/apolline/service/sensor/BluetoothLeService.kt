@@ -38,12 +38,7 @@ import android.graphics.Color
 import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
-import android.os.Binder
-import android.os.Environment
-import android.os.Handler
-import android.os.IBinder
-import android.os.Looper
-
+import android.os.*
 
 
 import android.util.Log
@@ -58,6 +53,7 @@ import science.apolline.utils.SampleGattAttributes
 import science.apolline.view.activity.MainActivity
 
 import android.support.v4.app.ActivityCompat.checkSelfPermission
+import com.squareup.haha.perflib.Main
 
 import kotlinx.android.synthetic.main.fragment_ioio_content.*
 
@@ -123,7 +119,7 @@ class BluetoothLeService : Service() {
 
                     val UIHandl = Handler(Looper.getMainLooper())
                     UIHandl.postDelayed({
-                        Toast.makeText(this@BluetoothLeService, "Start", Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(this@BluetoothLeService, "Start", Toast.LENGTH_SHORT).show()
                         if (MainActivity.mNotifyCharacteristic != null) {
                             MainActivity.mNotifyCharacteristic!!.setValue("c")
                             MainActivity.mBluetoothLeService!!.writeCharacteristic(MainActivity.mNotifyCharacteristic!!)
@@ -157,10 +153,8 @@ class BluetoothLeService : Service() {
             override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
 
 
-
                 val tempBuff = characteristic.getStringValue(0)
                 buff += tempBuff
-
 
 
 
@@ -364,7 +358,13 @@ class BluetoothLeService : Service() {
 
 
                     var ioiofm : android.support.v4.app.Fragment? = MainActivity.mFragment
-
+                    ioiofm!!.fragment_ioio_progress_pm1.stopSpinning()
+                    ioiofm.fragment_ioio_progress_pm2_5.stopSpinning()
+                    ioiofm.fragment_ioio_progress_pm10.stopSpinning()
+                    ioiofm.fragment_ioio_progress_rht.stopSpinning()
+                    ioiofm.fragment_ioio_progress_tmpk.stopSpinning()
+                    ioiofm.fragment_ioio_progress_tmpc.stopSpinning()
+                    ioiofm.fragment_ioio_progress_tmpk.stopSpinning()
                     ioiofm!!.fragment_ioio_progress_pm1.setValueAnimated(MainActivity.mBluetoothLeService!!.appaData.pm01Value.toFloat())
                     ioiofm.fragment_ioio_progress_pm2_5.setValueAnimated(MainActivity.mBluetoothLeService!!.appaData.pm2_5Value.toFloat())
                     ioiofm.fragment_ioio_progress_pm10.setValueAnimated(MainActivity.mBluetoothLeService!!.appaData.pm10Value.toFloat())
@@ -373,7 +373,7 @@ class BluetoothLeService : Service() {
                     ioiofm.fragment_ioio_progress_tmpc.setValueAnimated(MainActivity.mBluetoothLeService!!.appaData.tempe.toFloat())
                     ioiofm.fragment_ioio_progress_tmpk.setValueAnimated(MainActivity.mBluetoothLeService!!.appaData.tempe.toFloat()+273.15.toFloat())
 
-
+                    
 
 
                     if (appaData.bat_volt >=3.97) {//80-100
@@ -411,6 +411,7 @@ class BluetoothLeService : Service() {
 
     private fun broadcastUpdate(action: String) {
         val intent = Intent(action)
+        println("sending broadcast ... " + action)
         sendBroadcast(intent)
     }
 
@@ -500,7 +501,9 @@ class BluetoothLeService : Service() {
         }
         // We want to directly connect to the device, so we are setting the autoConnect
         // parameter to false.
+        println("before gattt " )
         mBluetoothGatt = device.connectGatt(this, false, mGattCallback)
+        println("after gattt " )
         Log.d(TAG, "Trying to create a new connection.")
         mBluetoothDeviceAddress = address
 
@@ -520,6 +523,8 @@ class BluetoothLeService : Service() {
         }
         mBluetoothGatt!!.disconnect()
     }
+
+
 
     /**
      * After using a given BLE device, the app must call this method to ensure resources are

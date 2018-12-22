@@ -127,6 +127,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                     val dataAvailability = this.inputStream!!.available()
                     if (dataAvailability > 0) {
                         val buffer = ByteArray(dataAvailability)
+
                         this.inputStream!!.read(buffer)
                         for (b in buffer)
                             if (b.compareTo(0x42) == 0)
@@ -151,6 +152,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                                         val RHT = RH / (1.0546 - 0.00216 * (tensionTemp * 100 - 273.15)) * 10 //compensé en t°
                                         data.rh = RH
                                         data.rht = RHT
+                                        println("yellooww : " + data.pm01Value)
                                     }
                                 }
                             }

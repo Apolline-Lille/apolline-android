@@ -30,6 +30,7 @@ import science.apolline.view.activity.MainActivity
 import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
 import android.support.v4.content.ContextCompat
+import org.jetbrains.anko.backgroundColor
 
 
 /**
@@ -47,6 +48,8 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
 
     private var mServiceStatus: Boolean = false
 
+    public lateinit var sensor_name : String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,14 +65,9 @@ class ViewPagerFragment : RootFragment(), AnkoLogger {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var sensor_name = arguments!!.getString("sensor_name")
-
+        this.sensor_name = arguments!!.getString("sensor_name")
         mAdapter = Adapter(childFragmentManager)
         setupViewPager(pager)
-        if (sensor_name.toLowerCase().contains(regex = "^appa.".toRegex())) {
-            //not working
-            tabs.setBackgroundColor(Color.parseColor("#428aff"))
-        }
         tabs.setupWithViewPager(pager)
         pager.addOnPageChangeListener(pageChangeListener)
         pager.offscreenPageLimit = 3
