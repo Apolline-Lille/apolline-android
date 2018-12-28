@@ -373,7 +373,6 @@ class BluetoothLeService : Service() {
                     ioiofm.fragment_ioio_progress_tmpc.setValueAnimated(MainActivity.mBluetoothLeService!!.appaData.tempe.toFloat())
                     ioiofm.fragment_ioio_progress_tmpk.setValueAnimated(MainActivity.mBluetoothLeService!!.appaData.tempe.toFloat()+273.15.toFloat())
 
-                    
 
 
                     if (appaData.bat_volt >=3.97) {//80-100
@@ -501,9 +500,9 @@ class BluetoothLeService : Service() {
         }
         // We want to directly connect to the device, so we are setting the autoConnect
         // parameter to false.
-        println("before gattt " )
+
         mBluetoothGatt = device.connectGatt(this, false, mGattCallback)
-        println("after gattt " )
+
         Log.d(TAG, "Trying to create a new connection.")
         mBluetoothDeviceAddress = address
 

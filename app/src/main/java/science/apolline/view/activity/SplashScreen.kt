@@ -296,7 +296,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
 
         val view = circle_layout.selectedItem
         if (view is CircleImageView) {
-            println("pairrrrrr ")
+
             mBluetoothAdapter!!.cancelDiscovery()
             selected_device_name_textview.text = view.name
             val deviceName = view.name
@@ -306,12 +306,12 @@ class SplashScreen : RootActivity(), AnkoLogger {
 
 //            if (boundedDevices.size > 0) {
             if (boundedDevices.contains(device)) {
-                println("pairrrrrr boundeddd ")
+
                 val deviceMacAddress = device!!.address.toString()
                 val intent = Intent(this, MainActivity::class.java)
 
                 if (deviceMacAddress != SENSOR_MAC_ADDRESS) {
-                    println("pairrrrrr deviceMacAddress " + deviceMacAddress)
+
                     var sensorNameEditText: EditText? = null
                     alert {
                         title = "New sensor name"
@@ -341,7 +341,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
                     }.show()
 
                 } else {
-                    println("pairrrrrr no new ")
+
                     startActivity(intent)
                     finish()
                 }

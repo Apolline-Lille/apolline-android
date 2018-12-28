@@ -151,7 +151,7 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
 
     override fun onStart() {
         super.onStart()
-        println("inside fragment " +this.deviceName)
+
         if(this.deviceName.toLowerCase().contains(regex = "^ioio.".toRegex())) {
 
             mDisposable.add(mViewModel.getDeviceList(MAX_DEVICE)
@@ -170,7 +170,7 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
                             val gsonBuilder = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
                             val data = gsonBuilder.fromJson(device.data, IOIOData::class.java)
 
-                            println("inside fragment 2 " + data!!.pm01Value)
+
                             val pm01 = data!!.pm01Value
                             val pm25 = data.pm2_5Value
                             val pm10 = data.pm10Value

@@ -96,7 +96,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             val action = intent.action
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 mConnected = true
-                println("connectedddd ")
+
 
                 invalidateOptionsMenu()
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
@@ -109,6 +109,8 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 displayGattServices(MainActivity.mBluetoothLeService!!.getSupportedGattServices())
 
                 if (mGattCharacteristics != null) {
+
+                    println("hereeee ")
 
                     val characteristic = mGattCharacteristics!![3][0]
                     val charaProp = characteristic.properties
@@ -153,7 +155,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
             MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address","address not found"))
 
-            println("mServiceConnection : " + mPrefs.getString("sensor_mac_address","address not found"))
+
 
         }
 
