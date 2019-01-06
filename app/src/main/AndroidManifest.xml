@@ -50,11 +50,11 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
-        <!-- <meta-data
+        <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabric_api_key}"/>
 
-         useless comment to fix manifest directly-->
+        <!-- useless comment to fix manifest directly-->
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
