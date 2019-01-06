@@ -24,7 +24,7 @@
         android:title="@string/pref_title_sync_frequency" />
 
     <ListPreference
-        android:defaultValue="5"
+        android:defaultValue="1"
         android:entries="@array/pref_collect_data_frequency_titles"
         android:entryValues="@array/pref_collect_data_frequency_values"
         android:key="collect_data_frequency"

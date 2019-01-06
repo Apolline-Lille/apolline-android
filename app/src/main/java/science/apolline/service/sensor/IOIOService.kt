@@ -58,7 +58,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     private var DEVICE_NAME = "Apolline00"
     private var DEVICE_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff"
-    private var COLLECT_DATA_FREQ: Int = 2
+    private var COLLECT_DATA_FREQ: Int = 1
 
 
     override fun createIOIOLooper(): IOIOLooper {
@@ -66,7 +66,6 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
         DEVICE_NAME = mPrefs.getString("device_name", "Apolline00")
         DEVICE_UUID = mPrefs.getString("device_uuid", "ffffffff-ffff-ffff-ffff-ffffffffffff")
-  //      COLLECT_DATA_FREQ = (mPrefs.getString("collect_data_frequency", "2")).toInt()
 
         return object : BaseIOIOLooper() {
             private val data = IOIOData()
@@ -94,7 +93,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
             @Throws(ConnectionLostException::class, InterruptedException::class)
             override fun loop() {
-                COLLECT_DATA_FREQ = (mPrefs.getString("collect_data_frequency", "2")).toInt()
+                COLLECT_DATA_FREQ = (mPrefs.getString("collect_data_frequency", "1")).toInt()
 
                 try {
                     if (CheckUtility.checkFineLocationPermission(applicationContext) && CheckUtility.canGetLocation(applicationContext)) {
