@@ -54,6 +54,8 @@
             android:value="f70ae3b4e2335171d5d6b51368637af3bbfbbfb2"
             />
 
+        <!-- useless comment to fix manifest directly-->
+
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAnCO9njYPfNfdGKNEbmt_UJ3_lMDYTAb8" />
