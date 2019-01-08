@@ -19,8 +19,6 @@ import science.apolline.service.database.TimestampSyncDao
 import science.apolline.service.networks.ApiUtils
 import science.apolline.utils.CheckUtility
 import science.apolline.utils.CheckUtility.isNetworkConnected
-import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  * Created by sparow on 19/01/2018.
@@ -36,6 +34,8 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
     private lateinit var timestampModel: TimestampSyncDao
     private var SYNC_MOD = 2 // Wi-Fi only
     private lateinit var mPrefs: SharedPreferences
+    private var TO_MILLISECONDS: Int = 1000000
+
     override fun onAdded() {
         info("onAdded: ")
     }
@@ -88,7 +88,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
             var t = TimestampSync(System.currentTimeMillis())
 
             val lastSyncDate: Long = timestampModel.getLastSync()
-            var nbUnSynced: Long = sensorModel.getSensorNotSyncCountByDate(t.date  * 1000000, lastSyncDate  * 1000000)
+            var nbUnSynced: Long = sensorModel.getSensorNotSyncCountByDate(t.date  * TO_MILLISECONDS, lastSyncDate  * TO_MILLISECONDS)
 
             info("actualDate ${t.date}")
             info("last sync = $lastSyncDate")
@@ -101,7 +101,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
 
             for (i in 1..attempt) {
                 //val dataNotSync = sensorModel.getUnSync(MAX_LENGTH)
-                val dataNotSync = sensorModel.getUnSyncByDate(t.date  * 1000000 ,lastSyncDate * 1000000 ,MAX_LENGTH)
+                val dataNotSync = sensorModel.getUnSyncByDate(t.date  * TO_MILLISECONDS ,lastSyncDate * TO_MILLISECONDS ,MAX_LENGTH)
 
                 if (dataNotSync.isNotEmpty()) {
                     info("UnSync to sync is :" + dataNotSync.size)

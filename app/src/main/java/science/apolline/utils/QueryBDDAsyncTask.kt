@@ -13,6 +13,7 @@ class QueryBDDAsyncTask(activity: SettingsActivity.DataErasePreferenceFragment) 
     //Prevent leak
     private val weakActivity: WeakReference<Activity>
     private var mActivity : SettingsActivity.DataErasePreferenceFragment
+    private var TO_MILLISECONDS : Int = 1000000
 
     init{
         weakActivity = WeakReference(activity.activity)
@@ -23,12 +24,13 @@ class QueryBDDAsyncTask(activity: SettingsActivity.DataErasePreferenceFragment) 
     protected override fun doInBackground(vararg params:String):Int {
         val sensorModel = AppDatabase.getInstance(mActivity.context).sensorDao()
         val timestampSyncDao = AppDatabase.getInstance(mActivity.context).timestampSyncDao()
-        when(params[0])
+        var arg0 = params[0]
+        when(arg0)
         {
             "getSensorCount" -> return sensorModel.getSensorCount().toInt()
-            "getSensorSyncCount" -> return sensorModel.getSensorSyncCountByDate(timestampSyncDao.getLastSync() * 1000000).toInt()
-            "getSensorNotSyncCount" -> return sensorModel.getSensorNotSyncCountByDate(timestampSyncDao.getLastSync() * 1000000).toInt()
-            "deleteDataSync" -> sensorModel.deleteDataSyncByDate(timestampSyncDao.getLastSync() * 1000000)
+            "getSensorSyncCount" -> return sensorModel.getSensorSyncCountByDate(timestampSyncDao.getLastSync() * TO_MILLISECONDS).toInt()
+            "getSensorNotSyncCount" -> return sensorModel.getSensorNotSyncCountByDate(timestampSyncDao.getLastSync() * TO_MILLISECONDS).toInt()
+            "deleteDataSync" -> sensorModel.deleteDataSyncByDate(timestampSyncDao.getLastSync() * TO_MILLISECONDS)
 
             else -> return 0
         }
@@ -37,7 +39,5 @@ class QueryBDDAsyncTask(activity: SettingsActivity.DataErasePreferenceFragment) 
 
     protected override fun onPostExecute(countSyncData:Int) {
         val activity = weakActivity.get() ?: return
-        Log.i("","Count Data Sync : " + countSyncData.toString())
-        //activity.onBackPressed()
     }
 }

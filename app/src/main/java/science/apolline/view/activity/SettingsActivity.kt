@@ -277,8 +277,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             dateLastSyncTxt = view.findViewById<TextView>(R.id.date_last_sync)
             var dateLastSync = QuerySynchro(this).execute("getLastSync").get()
             dateLastSyncTxt.setText(Date(dateLastSync).toString())
-
-            Toast.makeText(view.context, dateLastSync.toString(), Toast.LENGTH_LONG).show()
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

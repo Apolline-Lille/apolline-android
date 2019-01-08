@@ -59,6 +59,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
     private var DEVICE_NAME = "Apolline00"
     private var DEVICE_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff"
     private var COLLECT_DATA_FREQ: Int = 1
+    private var TO_MILLISECONDS: Int = 1000
 
 
     override fun createIOIOLooper(): IOIOLooper {
@@ -159,7 +160,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                     setServiceStatus(false)
                     error("Unable to start IOIOService: " + e.printStackTrace())
                 }
-                Thread.sleep((COLLECT_DATA_FREQ * 1000).toLong())
+                Thread.sleep((COLLECT_DATA_FREQ * TO_MILLISECONDS).toLong())
                 info("Position Hash :" + position.geohash)
                 persistData(data, position)
                 setServiceStatus(true)

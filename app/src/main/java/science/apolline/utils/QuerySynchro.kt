@@ -32,7 +32,5 @@ class QuerySynchro(activity: SettingsActivity.DataErasePreferenceFragment) : Asy
 
     protected override fun onPostExecute(countSyncData:Long) {
         val activity = weakActivity.get() ?: return
-        Log.i("","GetLastSync : " + countSyncData.toString())
-        //activity.onBackPressed()
     }
 }
