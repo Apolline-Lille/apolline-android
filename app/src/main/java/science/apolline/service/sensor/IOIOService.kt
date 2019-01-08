@@ -58,6 +58,8 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     private var DEVICE_NAME = "Apolline00"
     private var DEVICE_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff"
+    private var COLLECT_DATA_FREQ: Int = 1
+    private var TO_MILLISECONDS: Int = 1000
 
 
     override fun createIOIOLooper(): IOIOLooper {
@@ -73,7 +75,6 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
             private var inputStream: InputStream? = null
             private var inputTemp: AnalogInput? = null
             private var inputHum: AnalogInput? = null
-            private val freq = 1000
             private val request = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                     .setNumUpdates(5)
                     .setInterval(750)
@@ -92,7 +93,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
             @Throws(ConnectionLostException::class, InterruptedException::class)
             override fun loop() {
-
+                COLLECT_DATA_FREQ = (mPrefs.getString("collect_data_frequency", "1")).toInt()
 
                 try {
                     if (CheckUtility.checkFineLocationPermission(applicationContext) && CheckUtility.canGetLocation(applicationContext)) {
@@ -159,7 +160,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                     setServiceStatus(false)
                     error("Unable to start IOIOService: " + e.printStackTrace())
                 }
-                Thread.sleep(freq.toLong())
+                Thread.sleep((COLLECT_DATA_FREQ * TO_MILLISECONDS).toLong())
                 info("Position Hash :" + position.geohash)
                 persistData(data, position)
                 setServiceStatus(true)
@@ -169,7 +170,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
 
     private fun persistData(data: IOIOData, pos: Position?) {
         val d1 = System.currentTimeMillis() * 1000000
-        val device = Device(DEVICE_UUID, DEVICE_NAME, d1, pos, data.toJson(), 0)
+        val device = Device(DEVICE_UUID, DEVICE_NAME, d1, pos, data.toJson(),0)
         doAsync {
             sensorModel.insert(device)
             location = null

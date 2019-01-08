@@ -1,4 +1,4 @@
-<resources>
+    <resources>
     <string name="app_name">Apolline</string>
 
     <string name="splash_bluetooth_scan">Scanning in progress...</string>
@@ -125,6 +125,21 @@
         <item>-1</item>
     </string-array>
 
+    <string name="pref_title_collect_data_frequency">Data collection</string>
+    <string name="pref_summary_collect_data_frequency">Data collection frequency</string>
+    <string-array name="pref_collect_data_frequency_titles">
+        <item>Every second</item>
+        <item>Every 2 seconds</item>
+        <item>Every 5 seconds</item>
+        <item>Every 10 seconds</item>
+    </string-array>
+    <string-array name="pref_collect_data_frequency_values">
+        <item>1</item>
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+    </string-array>
+
     <string name="pref_title_sync_mod">Auto-synchronize data</string>
     <string-array name="pref_sync_mod_titles">
         <item>Do not auto-synchronize data.</item>
@@ -180,10 +195,16 @@
     <string name="pref_summary_chart_visible_entries">Maximum available points</string>
     <string name="pref_default_chart_visible_entries">100</string>
     <string name="pref_unit_chart_visible_entries_unit">Points</string>
+    <string name="pref_unit_collect_data_frequency">Secondes</string>
     <string name="title_activity_splash_screen">SplashScreen</string>
     <string name="scan_device_name">My PHONE</string>
     <string name="found_device_name">My Sensor</string>
     <string name="launch_scan_btn">Scan</string>
+    <string name="number_of_data_saved_in_phone">Number of data saved in phone :</string>
+    <string name="number_of_data_synchronized_send_to_server">Number of data synchronized (send to server) :</string>
+    <string name="number_of_data_unsynchronized">Number of data unsynchronized :</string>
+    <string name="date_of_last_synchronization_with_the_server">Date of last synchronization with the server :</string>
+    <string name="_0">0</string>
 
     <!--<string name="pref_title_chart_range_y">Axe Y visibility</string>-->
     <!--<string name="pref_title_chart_range_y_summary">Min &lt; Max  </string>-->

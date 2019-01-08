@@ -1,17 +1,36 @@
 package science.apolline.view.activity
 
 import android.annotation.TargetApi
+import android.app.Activity
+import android.app.AlertDialog
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
+import android.os.*
 import android.preference.*
+import android.support.annotation.RequiresApi
 import android.text.TextUtils
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import es.dmoral.toasty.Toasty
+import kotlinx.android.synthetic.main.activity_main_content.*
+import org.w3c.dom.Text
 import science.apolline.R
+import science.apolline.service.database.AppDatabase
+import science.apolline.utils.QueryBDDAsyncTask
+import science.apolline.utils.QuerySynchro
+import java.lang.ref.WeakReference
+import java.util.*
+
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -62,6 +81,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 || ChartPreferenceFragment::class.java.name == fragmentName
                 || DataSyncPreferenceFragment::class.java.name == fragmentName
                 || NotificationPreferenceFragment::class.java.name == fragmentName
+                || DataErasePreferenceFragment::class.java.name == fragmentName
     }
 
     /**
@@ -162,6 +182,101 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("sync_mod"), STRING)
             bindPreferenceSummaryToValue(findPreference("sync_frequency"), STRING)
+            bindPreferenceSummaryToValue(findPreference("collect_data_frequency"), STRING)
+        }
+
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            val id = item.itemId
+            if (id == android.R.id.home) {
+                startActivity(Intent(activity, SettingsActivity::class.java))
+                return true
+            }
+            return super.onOptionsItemSelected(item)
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    class DataErasePreferenceFragment : PreferenceFragment(){
+
+        lateinit var nbDataStoreTxt : TextView
+        lateinit var nbDataSynchronizedTxt : TextView
+        lateinit var nbDataUnsynchronizedTxt : TextView
+        lateinit var dateLastSyncTxt : TextView
+
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+
+        }
+
+        override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
+            if (inflater != null) {
+                var view = inflater.inflate(R.layout.fragment_delete_synchronized, container, false)
+
+                setTextView(view)
+
+                var btnDeleteData = view.findViewById<Button>(R.id.button_delete_synchonized_data)
+                btnDeleteData.setOnClickListener{ view ->
+                   showDeleteDataDialog()
+                }
+
+                return view
+            }
+            return super.onCreateView(inflater, container, savedInstanceState)
+        }
+
+        private fun showDeleteDataDialog() {
+            val builder = AlertDialog.Builder(this.view.context)
+            var countSyncData = 0
+
+            if (this.view.context != null) {
+                 countSyncData = QueryBDDAsyncTask(this).execute("getSensorSyncCount").get()
+            }
+
+            // Set the alert dialog title
+            builder.setTitle("Delete synchronized data")
+
+            // Display a message on alert dialog
+            builder.setMessage("Do you want to delete all the synchronized data ? (" +
+                    countSyncData + ")")
+
+            // Set a positive button and its click listener on alert dialog
+            builder.setPositiveButton("YES"){dialog, which ->
+                // Do something when user press the positive button
+                QueryBDDAsyncTask(this).execute("deleteDataSync").get()
+                Toasty.info(this.view.context,"Synchonized data has been deleted",Toast.LENGTH_LONG,true).show()
+
+                setTextView(this.view)
+            }
+
+            // Display a neutral button on alert dialog
+            builder.setNeutralButton("Cancel"){_,_ ->
+                Toasty.info(this.view.context,"Synchronized data has been kept",Toast.LENGTH_LONG,true).show()
+            }
+
+            // Finally, make the alert dialog using builder
+            val dialog: AlertDialog = builder.create()
+
+            // Display the alert dialog on app interface
+            dialog.show()
+        }
+
+        private fun setTextView(view: View){
+            nbDataStoreTxt = view.findViewById<TextView>(R.id.nb_data_saved)
+            var nbDataStore = QueryBDDAsyncTask(this).execute("getSensorCount").get()
+            nbDataStoreTxt.setText(nbDataStore.toString())
+
+            nbDataSynchronizedTxt = view.findViewById<TextView>(R.id.nb_data_sync)
+            var nbDataSynchronized = QueryBDDAsyncTask(this).execute("getSensorSyncCount").get()
+            nbDataSynchronizedTxt.setText(nbDataSynchronized.toString())
+
+            nbDataUnsynchronizedTxt = view.findViewById<TextView>(R.id.nb_data_unsync)
+            var nbDataUnsynchronized = QueryBDDAsyncTask(this).execute("getSensorNotSyncCount").get()
+            nbDataUnsynchronizedTxt.setText(nbDataUnsynchronized.toString())
+
+            dateLastSyncTxt = view.findViewById<TextView>(R.id.date_last_sync)
+            var dateLastSync = QuerySynchro(this).execute("getLastSync").get()
+            dateLastSyncTxt.setText(Date(dateLastSync).toString())
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

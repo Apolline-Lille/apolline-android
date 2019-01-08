@@ -1,0 +1,2 @@
+- Setting the sensor data recovery frequency
+- Removal option of synchronized data from the device's memory
