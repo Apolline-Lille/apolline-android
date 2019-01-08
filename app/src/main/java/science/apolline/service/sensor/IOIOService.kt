@@ -74,7 +74,6 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
             private var inputStream: InputStream? = null
             private var inputTemp: AnalogInput? = null
             private var inputHum: AnalogInput? = null
-  //          private val freq = COLLECT_DATA_FREQ * 1000
             private val request = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                     .setNumUpdates(5)
                     .setInterval(750)
