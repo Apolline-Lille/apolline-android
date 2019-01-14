@@ -19,7 +19,7 @@ buildscript {
     }
     dependencies {
 
-        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath 'com.android.tools.build:gradle:3.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "io.fabric.tools:gradle:$fabric_version"
         classpath "com.google.gms:google-services:$gmss_version"
