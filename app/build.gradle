@@ -18,7 +18,7 @@ android {
     def influxdb_pwd = hasProperty('INFLUXDB_PWD') ? INFLUXDB_PWD : System.getenv('INFLUXDB_PWD')
 
     compileSdkVersion 27
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '27.0.3'
 
 
     defaultConfig {
