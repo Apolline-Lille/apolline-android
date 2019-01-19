@@ -1,4 +1,4 @@
-test
+Aymanee
 ![apolline_logo_final-01](https://user-images.githubusercontent.com/22281426/36351313-1bac8b88-14a8-11e8-90f4-de41287cd1e9.png)
 [![Build Status](https://travis-ci.org/Apolline-Lille/apolline-android.svg?branch=master)](https://travis-ci.org/Apolline-Lille/apolline-android)
 # Apolline-android
