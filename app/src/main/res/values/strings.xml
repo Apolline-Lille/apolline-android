@@ -1,5 +1,13 @@
-    <resources>
+<resources>
     <string name="app_name">Apolline</string>
+
+    <string name="todo">TODO</string>
+
+    <string name="unknown_characteristic">Unknown characteristic</string>
+    <string name="unknown_service">Unknown service</string>
+    <string name="ble_not_supported">BLE is not supported</string>
+    <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
+
 
     <string name="splash_bluetooth_scan">Scanning in progress...</string>
     <string name="splash_welcome">Welcome to Apolline</string>
@@ -195,7 +203,6 @@
     <string name="pref_summary_chart_visible_entries">Maximum available points</string>
     <string name="pref_default_chart_visible_entries">100</string>
     <string name="pref_unit_chart_visible_entries_unit">Points</string>
-    <string name="pref_unit_collect_data_frequency">Secondes</string>
     <string name="title_activity_splash_screen">SplashScreen</string>
     <string name="scan_device_name">My PHONE</string>
     <string name="found_device_name">My Sensor</string>
