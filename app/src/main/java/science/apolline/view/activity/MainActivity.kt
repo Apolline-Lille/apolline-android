@@ -139,7 +139,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     private val mServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(componentName: ComponentName, service: IBinder) {
-            println("just before replace fragment 1 ")
+
 
             MainActivity.mBluetoothLeService = (service as BluetoothLeService.LocalBinder).getService()
             if (!MainActivity.mBluetoothLeService!!.initialize()) {
@@ -151,7 +151,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             var bundle = Bundle()
             bundle.putString("sensor_name" , mPrefs.getString("sensor_name" , "sensor_name does not exist"))
             mFragmentViewPager.setArguments(bundle)
-            println("just before replace fragment ")
+
             replaceFragment(mFragmentViewPager)
 
             MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address","address not found"))
@@ -161,7 +161,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         }
 
         override fun onServiceDisconnected(componentName: ComponentName) {
-            println("service disconnected :( ")
+
             MainActivity.mBluetoothLeService = null
         }
     }
@@ -254,13 +254,13 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onStart() {
         super.onStart()
-        println("avant prefs")
+
         //APPA
         if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = "^appa.".toRegex())) {
-            println("dans prefs")
+
             supportActionBar!!.setBackgroundDrawable(ColorDrawable(Color.parseColor("#428aff")))
             val gattServiceIntent = Intent(this@MainActivity, BluetoothLeService::class.java)
-            println("just before bind service")
+
             bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE)
 
 

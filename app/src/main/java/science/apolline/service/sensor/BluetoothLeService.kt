@@ -156,7 +156,7 @@ class BluetoothLeService : Service() {
                 val tempBuff = characteristic.getStringValue(0)
                 buff += tempBuff
 
-                println("ici "  + buff)
+
 
 
 
