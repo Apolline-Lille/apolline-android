@@ -22,15 +22,9 @@ import science.apolline.service.sensor.IOIOService
 import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
-import android.graphics.Color
 import com.github.mikephil.charting.jobs.MoveViewJob
-import com.squareup.haha.perflib.Main
 import science.apolline.utils.CheckUtility
-import science.apolline.view.activity.MainActivity
-import android.content.SharedPreferences
-import android.graphics.drawable.ColorDrawable
-import android.support.v4.content.ContextCompat
-import org.jetbrains.anko.backgroundColor
+
 
 
 /**

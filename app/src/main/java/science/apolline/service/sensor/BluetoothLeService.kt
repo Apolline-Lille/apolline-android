@@ -53,7 +53,7 @@ import science.apolline.utils.SampleGattAttributes
 import science.apolline.view.activity.MainActivity
 
 import android.support.v4.app.ActivityCompat.checkSelfPermission
-import com.squareup.haha.perflib.Main
+
 
 import kotlinx.android.synthetic.main.fragment_ioio_content.*
 
