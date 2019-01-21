@@ -1,0 +1,2 @@
+- Paramétrage de la fréquence de récupération de données du capteur
+- Option de suppression des données synchronisées de la mémoire de l'appareil
