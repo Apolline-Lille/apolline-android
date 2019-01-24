@@ -21,4 +21,8 @@ class SensorViewModel: RootViewModel<SensorViewModel>(), AnkoLogger {
         return sensorDao.getLastEntries(nbDevice)
     }
 
+    fun getDeviceListByDate(dateStart: Long, dateEnd : Long): Flowable<List<Device>>
+    {
+        return sensorDao.getEntriesByDate(dateStart, dateEnd)
+    }
 }
