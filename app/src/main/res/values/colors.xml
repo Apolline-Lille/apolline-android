@@ -3,4 +3,40 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!-- CircleView -->
+    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="primary_light">#BBDEFB</color>
+    <color name="accent">#455A64</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#B6B6B6</color>
+
+
+    <color name="ioio_circle_title">#ff5722</color>
+    <color name="loa_orange">#ff6d00</color>
+    <color name="loa_background">#e3f2fd</color>
+
+
+    <color name="loa_sensor_text_color1">#d50000</color>
+    <color name="loa_sensor_text_color2">#00c853</color>
+    <color name="loa_sensor_text_color3">#304ffe</color>
+
+    <color name="loa_sensor_circle_background_color1">#ff6434</color>
+    <color name="loa_sensor_circle_background_color2">#9cff57</color>
+    <color name="loa_sensor_circle_background_color3">#7a7cff</color>
+
+    <color name="degraded_color1">#00c853</color>
+    <color name="degraded_color2">#ffd600</color>
+    <color name="degraded_color3">#dd2c00</color>
+    <color name="degraded_color4">#d50000</color>
+
+    <color name="ioio_sensor_bg">#FFF200</color>
+    <color name="appa_sensor_bg">#1976D2</color>
+    <color name="bonded_bt_device_bg">#DD2C00</color>
+    <color name="new_bt_device_bg">#ff6434</color>
+    <color name="transparent">#00ffffff</color>
+
 </resources>

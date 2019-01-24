@@ -36,6 +36,7 @@ import ioio.lib.util.android.IOIOService
 import org.jetbrains.anko.*
 import science.apolline.service.sensor.IOIOService.Companion.getServiceStatus
 import science.apolline.utils.CheckUtility
+import science.apolline.utils.CheckUtility.checkFineLocationPermission
 
 
 class SplashScreen : RootActivity(), AnkoLogger {
@@ -149,7 +150,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
                         BluetoothDevice.BOND_BONDED -> {
                             info("device bound state BOND_BONDED: " + event.bluetoothDevice.name)
 
-                            if (event.bluetoothDevice.name.toString().toLowerCase().contains(regex = "^ioio.".toRegex())) {
+                            if (event.bluetoothDevice.name.toString().toLowerCase().contains(regex = "/.*".toRegex())) {
 
                                 val deviceMacAddress = event.bluetoothDevice!!.address.toString()
                                 val intent = Intent(this, MainActivity::class.java)
@@ -184,12 +185,10 @@ class SplashScreen : RootActivity(), AnkoLogger {
                                     }.show()
                                 }
                             }
-
                         }
                         else -> {
 
                         }
-
                     }
                 })
     }
@@ -235,7 +234,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
             if (boundedDevices.contains(device)) {
                 val deviceMacAddress = device!!.address.toString()
                 val intent = Intent(this, MainActivity::class.java)
-
+                debug("SPLASHSCREEN : " + deviceMacAddress)
                 if (deviceMacAddress != SENSOR_MAC_ADDRESS) {
                     var sensorNameEditText: EditText? = null
                     alert {
@@ -290,7 +289,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 nameOrcode = device.address.toString()
             } else {
                 nameOrcode = device.name.toString()
-                if (nameOrcode.toLowerCase().contains(regex = "^ioio.".toRegex())) {
+                if (nameOrcode.toLowerCase().contains(regex = "^ioio.".toRegex()) || nameOrcode.toLowerCase().contains(regex = "^appa.".toRegex())) {
                     isCompatible = true
                 }
             }
@@ -321,7 +320,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
                     onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_netwoking, isCompatible, isBounded)
                 }
 
-                BluetoothClass.Device.Major.PERIPHERAL -> {
+                BluetoothClass.Device.Major.PERIPHERAL -> { // IOIO sensor type
                     onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_peripheral, isCompatible, isBounded)
                 }
 
@@ -337,7 +336,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
                     onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_wear, isCompatible, isBounded)
                 }
 
-                else -> {
+                else -> { // APPA sensor type
                     onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_uncategorized, isCompatible, isBounded)
                 }
 
@@ -397,29 +396,35 @@ class SplashScreen : RootActivity(), AnkoLogger {
             val newMenu = CircleImageView(this)
             val currentDrawable = ContextCompat.getDrawable(this, drawableId)
             val willBeWhite = currentDrawable!!.constantState.newDrawable()
+            willBeWhite.mutate().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
 
-            if (bounded) {
-                newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item_bounded)
-            } else {
-                newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item)
+            // newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item)
+            info("device to add : $name")
+            if (name.toLowerCase().contains(regex = "^ioio.".toRegex())) {
+                newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item_ioio)
+                willBeWhite.mutate().setColorFilter(ContextCompat.getColor(this, R.color.primary_text), PorterDuff.Mode.SRC_ATOP)
+            } else if (name.toLowerCase().contains("^appa.".toRegex()))
+                newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item_appa)
+            else {
+                if (bounded)
+                    newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item_bounded)
+                else
+                    newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item)
             }
 
-            willBeWhite.mutate().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+
             newMenu.setPadding(20, 20, 20, 20)
             newMenu.setImageDrawable(willBeWhite)
             newMenu.name = name
-            //newMenu.setBackgroundResource(R.color.colorPrimary)
             circle_layout.addView(newMenu)
         }
     }
-
 
     private fun onRemoveClick(view: View) {
         if (circle_layout.childCount > 0) {
             circle_layout.removeViewAt(circle_layout.childCount - 1)
         }
     }
-
 
     private fun checkFineLocationPermission(request: PermissionRequest) {
         request.detachAllListeners()
@@ -466,7 +471,6 @@ class SplashScreen : RootActivity(), AnkoLogger {
             }
         }
     }
-
 
     private fun checkBlueToothState() {
 
