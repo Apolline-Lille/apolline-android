@@ -51,7 +51,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
-<!--        <meta-data
+        <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabric_api_key}"/>
 
@@ -62,11 +62,8 @@
 
         <meta-data
             android:name="firebase_performance_logcat_enabled"
-            android:value="true" /> -->
-
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyAnCO9njYPfNfdGKNEbmt_UJ3_lMDYTAb8" />
+            android:value="true" />
+        
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more activity_information.
