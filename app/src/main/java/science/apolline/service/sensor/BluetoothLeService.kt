@@ -21,7 +21,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Service
 import android.bluetooth.BluetoothAdapter
-
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
@@ -31,7 +30,11 @@ import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import io.reactivex.functions.BiFunction
+import org.jetbrains.anko.info
+
 
 import android.graphics.Color
 
@@ -47,15 +50,24 @@ import android.widget.Toast
 
 
 import science.apolline.models.APPAData
-import science.apolline.utils.SampleGattAttributes
 
 
 import science.apolline.view.activity.MainActivity
 
 import android.support.v4.app.ActivityCompat.checkSelfPermission
+import com.github.salomonbrys.kodein.KodeinInjector
+import com.github.salomonbrys.kodein.android.appKodein
+import com.github.salomonbrys.kodein.instance
+import com.google.android.gms.location.LocationRequest
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 
 import kotlinx.android.synthetic.main.fragment_ioio_content.*
+import org.jetbrains.anko.doAsync
+
+import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 
 import java.io.File
 import java.io.FileNotFoundException
@@ -67,14 +79,33 @@ import java.util.Calendar
 import java.util.UUID
 
 import science.apolline.R
-
+import science.apolline.models.Device
+import science.apolline.models.IOIOData
+import science.apolline.models.Position
+import science.apolline.service.database.SensorDao
+import science.apolline.utils.*
+import org.jetbrains.anko.AnkoLogger
 
 /**
  * Service for managing connection and data communication with a GATT server hosted on a
  * given Bluetooth LE device.
  */
-class BluetoothLeService : Service() {
+class BluetoothLeService : Service(),AnkoLogger {
 
+    private val injector: KodeinInjector = KodeinInjector()
+    private val sensorModel by injector.instance<SensorDao>()
+    private val mPrefs by injector.instance<SharedPreferences>()
+    private var DEVICE_NAME = "Apolline00"
+    private var DEVICE_UUID = "ffffffff-ffff-ffff-ffff-ffffffffffff"
+    private var COLLECT_DATA_FREQ: Int = 1
+    private var TO_MILLISECONDS: Int = 1000
+    private var position = Position()
+    private val locationProvider = ReactiveLocationProvider(this)
+    private val disposable = CompositeDisposable()
+    private var locationp: Location? = null
+    private val request = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+            .setNumUpdates(5)
+            .setInterval(750)
     private var mBluetoothManager: BluetoothManager? = null
     private var mBluetoothAdapter: BluetoothAdapter? = null
     private var mBluetoothDeviceAddress: String? = null
@@ -108,6 +139,7 @@ class BluetoothLeService : Service() {
 
     init {
         mGattCallback = object : BluetoothGattCallback() {
+
             override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
                 val intentAction: String
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
@@ -149,10 +181,20 @@ class BluetoothLeService : Service() {
                 }
             }
 
+            private fun persistData(data: APPAData, pos: Position?) {
+                val d1 = System.currentTimeMillis() * 1000000
+                val device = Device(DEVICE_UUID, DEVICE_NAME, d1, pos, data.toJson(),0)
+                doAsync {
+                    sensorModel.insert(device)
+                    locationp = null
+                }
+            }
+
+
             @SuppressLint("SetTextI18n")
             override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
-
-
+                COLLECT_DATA_FREQ = (mPrefs.getString("collect_data_frequency", "1")).toInt()
+                //this bleu sensor branch
                 val tempBuff = characteristic.getStringValue(0)
                 buff += tempBuff
 
@@ -268,6 +310,8 @@ class BluetoothLeService : Service() {
                         fin = buff.indexOf(";", debut + 1)
                         try {
                             appaData.tempe = java.lang.Double.parseDouble(buff.substring(debut + 1, fin))
+                            appaData.tempKelvin = appaData.tempe.toFloat() + 273.15.toFloat()
+
                         } catch (e: NumberFormatException) {
                             appaData.tempe = 0.0
                         }
@@ -277,6 +321,8 @@ class BluetoothLeService : Service() {
                         fin = buff.indexOf(";", debut + 1)
                         try {
                             appaData.humi = java.lang.Double.parseDouble(buff.substring(debut + 1, fin))
+                            appaData.rh = appaData.humi.toFloat()
+                            appaData.rht = appaData.rh/ (1.0546 - 0.00216 * (appaData.tempKelvin - 273.15)) * 10
                         } catch (e: NumberFormatException) {
                             appaData.humi = 0.0
                         }
@@ -354,10 +400,6 @@ class BluetoothLeService : Service() {
 
 
 
-
-
-
-
                     var ioiofm : android.support.v4.app.Fragment? = MainActivity.mFragment
                     ioiofm!!.fragment_ioio_progress_pm1.stopSpinning()
                     ioiofm.fragment_ioio_progress_pm2_5.stopSpinning()
@@ -393,6 +435,39 @@ class BluetoothLeService : Service() {
                     }
 
 
+                    if (CheckUtility.checkFineLocationPermission(applicationContext) && CheckUtility.canGetLocation(applicationContext)) {
+                        disposable.add(
+
+                                Observable.zip(
+                                        locationProvider.getUpdatedLocation(request).subscribeOn(Schedulers.io()),
+                                        locationProvider.getDetectedActivity(0)
+                                                .map(ToMostProbableActivity())
+                                                .map(DetectedActivityToString())
+                                                .subscribeOn(Schedulers.io()),
+                                        BiFunction<Location, String, Pair<Location, String>> { currentLocation, currentActivity ->
+                                            Pair(currentLocation, currentActivity)
+                                        }
+
+                                )
+                                        .onExceptionResumeNext(Observable.empty())
+                                        .onErrorReturn {
+                                            error("Error location pair not found $it")
+                                        }
+                                        .observeOn(Schedulers.io())
+                                        .subscribe { t ->
+                                            if (t == null)
+                                                info("Get location error")
+                                            else
+                                                position = Position(t.first.provider, GeoHashHelper.encode(t.first.latitude, t.first.longitude), t.second)
+                                        }
+                        )
+
+                    } else
+                        position = Position()
+
+                    Thread.sleep((COLLECT_DATA_FREQ * TO_MILLISECONDS).toLong())
+                    info("Position Hash :" + position.geohash)
+                    persistData(appaData, position)
 
 
 
@@ -502,6 +577,7 @@ class BluetoothLeService : Service() {
         // We want to directly connect to the device, so we are setting the autoConnect
         // parameter to false.
 
+        injector.inject(appKodein())
         mBluetoothGatt = device.connectGatt(this, false, mGattCallback)
 
         Log.d(TAG, "Trying to create a new connection.")

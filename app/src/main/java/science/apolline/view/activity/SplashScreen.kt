@@ -82,7 +82,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         mDisposable = CompositeDisposable()
 
-        //mIsLocationPermissionGranted = CheckUtility.isWifiNetworkConnected(this)
+        mIsLocationPermissionGranted = CheckUtility.isWifiNetworkConnected(this)
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
 
@@ -151,6 +151,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
                 .subscribe { device ->
+
                     addDeviceToCircleView(device, isBounded = isBoundedDevice(device))
                 }
         )
@@ -176,39 +177,19 @@ class SplashScreen : RootActivity(), AnkoLogger {
                                 val intent = Intent(this, MainActivity::class.java)
 
                                 if (deviceMacAddress != SENSOR_MAC_ADDRESS) {
-                                    var sensorNameEditText: EditText? = null
 
-                                    alert {
-                                        title = "New sensor name"
-                                        customView {
-                                            sensorNameEditText = editText {
-                                                id = Id.alert_new_sensor
-                                                hint = "A-00"
-                                                padding = dip(20)
-                                            }
-                                        }
-
-                                        yesButton {
-                                            val sensorName = sensorNameEditText!!.text.toString()
-                                            mPrefs.edit().putString("sensor_mac_address", deviceMacAddress)
-                                                    .putString("sensor_name", sensorName)
-                                                    .apply()
-                                            startActivity(intent)
-                                            finish()
-                                        }
-
-                                        noButton {
-
-                                        }
+                                    mPrefs.edit().putString("sensor_mac_address", deviceMacAddress)
+                                            .putString("sensor_name", event.bluetoothDevice.name.toString().toLowerCase())
+                                            .apply()
+                                    startActivity(intent)
+                                    finish()
 
 
-                                    }.show()
                                 }
                             }
 
                         }
                         else -> {
-
                         }
 
                     }
@@ -312,33 +293,12 @@ class SplashScreen : RootActivity(), AnkoLogger {
 
                 if (deviceMacAddress != SENSOR_MAC_ADDRESS) {
 
-                    var sensorNameEditText: EditText? = null
-                    alert {
-                        title = "New sensor name"
-                        customView {
-                            sensorNameEditText = editText {
-                                id = Id.alert_new_sensor
-                                hint = "A-00"
-                                padding = dip(20)
-                            }
-                        }
+                    mPrefs.edit().putString("sensor_mac_address", deviceMacAddress)
+                            .putString("sensor_name", device!!.name.toString())
+                            .apply()
 
-                        yesButton {
-                            val sensorName = sensorNameEditText!!.text.toString()
-                            mPrefs.edit().putString("sensor_mac_address", deviceMacAddress)
-                                    .putString("sensor_name", sensorName)
-                                    .apply()
-
-                            startActivity(intent)
-                            finish()
-                        }
-
-                        noButton {
-
-                        }
-
-
-                    }.show()
+                    startActivity(intent)
+                    finish()
 
                 } else {
 

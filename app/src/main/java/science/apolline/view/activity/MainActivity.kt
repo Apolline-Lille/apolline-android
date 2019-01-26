@@ -246,6 +246,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             var bundle = Bundle()
             bundle.putString("sensor_name" , mPrefs.getString("sensor_name" , "sensor_name does not exist"))
             mFragmentViewPager.setArguments(bundle)
+             startService(Intent(applicationContext, IOIOService::class.java))
             replaceFragment(mFragmentViewPager)
 
         }
@@ -279,8 +280,11 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 if (IOIOService.getServiceStatus()){
                     stopService(Intent(applicationContext, IOIOService::class.java))
                 }
-                else {
-                    MainActivity.mBluetoothLeService!!.disconnect()
+                if(mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = "^appa.".toRegex())) {
+                    //MainActivity.mBluetoothLeService!!.disconnect()
+                    //unbindService(mServiceConnection)
+                    //MainActivity.mBluetoothLeService = null
+
                 }
                 val intent = Intent(this, SplashScreen::class.java)
                 startActivity(intent)

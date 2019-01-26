@@ -169,7 +169,7 @@ class IOIOFragment : RootFragment(), FragmentLifecycle, AnkoLogger {
                             val device = it.first()
                             val gsonBuilder = GsonBuilder().registerTypeAdapter(IOIOData::class.java, DataDeserializer()).create()
                             val data = gsonBuilder.fromJson(device.data, IOIOData::class.java)
-
+                            sensorName.text = "sensor name : " + this.deviceName
 
                             val pm01 = data!!.pm01Value
                             val pm25 = data.pm2_5Value
