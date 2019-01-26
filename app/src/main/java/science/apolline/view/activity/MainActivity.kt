@@ -453,8 +453,9 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         }
         else {
 
+            MainActivity.mBluetoothLeService!!.disconnect()
             unbindService(mServiceConnection)
-            MainActivity.mBluetoothLeService = null
+            //MainActivity.mBluetoothLeService = null
         }
         /*
         if (mRequestLocationAlert.isShowing) {
