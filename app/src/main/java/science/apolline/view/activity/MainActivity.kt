@@ -153,7 +153,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             mFragmentViewPager.setArguments(bundle)
 
             replaceFragment(mFragmentViewPager)
-
+            registerReceiver(mGattUpdateReceiver, MainActivity.makeGattUpdateIntentFilter())
             MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address","address not found"))
 
 
@@ -362,9 +362,9 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             }
             R.id.pause -> {
                 if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = "^appa.".toRegex())) {
-
-
+                    println("disconnectinggg")
                     MainActivity.mBluetoothLeService!!.disconnect()
+                    return true
 
                 }
                 else {
@@ -420,19 +420,13 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onResume() {
         super.onResume()
-        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = "^appa.".toRegex())) {
-            registerReceiver(mGattUpdateReceiver, MainActivity.makeGattUpdateIntentFilter())
-            if (MainActivity.mBluetoothLeService != null) {
-                val result = MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address","address not found"))
-                Log.d(MainActivity.TAG, "Connect request result=$result")
-            }
-        }
     }
 
     override fun onPause() {
         super.onPause()
         if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = "^appa.".toRegex())) {
-            unregisterReceiver(mGattUpdateReceiver)
+            //unregisterReceiver(mGattUpdateReceiver)
+            MainActivity.mBluetoothLeService!!.disconnect()
         }
     }
 
