@@ -5,15 +5,20 @@ import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothClass
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
 import android.preference.PreferenceManager
 import android.support.annotation.IdRes
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
+import android.util.Log
 import science.apolline.R
 import kotlinx.android.synthetic.main.content_splash_screen.*
 import com.szugyi.circlemenu.view.CircleImageView
@@ -36,6 +41,7 @@ import ioio.lib.util.android.IOIOService
 import org.jetbrains.anko.*
 import science.apolline.service.sensor.IOIOService.Companion.getServiceStatus
 import science.apolline.utils.CheckUtility
+import java.util.ArrayList
 
 
 class SplashScreen : RootActivity(), AnkoLogger {
@@ -47,12 +53,19 @@ class SplashScreen : RootActivity(), AnkoLogger {
     private var mDetectedDevices = hashMapOf<String, BluetoothDevice?>()
     private lateinit var mPrefs: SharedPreferences
     private var mIsLocationPermissionGranted = false
+    private lateinit var mRequestLocationAlert: AlertDialog
 
     private var EXTRA_DEVICE_ADDRESS: String = "fffffff-ffff-ffff-ffff-ffffffffffff"
     private var SENSOR_MAC_ADDRESS: String = "ff-ff-ff-ff-ff-ff"
 
     private val mRequestLocationPermission by lazy {
         permissionsBuilder(Manifest.permission.ACCESS_FINE_LOCATION)
+                .build()
+    }
+
+    private val mRequestPermissions by lazy {
+        permissionsBuilder(Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.ACCESS_FINE_LOCATION)
                 .build()
     }
 
@@ -70,6 +83,9 @@ class SplashScreen : RootActivity(), AnkoLogger {
         mDisposable = CompositeDisposable()
 
         mIsLocationPermissionGranted = CheckUtility.isWifiNetworkConnected(this)
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+
+
 
         setContentView(R.layout.activity_splash_screen)
         ripple_scan_view.clipToOutline = true
@@ -82,6 +98,12 @@ class SplashScreen : RootActivity(), AnkoLogger {
         circle_layout.setOnCenterClickListener {
             if (!mIsLocationPermissionGranted) {
                 checkFineLocationPermission(mRequestLocationPermission)
+                // Request disable Doze Mode
+                CheckUtility.requestDozeMode(this)
+                // Request enable location
+                mRequestLocationAlert = CheckUtility.requestLocation(this)
+                // Check permissions
+                checkPermissions(mRequestPermissions)
             } else {
                 checkBlueToothState()
             }
@@ -129,11 +151,10 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.computation())
                 .subscribe { device ->
+
                     addDeviceToCircleView(device, isBounded = isBoundedDevice(device))
                 }
         )
-
-
 
         mDisposable.add(mRxBluetoothClient.observeBondState()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -149,49 +170,76 @@ class SplashScreen : RootActivity(), AnkoLogger {
                         BluetoothDevice.BOND_BONDED -> {
                             info("device bound state BOND_BONDED: " + event.bluetoothDevice.name)
 
-                            if (event.bluetoothDevice.name.toString().toLowerCase().contains(regex = "^ioio.".toRegex())) {
+                            if (event.bluetoothDevice.name.toString().toLowerCase().contains(regex = "^ioio.".toRegex()) ||
+                                    event.bluetoothDevice.name.toString().toLowerCase().contains(regex = "^appa.".toRegex())) {
 
                                 val deviceMacAddress = event.bluetoothDevice!!.address.toString()
                                 val intent = Intent(this, MainActivity::class.java)
 
                                 if (deviceMacAddress != SENSOR_MAC_ADDRESS) {
-                                    var sensorNameEditText: EditText? = null
 
-                                    alert {
-                                        title = "New sensor name"
-                                        customView {
-                                            sensorNameEditText = editText {
-                                                id = Id.alert_new_sensor
-                                                hint = "A-00"
-                                                padding = dip(20)
-                                            }
-                                        }
-
-                                        yesButton {
-                                            val sensorName = sensorNameEditText!!.text.toString()
-                                            mPrefs.edit().putString("sensor_mac_address", deviceMacAddress)
-                                                    .putString("sensor_name", sensorName)
-                                                    .apply()
-                                            startActivity(intent)
-                                            finish()
-                                        }
-
-                                        noButton {
-
-                                        }
+                                    mPrefs.edit().putString("sensor_mac_address", deviceMacAddress)
+                                            .putString("sensor_name", event.bluetoothDevice.name.toString().toLowerCase())
+                                            .apply()
+                                    startActivity(intent)
+                                    finish()
 
 
-                                    }.show()
                                 }
                             }
 
                         }
                         else -> {
-
                         }
 
                     }
                 })
+
+
+    }
+
+
+    private fun checkPermissions(request: PermissionRequest) {
+        request.detachAllListeners()
+        request.send()
+        request.listeners {
+
+            onAccepted {
+                Toasty.success(applicationContext, "READ_PHONE_STATE and ACCESS_FINE_LOCATION permissions granted.", Toast.LENGTH_SHORT, true).show()
+                stopService(Intent(applicationContext, science.apolline.service.sensor.IOIOService::class.java))
+                startService(Intent(applicationContext, science.apolline.service.sensor.IOIOService::class.java))
+            }
+
+            onDenied {
+                Toasty.error(applicationContext, "READ_PHONE_STATE and ACCESS_FINE_LOCATION permissions denied.", Toast.LENGTH_LONG, true).show()
+            }
+
+            onPermanentlyDenied {
+                Toasty.error(applicationContext, "READ_PHONE_STATE and ACCESS_FINE_LOCATION permissions permanently denied, please grant it manually, Apolline will close in 10 seconds", Toast.LENGTH_LONG, true).show()
+                object : CountDownTimer(10000, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
+
+                    }
+
+                    override fun onFinish() {
+                        finish()
+                    }
+                }.start()
+            }
+
+            onShouldShowRationale { _, _ ->
+
+                alert("Apolline will not work, please grant READ_PHONE_STATE and ACCESS_FINE_LOCATION permissions.", "Request read phone state and location permissions") {
+                    yesButton {
+                        checkPermissions(mRequestPermissions)
+                    }
+                    noButton {
+                        checkPermissions(mRequestPermissions)
+                    }
+                }.show()
+
+            }
+        }
     }
 
     override fun onStop() {
@@ -221,50 +269,39 @@ class SplashScreen : RootActivity(), AnkoLogger {
     }
 
 
+
+
     private fun pairCurrentDevice() {
 //        if (circle_layout.tag != null) {
+
+
         val view = circle_layout.selectedItem
         if (view is CircleImageView) {
+
             mBluetoothAdapter!!.cancelDiscovery()
             selected_device_name_textview.text = view.name
             val deviceName = view.name
             val device = mDetectedDevices[deviceName]
+
             val boundedDevices = mBluetoothAdapter!!.bondedDevices
 
 //            if (boundedDevices.size > 0) {
             if (boundedDevices.contains(device)) {
+
                 val deviceMacAddress = device!!.address.toString()
                 val intent = Intent(this, MainActivity::class.java)
 
                 if (deviceMacAddress != SENSOR_MAC_ADDRESS) {
-                    var sensorNameEditText: EditText? = null
-                    alert {
-                        title = "New sensor name"
-                        customView {
-                            sensorNameEditText = editText {
-                                id = Id.alert_new_sensor
-                                hint = "A-00"
-                                padding = dip(20)
-                            }
-                        }
 
-                        yesButton {
-                            val sensorName = sensorNameEditText!!.text.toString()
-                            mPrefs.edit().putString("sensor_mac_address", deviceMacAddress)
-                                    .putString("sensor_name", sensorName)
-                                    .apply()
-                            startActivity(intent)
-                            finish()
-                        }
+                    mPrefs.edit().putString("sensor_mac_address", deviceMacAddress)
+                            .putString("sensor_name", device!!.name.toString())
+                            .apply()
 
-                        noButton {
-
-                        }
-
-
-                    }.show()
+                    startActivity(intent)
+                    finish()
 
                 } else {
+
                     startActivity(intent)
                     finish()
                 }
@@ -290,7 +327,8 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 nameOrcode = device.address.toString()
             } else {
                 nameOrcode = device.name.toString()
-                if (nameOrcode.toLowerCase().contains(regex = "^ioio.".toRegex())) {
+                if (nameOrcode.toLowerCase().contains(regex = "^ioio.".toRegex()) ||
+                        nameOrcode.toLowerCase().contains(regex = "^appa.".toRegex())) {
                     isCompatible = true
                 }
             }
@@ -363,7 +401,8 @@ class SplashScreen : RootActivity(), AnkoLogger {
             boundedDevices.forEach { device ->
                 addDeviceToCircleView(device, isBounded = isBoundedDevice(device))
 
-                if (device.name.toString().toLowerCase().contains(regex = "^ioio.".toRegex())) {
+                if (device.name.toString().toLowerCase().contains(regex = "^ioio.".toRegex()) ||
+                        device.name.toString().toLowerCase().contains(regex = "^appa.".toRegex()) ) {
                     currentCompatibleSensor = device
                     sensorCounter++
                 }

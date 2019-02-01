@@ -122,6 +122,7 @@ class IOIOService : ioio.lib.util.android.IOIOService(), AnkoLogger {
                                                 position = Position(t.first.provider, GeoHashHelper.encode(t.first.latitude, t.first.longitude), t.second)
                                         }
                         )
+
                     } else
                         position = Position()
 
