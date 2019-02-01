@@ -40,8 +40,8 @@ interface SensorDao {
     @Query("SELECT count(*) FROM Device")
     fun getCount(): Flowable<Long>
 
-    @Query("SELECT * FROM Device WHERE :dateStart <= date AND date <= :dateEnd")
-    fun getEntriesByDate(dateStart: Long, dateEnd: Long): Flowable<List<Device>>
+    @Query("SELECT * FROM Device WHERE :dateStart <= date AND date <= :dateEnd LIMIT :MAX_DEVICE")
+    fun getEntriesByDate(dateStart: Long, dateEnd: Long, MAX_DEVICE: Long): Flowable<List<Device>>
 
     @Transaction
     @Query("SELECT * FROM Device WHERE id=:idDevice")

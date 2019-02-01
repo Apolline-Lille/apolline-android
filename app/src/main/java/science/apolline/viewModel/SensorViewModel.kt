@@ -5,7 +5,6 @@ import science.apolline.models.Device
 import org.jetbrains.anko.*
 import com.github.salomonbrys.kodein.instance
 import io.reactivex.Flowable
-import io.reactivex.Single
 import science.apolline.root.RootViewModel
 
 
@@ -21,8 +20,8 @@ class SensorViewModel: RootViewModel<SensorViewModel>(), AnkoLogger {
         return sensorDao.getLastEntries(nbDevice)
     }
 
-    fun getDeviceListByDate(dateStart: Long, dateEnd : Long): Flowable<List<Device>>
+    fun getDeviceListByDate(dateStart: Long, dateEnd: Long, MAX_DEVICE: Long): Flowable<List<Device>>
     {
-        return sensorDao.getEntriesByDate(dateStart, dateEnd)
+        return sensorDao.getEntriesByDate(dateStart, dateEnd, MAX_DEVICE)
     }
 }

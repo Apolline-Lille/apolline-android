@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +30,6 @@ import org.jetbrains.anko.info
 import com.google.maps.android.heatmaps.Gradient
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import science.apolline.models.Device
 import science.apolline.root.FragmentLifecycle
 import java.text.SimpleDateFormat
 import java.util.*
@@ -74,17 +72,20 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
             error("Can't init Maps: " + e.printStackTrace())
         }
 
-        val btn_date = v.findViewById<Button>(R.id.filter_date_button)
-        val c = Calendar.getInstance()
-        val year = c.get(Calendar.YEAR)
-        val month = c.get(Calendar.MONTH)+1
-        val day = c.get(Calendar.DAY_OF_MONTH)
-        val currentDate = "$day/$month/$year"
-        btn_date.text = currentDate
+        val btnDate = v.findViewById<Button>(R.id.filter_date_button)
+        val btnShowAll = v.findViewById<Button>(R.id.showallBtnMapFragment)
 
-        btn_date.setOnClickListener {
+        btnDate.text = getDateOfDay()
+
+        btnDate.setOnClickListener {
             this.showDatePicker(v)
         }
+
+        btnShowAll.setOnClickListener{
+            this.refreshMap(0, System.currentTimeMillis() + DAY_IN_MILLIS)
+            btnDate.text = getDateOfDay()
+        }
+
 
         return v
     }
@@ -217,14 +218,13 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                 }
             }
 
-            initHeatMap(0, 1549919299999)
+            initHeatMap(0, System.currentTimeMillis() + DAY_IN_MILLIS)
         }
 
     }
 
 
     private fun addHeatMap(list: List<WeightedLatLng>) {
-        Log.d("appo", "addHeatMap CALLED")
         val colors = intArrayOf(Color.rgb(102, 225, 0), // green
                 Color.rgb(255, 0, 0)    // red
         )
@@ -244,9 +244,7 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     private fun initHeatMap(dateStart : Long, dateEnd : Long) {
         doAsync {
 
-            val TO_MILLIS = 1000000
-
-            val listAllDevices = mViewModel.getDeviceListByDate(dateStart * TO_MILLIS, dateEnd * TO_MILLIS).blockingFirst()
+            val listAllDevices = mViewModel.getDeviceListByDate(dateStart * TO_MILLIS, dateEnd * TO_MILLIS, MAX_DEVICE).blockingFirst()
 
             info("Size listAllDevices -> " + listAllDevices.size)
 
@@ -297,17 +295,13 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
 
     fun showDatePicker(v: View) {
 
-        val DAY_IN_MILLIS = 86399999
-
         val c = Calendar.getInstance()
         val year = c.get(Calendar.YEAR)
         val month = c.get(Calendar.MONTH)
         val day = c.get(Calendar.DAY_OF_MONTH)
 
-        val dpd = DatePickerDialog(activity,
+        val dpd = DatePickerDialog(activity, R.style.DialogDatePickerTheme,
         DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            Toast.makeText(context, """$dayOfMonth - ${monthOfYear + 1} - $year""", Toast.LENGTH_LONG).show()
-
             val sdf = SimpleDateFormat("yyyy-MM-dd")
             val mDate = sdf.parse("$year-${monthOfYear + 1}-$dayOfMonth")
             val mDateToMillisStart = mDate.time
@@ -318,8 +312,17 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
         dpd.show()
     }
 
+    fun getDateOfDay() : String{
+        val sdf = SimpleDateFormat("dd/MM/yyyy")
+        return sdf.format(Date())
+    }
+
     companion object {
         private const val MAPS_NAME = "HEAT_MAP_HIST"
         private const val MAX_DEVICE = 10000L
+        val DAY_IN_MILLIS = 86399999
+        val TO_MILLIS = 1000000
+
+
     }
 }

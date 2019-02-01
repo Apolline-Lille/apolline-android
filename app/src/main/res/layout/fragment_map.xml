@@ -11,16 +11,39 @@
 
         <Button
             android:id="@+id/filter_date_button"
+            style="@style/Widget.AppCompat.Button.Small"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/corners_btn"
+            android:hint="Select data"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:text="01/01/1970"
-            android:textColor="@color/black"
-            android:textSize="24sp"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/fragment_mapview"
+            app:layout_constraintEnd_toStartOf="@+id/showallBtnMapFragment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/showallBtnMapFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/corners_btn"
+            android:text="Show all"
+            android:textColor="@android:color/white"
             app:layout_constraintBottom_toTopOf="@+id/fragment_mapview"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/filter_date_button"
             app:layout_constraintTop_toTopOf="parent" />
 
         <fragment
@@ -32,6 +55,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/filter_date_button"></fragment>
+
     </android.support.constraint.ConstraintLayout>
 
     <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
