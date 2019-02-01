@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -241,19 +242,33 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
         // Add a tile overlay to the map, using the heat map tile provider.
         if (mHeatMap != null)
             mOverlay = mHeatMap!!.addTileOverlay(TileOverlayOptions().tileProvider(mProvider))
-
     }
 
+    private fun removeHeatMap() {
+        if(::mOverlay.isInitialized) {
+            mOverlay.remove()
+        }
+    }
 
     private fun initHeatMap(showAll: Boolean, dateStart : Long, dateEnd : Long) {
         doAsync {
+            Log.d("appo","initMap start")
+
+            val TO_MILLIS = 1000000
+
             val listAllDevices : List<Device> = if(showAll) {
                 mViewModel.getDeviceList(MAX_DEVICE).blockingFirst()
             } else {
-                mViewModel.getDeviceListByDate(dateStart, dateEnd).blockingFirst()
+                mViewModel.getDeviceListByDate(dateStart * TO_MILLIS, dateEnd * TO_MILLIS).blockingFirst()
             }
 
-            info("Size of list before: " + listAllDevices.size)
+            info("Size listAllDevices -> " + listAllDevices.size)
+
+            if(listAllDevices.size == 0){
+                mOverlay.remove()
+                info("Size remove called")
+            }
+
             val geo: MutableList<WeightedLatLng> = mutableListOf()
             if (listAllDevices.isNotEmpty()) {
                 listAllDevices.forEach {
@@ -286,6 +301,8 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
         }
     }
 
+
+
     fun showDatePicker(v: View) {
 
         val DAY_IN_MILLIS = 86399999
@@ -295,7 +312,8 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
         val month = c.get(Calendar.MONTH)
         val day = c.get(Calendar.DAY_OF_MONTH)
 
-        val dpd = DatePickerDialog(activity, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+        val dpd = DatePickerDialog(activity,
+        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
             Toast.makeText(context, """$dayOfMonth - ${monthOfYear + 1} - $year""", Toast.LENGTH_LONG).show()
 
             val sdf = SimpleDateFormat("yyyy-MM-dd")
@@ -303,9 +321,7 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
             val mDateToMillisStart = mDate.time
             val mDateTotimeMillisEnd = mDateToMillisStart + DAY_IN_MILLIS
 
-            //val listDatas = mViewModel.getDeviceListByDate(mDateToMillisStart, mDateTotimeMillisEnd).blockingFirst()
-            initHeatMap(false, mDateToMillisStart, mDateTotimeMillisEnd);
-
+            initHeatMap(false, mDateToMillisStart, mDateTotimeMillisEnd)
         }, year, month, day)
 
         dpd.show()
