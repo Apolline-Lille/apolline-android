@@ -116,9 +116,6 @@ class SplashScreen : RootActivity(), AnkoLogger {
                         }
                         BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
                             ripple_scan_view.stopRippleAnimation()
-                            //setCurrentItemText()
-                            //selected_textView.text = getString(R.string.splash_bluetooth_scan_finished)
-
                         }
                         else -> {
 
@@ -133,8 +130,6 @@ class SplashScreen : RootActivity(), AnkoLogger {
                     addDeviceToCircleView(device, isBounded = isBoundedDevice(device))
                 }
         )
-
-
 
         mDisposable.add(mRxBluetoothClient.observeBondState()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -278,7 +273,6 @@ class SplashScreen : RootActivity(), AnkoLogger {
 
     }
 
-
     private fun addDeviceToCircleView(device: BluetoothDevice?, isBounded: Boolean) {
 
         var isCompatible = false
@@ -294,56 +288,60 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 }
             }
 
-            mDetectedDevices[nameOrcode] = device
+            if (mDetectedDevices.containsKey(nameOrcode))
+                return
 
-            when (device.bluetoothClass.majorDeviceClass) {
+            else {
+                mDetectedDevices[nameOrcode] = device
 
-                BluetoothClass.Device.Major.AUDIO_VIDEO -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_audio_video, isCompatible, isBounded)
-                }
-                BluetoothClass.Device.Major.COMPUTER -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_computer, isCompatible, isBounded)
-                }
-                BluetoothClass.Device.Major.HEALTH -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_health, isCompatible, isBounded)
-                }
+                when (device.bluetoothClass.majorDeviceClass) {
 
-                BluetoothClass.Device.Major.IMAGING -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_imaging, isCompatible, isBounded)
-                }
+                    BluetoothClass.Device.Major.AUDIO_VIDEO -> {
+                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_audio_video, isCompatible, isBounded)
+                    }
+                    BluetoothClass.Device.Major.COMPUTER -> {
+                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_computer, isCompatible, isBounded)
+                    }
+                    BluetoothClass.Device.Major.HEALTH -> {
+                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_health, isCompatible, isBounded)
+                    }
 
-                BluetoothClass.Device.Major.MISC -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_misc, isCompatible, isBounded)
-                }
+                    BluetoothClass.Device.Major.IMAGING -> {
+                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_imaging, isCompatible, isBounded)
+                    }
 
-                BluetoothClass.Device.Major.NETWORKING -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_netwoking, isCompatible, isBounded)
-                }
+                    BluetoothClass.Device.Major.MISC -> {
+                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_misc, isCompatible, isBounded)
+                    }
 
-                BluetoothClass.Device.Major.PERIPHERAL -> { // IOIO sensor type
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_peripheral, isCompatible, isBounded)
-                }
+                    BluetoothClass.Device.Major.NETWORKING -> {
+                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_netwoking, isCompatible, isBounded)
+                    }
 
-                BluetoothClass.Device.Major.TOY -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_toy, isCompatible, isBounded)
-                }
+                    BluetoothClass.Device.Major.PERIPHERAL -> { // IOIO sensor type
+                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_peripheral, isCompatible, isBounded)
+                    }
 
-                BluetoothClass.Device.Major.PHONE -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_phone, isCompatible, isBounded)
-                }
+                    BluetoothClass.Device.Major.TOY -> {
+                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_toy, isCompatible, isBounded)
+                    }
 
-                BluetoothClass.Device.Major.WEARABLE -> {
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_wear, isCompatible, isBounded)
-                }
+                    BluetoothClass.Device.Major.PHONE -> {
+                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_phone, isCompatible, isBounded)
+                    }
 
-                else -> { // APPA sensor type
-                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_uncategorized, isCompatible, isBounded)
-                }
+                    BluetoothClass.Device.Major.WEARABLE -> {
+                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_wear, isCompatible, isBounded)
+                    }
 
+                    else -> { // APPA sensor type
+                        debug("APPA sensor ::onAddClick")
+                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_uncategorized, isCompatible, isBounded)
+                    }
             }
 
+            }
         }
-
     }
 
     private fun isBoundedDevice(device: BluetoothDevice?): Boolean {
