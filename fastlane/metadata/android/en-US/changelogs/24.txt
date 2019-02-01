@@ -1,0 +1,4 @@
+- Integration of the blue sensor. 
+- Sensor's name entry removed. 
+- More visual interaction with the user, like displaying the name of the sensor and adapting the color of the theme depending on the type of the sensor. 
+

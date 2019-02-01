@@ -1,0 +1,6 @@
+- Intégration du capteur bleu. 
+- La saisie du nom du capteur par l'utilisateur supprimée.  
+- Plus d'intéraction visuel avec l'utilisateur, comme l'affichage du nom du capteur et le changement du couleur du thème de l'application en fonction du type de capteur.
+ 
+
+
