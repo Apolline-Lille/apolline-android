@@ -82,7 +82,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         mDisposable = CompositeDisposable()
 
-        mIsLocationPermissionGranted = CheckUtility.isWifiNetworkConnected(this)
+        mIsLocationPermissionGranted = CheckUtility.checkFineLocationPermission(this)
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
 

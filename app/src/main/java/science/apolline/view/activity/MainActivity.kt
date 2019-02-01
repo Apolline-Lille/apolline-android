@@ -318,13 +318,13 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                         return true
                     }
                     1 -> {
-
                         if (CheckUtility.isNetworkConnected(this)) {
                             mJobManager.addJobInBackground(SyncInfluxDBJob())
                             Toasty.info(applicationContext, "Synchronization in progress (Mobile)", Toast.LENGTH_SHORT, true).show()
                             return true
+                        } else {
+                            Toasty.warning(applicationContext, "Please enable your data mobile or change synchronization policy", Toast.LENGTH_SHORT, true).show()
                         }
-
                     }
                     2 -> {
                         if (CheckUtility.isWifiNetworkConnected(this)) {
