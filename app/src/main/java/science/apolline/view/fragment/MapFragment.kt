@@ -14,7 +14,6 @@ import com.github.salomonbrys.kodein.android.appKodein
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.TileOverlay
 import com.google.gson.GsonBuilder
-import io.reactivex.disposables.CompositeDisposable
 import org.jetbrains.anko.AnkoLogger
 import pl.charmas.android.reactivelocation2.ReactiveLocationProvider
 import science.apolline.R
@@ -30,7 +29,6 @@ import com.google.maps.android.heatmaps.HeatmapTileProvider
 import com.google.maps.android.heatmaps.WeightedLatLng
 import org.jetbrains.anko.info
 import com.google.maps.android.heatmaps.Gradient
-import io.reactivex.Flowable
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import science.apolline.models.Device
@@ -77,14 +75,12 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
         }
 
         val btn_date = v.findViewById<Button>(R.id.filter_date_button)
-
-
         val c = Calendar.getInstance()
         val year = c.get(Calendar.YEAR)
         val month = c.get(Calendar.MONTH)+1
         val day = c.get(Calendar.DAY_OF_MONTH)
         val currentDate = "$day/$month/$year"
-        btn_date.setText(currentDate)
+        btn_date.text = currentDate
 
         btn_date.setOnClickListener {
             this.showDatePicker(v)
@@ -221,13 +217,14 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                 }
             }
 
-            initHeatMap(true, 0, 0)
+            initHeatMap(0, 1549919299999)
         }
 
     }
 
 
     private fun addHeatMap(list: List<WeightedLatLng>) {
+        Log.d("appo", "addHeatMap CALLED")
         val colors = intArrayOf(Color.rgb(102, 225, 0), // green
                 Color.rgb(255, 0, 0)    // red
         )
@@ -240,34 +237,18 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
                 .gradient(gradient)
                 .build()
         // Add a tile overlay to the map, using the heat map tile provider.
-        if (mHeatMap != null)
-            mOverlay = mHeatMap!!.addTileOverlay(TileOverlayOptions().tileProvider(mProvider))
+            if (mHeatMap != null)
+                mOverlay = mHeatMap!!.addTileOverlay(TileOverlayOptions().tileProvider(mProvider))
     }
 
-    private fun removeHeatMap() {
-        if(::mOverlay.isInitialized) {
-            mOverlay.remove()
-        }
-    }
-
-    private fun initHeatMap(showAll: Boolean, dateStart : Long, dateEnd : Long) {
+    private fun initHeatMap(dateStart : Long, dateEnd : Long) {
         doAsync {
-            Log.d("appo","initMap start")
 
             val TO_MILLIS = 1000000
 
-            val listAllDevices : List<Device> = if(showAll) {
-                mViewModel.getDeviceList(MAX_DEVICE).blockingFirst()
-            } else {
-                mViewModel.getDeviceListByDate(dateStart * TO_MILLIS, dateEnd * TO_MILLIS).blockingFirst()
-            }
+            val listAllDevices = mViewModel.getDeviceListByDate(dateStart * TO_MILLIS, dateEnd * TO_MILLIS).blockingFirst()
 
             info("Size listAllDevices -> " + listAllDevices.size)
-
-            if(listAllDevices.size == 0){
-                mOverlay.remove()
-                info("Size remove called")
-            }
 
             val geo: MutableList<WeightedLatLng> = mutableListOf()
             if (listAllDevices.isNotEmpty()) {
@@ -301,6 +282,17 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
         }
     }
 
+    fun refreshMap(dateStart: Long, dateEnd: Long){
+        val formatter = SimpleDateFormat("dd/MM/yyyy")
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = dateStart
+        val filterBtn = view?.findViewById<Button>(R.id.filter_date_button)
+        if (filterBtn != null) { filterBtn.text = formatter.format(calendar.time)}
+
+        mOverlay.clearTileCache()
+        mOverlay.remove()
+        initHeatMap(dateStart, dateEnd)
+    }
 
 
     fun showDatePicker(v: View) {
@@ -321,9 +313,8 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
             val mDateToMillisStart = mDate.time
             val mDateTotimeMillisEnd = mDateToMillisStart + DAY_IN_MILLIS
 
-            initHeatMap(false, mDateToMillisStart, mDateTotimeMillisEnd)
+            refreshMap(mDateToMillisStart, mDateTotimeMillisEnd)
         }, year, month, day)
-
         dpd.show()
     }
 
