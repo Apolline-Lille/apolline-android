@@ -30,7 +30,6 @@
         android:layout_height="match_parent"
         android:layout_weight="3.5">
 
-
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/selected_device_name_textview"
             android:layout_width="match_parent"
@@ -53,9 +52,6 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         app:layout_constraintTop_toBottomOf="@+id/banner_apolline">
-
-
-
 
         <com.szugyi.circlemenu.view.CircleLayout
             android:id="@+id/circle_layout"
