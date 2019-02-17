@@ -60,7 +60,7 @@ Alphabetical order of last names
 * Guillaume Jean-Jaques SEM
 * Damien TOULOUSE
 * Aymane BOUZIANE 
- 
+* Aymane BOUZIANE 
  
  
  
