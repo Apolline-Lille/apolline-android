@@ -134,7 +134,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 invalidateOptionsMenu()
 
 
-                // clearUI();
+               
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 
                 displayGattServices(MainActivity.mBluetoothLeService!!.getSupportedGattServices())
