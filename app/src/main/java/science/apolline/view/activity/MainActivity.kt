@@ -82,6 +82,8 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     @SuppressLint("StaticFieldLeak")
     var img: ImageView? = null
 
+    private var distroyed = false
+
 
 
 
@@ -101,7 +103,36 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 invalidateOptionsMenu()
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false
+
+                if(distroyed == false) {
+                    val builder = AlertDialog.Builder(this@MainActivity)
+
+                    builder.setTitle("capteur deconnecté")
+
+                    builder.setMessage("Le capteur a été deconnecté. Vérifiez qu'il est allumé et qu'il est assez proche de votre de téléphone.")
+
+                    builder.setPositiveButton("reconnecter"){dialog, which ->
+                        registerReceiver(this, MainActivity.makeGattUpdateIntentFilter())
+                        if (MainActivity.mBluetoothLeService != null) {
+                            val result = MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address","address not found"))
+                            Log.d(MainActivity.TAG, "Connect request result=$result")
+                        }
+                    }
+
+
+                    builder.setNegativeButton("Ok"){dialog,which ->
+                    }
+
+
+
+                    val dialog: AlertDialog = builder.create()
+
+                    dialog.show()
+                }
+
+
                 invalidateOptionsMenu()
+
 
                 // clearUI();
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
@@ -281,9 +312,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                     stopService(Intent(applicationContext, IOIOService::class.java))
                 }
                 if(mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = "^appa.".toRegex())) {
-                    //MainActivity.mBluetoothLeService!!.disconnect()
-                    //unbindService(mServiceConnection)
-                    //MainActivity.mBluetoothLeService = null
+
 
                 }
                 val intent = Intent(this, SplashScreen::class.java)
@@ -362,7 +391,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             }
             R.id.pause -> {
                 if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = "^appa.".toRegex())) {
-                    println("disconnectinggg")
+
                     MainActivity.mBluetoothLeService!!.disconnect()
                     return true
 
@@ -424,14 +453,12 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onPause() {
         super.onPause()
-        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = "^appa.".toRegex())) {
-            //unregisterReceiver(mGattUpdateReceiver)
-            MainActivity.mBluetoothLeService!!.disconnect()
-        }
+
     }
 
 
     override fun onDestroy() {
+        distroyed = true
         if (mWakeLock.isHeld) {
             mWakeLock.release()
             info("WakeLock released")
@@ -449,12 +476,9 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
             MainActivity.mBluetoothLeService!!.disconnect()
             unbindService(mServiceConnection)
-            //MainActivity.mBluetoothLeService = null
+
         }
-        /*
-        if (mRequestLocationAlert.isShowing) {
-            mRequestLocationAlert.cancel()
-        }*/
+
     }
 
     private fun checkBlueToothState() {
