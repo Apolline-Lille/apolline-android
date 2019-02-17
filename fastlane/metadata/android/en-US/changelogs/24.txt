@@ -1,2 +1,0 @@
-- some bugs fixed 
-- a pop up message is displayed when the bleu sensor is deconneted. 

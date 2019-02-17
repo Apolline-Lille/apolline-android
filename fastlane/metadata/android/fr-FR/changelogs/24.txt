@@ -1,2 +1,0 @@
-- Bugs réparés 
-- Un message s'affiche quand le capteur est deconnecté 
