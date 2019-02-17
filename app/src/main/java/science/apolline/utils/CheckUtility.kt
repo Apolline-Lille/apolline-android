@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Build
@@ -82,7 +83,7 @@ object CheckUtility : AnkoLogger {
      */
     fun isNetworkConnected(context: Context): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val netInfo = cm.activeNetworkInfo
+        val netInfo: NetworkInfo? = cm.activeNetworkInfo
         return netInfo != null && netInfo.isConnected
     }
 
@@ -90,8 +91,8 @@ object CheckUtility : AnkoLogger {
     fun isWifiNetworkConnected(context: Context): Boolean {
         var wifiNetworkState = false
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val netInfo = cm.activeNetworkInfo
-        if (netInfo.type == ConnectivityManager.TYPE_WIFI)
+        val netInfo : NetworkInfo? = cm.activeNetworkInfo
+        if (netInfo?.type == ConnectivityManager.TYPE_WIFI)
             wifiNetworkState = true
         return netInfo != null && wifiNetworkState
     }

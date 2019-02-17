@@ -25,7 +25,7 @@ android {
         applicationId "science.apolline"
         minSdkVersion 21
         targetSdkVersion 27
-
+        
         versionCode 26
         versionName "2.4.9"
 
