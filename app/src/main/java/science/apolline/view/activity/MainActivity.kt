@@ -136,7 +136,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
                 // clearUI();
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                // Show all the supported services and characteristics on the user interface.
+                
                 displayGattServices(MainActivity.mBluetoothLeService!!.getSupportedGattServices())
 
                 if (mGattCharacteristics != null) {
