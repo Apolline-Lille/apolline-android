@@ -302,6 +302,9 @@ dependencies {
 
     // KPermissions
     implementation "com.github.fondesa:kpermissions:$kpermissions_version"
+
+    //
+    implementation 'com.squareup:android-times-square:1.6.5@aar'
 }
 
 repositories {

@@ -1,6 +1,6 @@
 package science.apolline.view.fragment
 
-import android.app.DatePickerDialog
+import android.app.AlertDialog
 import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.os.Bundle
@@ -28,11 +28,13 @@ import com.google.maps.android.heatmaps.HeatmapTileProvider
 import com.google.maps.android.heatmaps.WeightedLatLng
 import org.jetbrains.anko.info
 import com.google.maps.android.heatmaps.Gradient
+import com.squareup.timessquare.CalendarPickerView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import science.apolline.root.FragmentLifecycle
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 
 /**
@@ -76,17 +78,13 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
         val btnShowAll = v.findViewById<Button>(R.id.showallBtnMapFragment)
 
         btnDate.text = getDateOfDay()
-
         btnDate.setOnClickListener {
-            this.showDatePicker(v)
+            onBtnFilterClick(v)
         }
-
         btnShowAll.setOnClickListener{
             this.refreshMap(0, System.currentTimeMillis() + DAY_IN_MILLIS)
             btnDate.text = getDateOfDay()
         }
-
-
         return v
     }
 
@@ -97,7 +95,6 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
         mLocationProvider = ReactiveLocationProvider(context)
         mOldGeoHash = ""
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -285,32 +282,55 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = dateStart
         val filterBtn = view?.findViewById<Button>(R.id.filter_date_button)
-        if (filterBtn != null) { filterBtn.text = formatter.format(calendar.time)}
+        if (filterBtn != null) { filterBtn.text = formatter.format(dateEnd)}
 
         mOverlay.clearTileCache()
         mOverlay.remove()
         initHeatMap(dateStart, dateEnd)
     }
 
+    fun onBtnFilterClick(view : View) {
+        val inflater = layoutInflater
+        val alertLayout = inflater.inflate(R.layout.datepickermapdialog, null)
+        val cal : CalendarPickerView
 
-    fun showDatePicker(v: View) {
+        cal = alertLayout.findViewById<CalendarPickerView>(R.id.calendar_view)
 
-        val c = Calendar.getInstance()
-        val year = c.get(Calendar.YEAR)
-        val month = c.get(Calendar.MONTH)
-        val day = c.get(Calendar.DAY_OF_MONTH)
+        /* Initialization Calendar Picker */
+        val nextYear = Calendar.getInstance()
+        nextYear.add(Calendar.YEAR, 1)
 
-        val dpd = DatePickerDialog(activity, R.style.DialogDatePickerTheme,
-        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            val sdf = SimpleDateFormat("yyyy-MM-dd")
-            val mDate = sdf.parse("$year-${monthOfYear + 1}-$dayOfMonth")
-            val mDateToMillisStart = mDate.time
-            val mDateTotimeMillisEnd = mDateToMillisStart + DAY_IN_MILLIS
+        val today = Date()
+        val minDate = Date(0)
+        val maxDate = Calendar.getInstance()
+        maxDate.add(Calendar.MONTH, 1)
 
-            refreshMap(mDateToMillisStart, mDateTotimeMillisEnd)
-        }, year, month, day)
-        dpd.show()
+        cal.init(minDate, maxDate.time)
+                .inMode(CalendarPickerView.SelectionMode.RANGE)
+                .withSelectedDate(today)
+
+        /* Create AlertDialog */
+        val alert = AlertDialog.Builder(this.context)
+        alert.setTitle("Choose date")
+        alert.setView(alertLayout)
+        alert.setCancelable(false)
+        alert.setNegativeButton("Cancel") {
+            dialog, which ->
+            Toast.makeText(context, "Cancel clicked", Toast.LENGTH_SHORT).show() }
+
+        alert.setPositiveButton("OK") {
+            dialog, which ->
+            val selectedDates = cal.selectedDates
+            if(selectedDates.size == 1){
+                refreshMap(selectedDates[0].time, selectedDates[0].time + DAY_IN_MILLIS)
+            }else {
+                refreshMap(selectedDates[0].time, selectedDates[selectedDates.size-1].time + DAY_IN_MILLIS)
+            }
+        }
+        val dialog = alert.create()
+        dialog.show()
     }
+
 
     fun getDateOfDay() : String{
         val sdf = SimpleDateFormat("dd/MM/yyyy")
@@ -318,11 +338,11 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
     }
 
     companion object {
+
         private const val MAPS_NAME = "HEAT_MAP_HIST"
         private const val MAX_DEVICE = 10000L
         val DAY_IN_MILLIS = 86399999
         val TO_MILLIS = 1000000
-
 
     }
 }
