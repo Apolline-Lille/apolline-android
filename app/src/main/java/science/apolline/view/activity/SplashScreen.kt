@@ -25,6 +25,7 @@ import com.szugyi.circlemenu.view.CircleImageView
 import android.widget.Toast
 import android.view.View
 import android.view.animation.RotateAnimation
+import android.widget.Button
 import android.widget.EditText
 import com.fondesa.kpermissions.extension.listeners
 import com.github.ivbaranov.rxbluetooth.RxBluetooth
@@ -39,6 +40,7 @@ import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.request.PermissionRequest
 import ioio.lib.util.android.IOIOService
 import org.jetbrains.anko.*
+import science.apolline.R.id.circle_layout
 import science.apolline.service.sensor.IOIOService.Companion.getServiceStatus
 import science.apolline.utils.CheckUtility
 import science.apolline.utils.CheckUtility.checkFineLocationPermission
@@ -116,6 +118,12 @@ class SplashScreen : RootActivity(), AnkoLogger {
             setCurrentItemText()
         }
 
+        no_sensor_btn.setOnClickListener({
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        })
+
         setCurrentItemText()
         checkFineLocationPermission(mRequestLocationPermission)
         initBoundedDevices()
@@ -134,6 +142,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
                         BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
                             circle_layout.removeAllViews()
                             selected_device_name_textview.text = getString(R.string.splash_bluetooth_scan)
+                            mDetectedDevices.clear()
                             ripple_scan_view.startRippleAnimation()
                         }
                         BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
@@ -181,8 +190,6 @@ class SplashScreen : RootActivity(), AnkoLogger {
                                             .apply()
                                     startActivity(intent)
                                     finish()
-
-
                                 }
                             }
                         }
@@ -254,7 +261,6 @@ class SplashScreen : RootActivity(), AnkoLogger {
         finish()
     }
 
-
     private fun setCurrentItemText() {
 //        if (circle_layout.tag != null) {
         val view = circle_layout.selectedItem
@@ -263,9 +269,6 @@ class SplashScreen : RootActivity(), AnkoLogger {
         }
 //        }
     }
-
-
-
 
     private fun pairCurrentDevice() {
 //        if (circle_layout.tag != null) {
@@ -281,7 +284,6 @@ class SplashScreen : RootActivity(), AnkoLogger {
 
             val boundedDevices = mBluetoothAdapter!!.bondedDevices
 
-//            if (boundedDevices.size > 0) {
             if (boundedDevices.contains(device)) {
 
                 val deviceMacAddress = device!!.address.toString()
@@ -307,7 +309,6 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 Toasty.info(applicationContext, "Default PIN code for IOIO sensor is: 4545", Toast.LENGTH_LONG, true).show()
                 device!!.createBond()
             }
-            //           }
         }
 
     }
@@ -328,10 +329,8 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 }
             }
 
-            if (mDetectedDevices.containsKey(nameOrcode))
-                return
+            if (!mDetectedDevices.containsKey(nameOrcode)) {
 
-            else {
                 mDetectedDevices[nameOrcode] = device
 
                 when (device.bluetoothClass.majorDeviceClass) {
@@ -375,11 +374,9 @@ class SplashScreen : RootActivity(), AnkoLogger {
                     }
 
                     else -> { // APPA sensor type
-                        debug("APPA sensor ::onAddClick")
                         onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_uncategorized, isCompatible, isBounded)
                     }
-            }
-
+                }
             }
         }
     }
