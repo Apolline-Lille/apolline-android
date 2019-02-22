@@ -30,6 +30,7 @@
         android:layout_height="match_parent"
         android:layout_weight="3.5">
 
+
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/selected_device_name_textview"
             android:layout_width="match_parent"
@@ -52,6 +53,9 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         app:layout_constraintTop_toBottomOf="@+id/banner_apolline">
+
+
+
 
         <com.szugyi.circlemenu.view.CircleLayout
             android:id="@+id/circle_layout"
@@ -91,16 +95,6 @@
                 android:src="@drawable/ic_scan_smartphone" />
 
         </com.skyfishjy.library.RippleBackground>
-
-        <Button
-            android:id="@+id/no_sensor_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_sensor_btn_label"
-            android:textSize="13sp"
-            android:layout_margin="7dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"/>
 
     </RelativeLayout>
 

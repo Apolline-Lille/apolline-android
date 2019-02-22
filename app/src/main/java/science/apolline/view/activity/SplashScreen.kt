@@ -25,7 +25,6 @@ import com.szugyi.circlemenu.view.CircleImageView
 import android.widget.Toast
 import android.view.View
 import android.view.animation.RotateAnimation
-import android.widget.Button
 import android.widget.EditText
 import com.fondesa.kpermissions.extension.listeners
 import com.github.ivbaranov.rxbluetooth.RxBluetooth
@@ -40,10 +39,8 @@ import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.request.PermissionRequest
 import ioio.lib.util.android.IOIOService
 import org.jetbrains.anko.*
-import science.apolline.R.id.circle_layout
 import science.apolline.service.sensor.IOIOService.Companion.getServiceStatus
 import science.apolline.utils.CheckUtility
-import science.apolline.utils.CheckUtility.checkFineLocationPermission
 import java.util.ArrayList
 
 
@@ -118,12 +115,6 @@ class SplashScreen : RootActivity(), AnkoLogger {
             setCurrentItemText()
         }
 
-        no_sensor_btn.setOnClickListener({
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        })
-
         setCurrentItemText()
         checkFineLocationPermission(mRequestLocationPermission)
         initBoundedDevices()
@@ -142,11 +133,13 @@ class SplashScreen : RootActivity(), AnkoLogger {
                         BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
                             circle_layout.removeAllViews()
                             selected_device_name_textview.text = getString(R.string.splash_bluetooth_scan)
-                            mDetectedDevices.clear()
                             ripple_scan_view.startRippleAnimation()
                         }
                         BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
                             ripple_scan_view.stopRippleAnimation()
+                            //setCurrentItemText()
+                            //selected_textView.text = getString(R.string.splash_bluetooth_scan_finished)
+
                         }
                         else -> {
 
@@ -190,11 +183,15 @@ class SplashScreen : RootActivity(), AnkoLogger {
                                             .apply()
                                     startActivity(intent)
                                     finish()
+
+
                                 }
                             }
+
                         }
                         else -> {
                         }
+
                     }
                 })
 
@@ -261,6 +258,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
         finish()
     }
 
+
     private fun setCurrentItemText() {
 //        if (circle_layout.tag != null) {
         val view = circle_layout.selectedItem
@@ -269,6 +267,9 @@ class SplashScreen : RootActivity(), AnkoLogger {
         }
 //        }
     }
+
+
+
 
     private fun pairCurrentDevice() {
 //        if (circle_layout.tag != null) {
@@ -284,11 +285,12 @@ class SplashScreen : RootActivity(), AnkoLogger {
 
             val boundedDevices = mBluetoothAdapter!!.bondedDevices
 
+//            if (boundedDevices.size > 0) {
             if (boundedDevices.contains(device)) {
 
                 val deviceMacAddress = device!!.address.toString()
                 val intent = Intent(this, MainActivity::class.java)
-                debug("SPLASHSCREEN : " + deviceMacAddress)
+
                 if (deviceMacAddress != SENSOR_MAC_ADDRESS) {
 
                     mPrefs.edit().putString("sensor_mac_address", deviceMacAddress)
@@ -309,9 +311,11 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 Toasty.info(applicationContext, "Default PIN code for IOIO sensor is: 4545", Toast.LENGTH_LONG, true).show()
                 device!!.createBond()
             }
+            //           }
         }
 
     }
+
 
     private fun addDeviceToCircleView(device: BluetoothDevice?, isBounded: Boolean) {
 
@@ -329,56 +333,56 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 }
             }
 
-            if (!mDetectedDevices.containsKey(nameOrcode)) {
+            mDetectedDevices[nameOrcode] = device
 
-                mDetectedDevices[nameOrcode] = device
+            when (device.bluetoothClass.majorDeviceClass) {
 
-                when (device.bluetoothClass.majorDeviceClass) {
-
-                    BluetoothClass.Device.Major.AUDIO_VIDEO -> {
-                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_audio_video, isCompatible, isBounded)
-                    }
-                    BluetoothClass.Device.Major.COMPUTER -> {
-                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_computer, isCompatible, isBounded)
-                    }
-                    BluetoothClass.Device.Major.HEALTH -> {
-                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_health, isCompatible, isBounded)
-                    }
-
-                    BluetoothClass.Device.Major.IMAGING -> {
-                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_imaging, isCompatible, isBounded)
-                    }
-
-                    BluetoothClass.Device.Major.MISC -> {
-                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_misc, isCompatible, isBounded)
-                    }
-
-                    BluetoothClass.Device.Major.NETWORKING -> {
-                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_netwoking, isCompatible, isBounded)
-                    }
-
-                    BluetoothClass.Device.Major.PERIPHERAL -> { // IOIO sensor type
-                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_peripheral, isCompatible, isBounded)
-                    }
-
-                    BluetoothClass.Device.Major.TOY -> {
-                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_toy, isCompatible, isBounded)
-                    }
-
-                    BluetoothClass.Device.Major.PHONE -> {
-                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_phone, isCompatible, isBounded)
-                    }
-
-                    BluetoothClass.Device.Major.WEARABLE -> {
-                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_wear, isCompatible, isBounded)
-                    }
-
-                    else -> { // APPA sensor type
-                        onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_uncategorized, isCompatible, isBounded)
-                    }
+                BluetoothClass.Device.Major.AUDIO_VIDEO -> {
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_audio_video, isCompatible, isBounded)
                 }
+                BluetoothClass.Device.Major.COMPUTER -> {
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_computer, isCompatible, isBounded)
+                }
+                BluetoothClass.Device.Major.HEALTH -> {
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_health, isCompatible, isBounded)
+                }
+
+                BluetoothClass.Device.Major.IMAGING -> {
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_imaging, isCompatible, isBounded)
+                }
+
+                BluetoothClass.Device.Major.MISC -> {
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_misc, isCompatible, isBounded)
+                }
+
+                BluetoothClass.Device.Major.NETWORKING -> {
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_netwoking, isCompatible, isBounded)
+                }
+
+                BluetoothClass.Device.Major.PERIPHERAL -> {
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_peripheral, isCompatible, isBounded)
+                }
+
+                BluetoothClass.Device.Major.TOY -> {
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_toy, isCompatible, isBounded)
+                }
+
+                BluetoothClass.Device.Major.PHONE -> {
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_phone, isCompatible, isBounded)
+                }
+
+                BluetoothClass.Device.Major.WEARABLE -> {
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_wear, isCompatible, isBounded)
+                }
+
+                else -> {
+                    onAddClick(circle_layout, nameOrcode, R.drawable.ic_device_bluetooth_uncategorized, isCompatible, isBounded)
+                }
+
             }
+
         }
+
     }
 
     private fun isBoundedDevice(device: BluetoothDevice?): Boolean {
@@ -432,35 +436,29 @@ class SplashScreen : RootActivity(), AnkoLogger {
             val newMenu = CircleImageView(this)
             val currentDrawable = ContextCompat.getDrawable(this, drawableId)
             val willBeWhite = currentDrawable!!.constantState.newDrawable()
-            willBeWhite.mutate().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
 
-            // newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item)
-            info("device to add : $name")
-            if (name.toLowerCase().contains(regex = "^ioio.".toRegex())) {
-                newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item_ioio)
-                willBeWhite.mutate().setColorFilter(ContextCompat.getColor(this, R.color.primary_text), PorterDuff.Mode.SRC_ATOP)
-            } else if (name.toLowerCase().contains("^appa.".toRegex()))
-                newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item_appa)
-            else {
-                if (bounded)
-                    newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item_bounded)
-                else
-                    newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item)
+            if (bounded) {
+                newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item_bounded)
+            } else {
+                newMenu.setBackgroundResource(R.drawable.circle_menu_shape_item)
             }
 
-
+            willBeWhite.mutate().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
             newMenu.setPadding(20, 20, 20, 20)
             newMenu.setImageDrawable(willBeWhite)
             newMenu.name = name
+            //newMenu.setBackgroundResource(R.color.colorPrimary)
             circle_layout.addView(newMenu)
         }
     }
+
 
     private fun onRemoveClick(view: View) {
         if (circle_layout.childCount > 0) {
             circle_layout.removeViewAt(circle_layout.childCount - 1)
         }
     }
+
 
     private fun checkFineLocationPermission(request: PermissionRequest) {
         request.detachAllListeners()
@@ -507,6 +505,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
             }
         }
     }
+
 
     private fun checkBlueToothState() {
 

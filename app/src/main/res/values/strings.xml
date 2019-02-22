@@ -212,7 +212,6 @@
     <string name="number_of_data_unsynchronized">Number of data unsynchronized :</string>
     <string name="date_of_last_synchronization_with_the_server">Date of last synchronization with the server :</string>
     <string name="_0">0</string>
-    <string name="no_sensor_btn_label">Acceder sans capteur</string>
 
     <!--<string name="pref_title_chart_range_y">Axe Y visibility</string>-->
     <!--<string name="pref_title_chart_range_y_summary">Min &lt; Max  </string>-->
