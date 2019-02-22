@@ -284,9 +284,11 @@ class MapFragment : RootFragment(), FragmentLifecycle, OnMapReadyCallback, AnkoL
         val filterBtn = view?.findViewById<Button>(R.id.filter_date_button)
         if (filterBtn != null) { filterBtn.text = formatter.format(dateEnd)}
 
-        mOverlay.clearTileCache()
-        mOverlay.remove()
-        initHeatMap(dateStart, dateEnd)
+        if(::mOverlay.isInitialized) {
+            mOverlay.clearTileCache()
+            mOverlay.remove()
+            initHeatMap(dateStart, dateEnd)
+        }
     }
 
     fun onBtnFilterClick(view : View) {
