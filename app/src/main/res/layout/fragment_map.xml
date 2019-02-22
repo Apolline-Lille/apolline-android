@@ -5,13 +5,58 @@
     android:layout_height="match_parent"
     xmlns:fab="http://schemas.android.com/tools">
 
-    <fragment
-        android:id="@+id/fragment_mapview"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent">
-    </fragment>
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/filter_date_button"
+            style="@style/Widget.AppCompat.Button.Small"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/corners_btn"
+            android:hint="Select data"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="01/01/1970"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/fragment_mapview"
+            app:layout_constraintEnd_toStartOf="@+id/showallBtnMapFragment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/showallBtnMapFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/corners_btn"
+            android:text="Show all"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toTopOf="@+id/fragment_mapview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/filter_date_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <fragment
+            android:id="@+id/fragment_mapview"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/filter_date_button"></fragment>
+
+    </android.support.constraint.ConstraintLayout>
 
     <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
         <!--xmlns:fab="http://schemas.android.com/apk/res-auto"-->

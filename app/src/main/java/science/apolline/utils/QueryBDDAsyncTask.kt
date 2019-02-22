@@ -25,6 +25,7 @@ class QueryBDDAsyncTask(activity: SettingsActivity.DataErasePreferenceFragment) 
         val sensorModel = AppDatabase.getInstance(mActivity.context).sensorDao()
         val timestampSyncDao = AppDatabase.getInstance(mActivity.context).timestampSyncDao()
         var arg0 = params[0]
+        Log.d("dtp", "last sync" + timestampSyncDao.getLastSync())
         when(arg0)
         {
             "getSensorCount" -> return sensorModel.getSensorCount().toInt()
