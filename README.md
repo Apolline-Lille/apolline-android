@@ -59,9 +59,7 @@ Alphabetical order of last names
 * Cyril Delegove
 * Guillaume Jean-Jaques SEM
 * Damien TOULOUSE
- 
- 
- 
+* Aymane BOUZIANE 
  
  
  

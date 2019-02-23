@@ -25,9 +25,9 @@ android {
         applicationId "science.apolline"
         minSdkVersion 21
         targetSdkVersion 27
-
-        versionCode 25
-        versionName "2.4.8"
+        
+        versionCode 26
+        versionName "2.4.9"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
