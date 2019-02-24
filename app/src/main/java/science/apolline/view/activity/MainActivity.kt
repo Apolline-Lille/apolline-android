@@ -13,7 +13,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.wifi.WifiManager.WifiLock
 import android.os.Bundle
-import android.os.CountDownTimer
+
 import android.os.IBinder
 import android.os.PowerManager.WakeLock
 import android.preference.PreferenceManager
@@ -33,9 +33,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.birbit.android.jobqueue.JobManager
-import com.fondesa.kpermissions.extension.listeners
-import com.fondesa.kpermissions.extension.permissionsBuilder
-import com.fondesa.kpermissions.request.PermissionRequest
+
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.with
 import com.google.android.gms.maps.GoogleMap
@@ -47,7 +45,7 @@ import org.jetbrains.anko.*
 import science.apolline.BuildConfig
 import science.apolline.R
 import science.apolline.root.RootActivity
-import science.apolline.root.RootFragment
+
 import science.apolline.service.sensor.BluetoothLeService
 import science.apolline.service.sensor.IOIOService
 import science.apolline.service.synchronisation.SyncInfluxDBJob
@@ -82,7 +80,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     @SuppressLint("StaticFieldLeak")
     var img: ImageView? = null
 
-    private var distroyed = false
+    private var destroyed = false
 
 
 
@@ -104,12 +102,12 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false
 
-                if(distroyed == false) {
+                if(destroyed == false) {
                     val builder = AlertDialog.Builder(this@MainActivity)
 
-                    builder.setTitle("capteur deconnecté")
+                    builder.setTitle(DISCONNECTED_SENSOR_DISPLAY_TITLE)
 
-                    builder.setMessage("Le capteur a été deconnecté. Vérifiez qu'il est allumé et qu'il est assez proche de votre de téléphone.")
+                    builder.setMessage(DISCONNECTED_SENSOR_DISPLAY_MESSAGE)
 
                     builder.setPositiveButton("reconnecter"){dialog, which ->
                         registerReceiver(this, MainActivity.makeGattUpdateIntentFilter())
@@ -458,7 +456,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
 
     override fun onDestroy() {
-        distroyed = true
+        destroyed = true
         if (mWakeLock.isHeld) {
             mWakeLock.release()
             info("WakeLock released")
@@ -533,7 +531,8 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         internal lateinit var mPrefs: SharedPreferences
         internal val EXTRAS_DEVICE_NAME = "DEVICE_NAME"
         internal val EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS"
-
+        internal val DISCONNECTED_SENSOR_DISPLAY_TITLE = "Capteur déconnecté"
+        internal val DISCONNECTED_SENSOR_DISPLAY_MESSAGE = "Le capteur a été déconnecté. Vérifiez qu'il est allumé et qu'il est à proximité de votre téléphone."
         var mFragment : Fragment? = null
 
         internal var mDeviceName: String = ""

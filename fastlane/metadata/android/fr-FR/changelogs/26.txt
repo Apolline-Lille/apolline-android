@@ -1,2 +1,2 @@
-- some bugs fixed
-- a pop up message is displayed when the bleu sensor is deconneted.
+- quelques bugs fixés : crashs, récupération des données ne fonctionnait pas qu'on change d'écran et qu'on revient ou quand on sort de l'application et qu'on revient.  
+- Une notification est affichée lorsque le capteur bleu se déconnecte.
