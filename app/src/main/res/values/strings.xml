@@ -2,6 +2,11 @@
     <string name="app_name">Apolline</string>
 
     <string name="todo">TODO</string>
+    <string name="ioio_regex">^ioio.</string>
+    <string name="appa_regex">^appa.</string>
+
+    <string name="disconnected_sensor_display_title">Capteur déconnecté</string>
+    <string name="disconnected_sensor_display_message">Le capteur a été déconnecté. Vérifiez qu\'il est allumé et qu\'il est à proximité de votre téléphone.</string>
 
     <string name="unknown_characteristic">Unknown characteristic</string>
     <string name="unknown_service">Unknown service</string>
