@@ -13,7 +13,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.wifi.WifiManager.WifiLock
 import android.os.Bundle
-
+import android.os.CountDownTimer
 import android.os.IBinder
 import android.os.PowerManager.WakeLock
 import android.preference.PreferenceManager
@@ -33,7 +33,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.birbit.android.jobqueue.JobManager
-
+import com.fondesa.kpermissions.extension.listeners
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.request.PermissionRequest
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.with
 import com.google.android.gms.maps.GoogleMap
@@ -45,7 +47,7 @@ import org.jetbrains.anko.*
 import science.apolline.BuildConfig
 import science.apolline.R
 import science.apolline.root.RootActivity
-
+import science.apolline.root.RootFragment
 import science.apolline.service.sensor.BluetoothLeService
 import science.apolline.service.sensor.IOIOService
 import science.apolline.service.synchronisation.SyncInfluxDBJob
@@ -62,7 +64,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
     // IOIO
     private val mJobManager by instance<JobManager>()
-     val mFragmentViewPager by instance<ViewPagerFragment>()
+    val mFragmentViewPager by instance<ViewPagerFragment>()
     private val mWakeLock: WakeLock by with(this as AppCompatActivity).instance()
     private val mWifiLock: WifiLock by with(this as AppCompatActivity).instance()
     private var mBluetoothAdapter: BluetoothAdapter? = null
@@ -70,7 +72,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var mDisposable: CompositeDisposable
     private var SYNC_MOD = 2 // Wi-Fi only
     private var INFLUXDB_SYNC_FREQ: Long = -1
-
 
     // APPA
     private var mDeviceAddress: String? = null
@@ -94,12 +95,9 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             val action = intent.action
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 mConnected = true
-
-
                 invalidateOptionsMenu()
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false
-
                 if(destroyed == false) {
                     val builder = AlertDialog.Builder(this@MainActivity)
                     builder.setTitle(R.string.disconnected_sensor_display_title)
@@ -117,7 +115,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                     dialog.show()
                 }
                 invalidateOptionsMenu()
-
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 displayGattServices(MainActivity.mBluetoothLeService!!.getSupportedGattServices())
                 if (mGattCharacteristics != null) {
@@ -160,7 +157,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             replaceFragment(mFragmentViewPager)
             registerReceiver(mGattUpdateReceiver, MainActivity.makeGattUpdateIntentFilter())
             MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address","address not found"))
-
         }
 
         override fun onServiceDisconnected(componentName: ComponentName) {
@@ -178,6 +174,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         val gattServiceData = ArrayList<HashMap<String, String>>()
         val gattCharacteristicData = ArrayList<ArrayList<HashMap<String, String>>>()
         mGattCharacteristics = ArrayList()
+
         // Loops through available GATT Services.
         for (gattService in gattServices) {
             val currentServiceData = HashMap<String, String>()
@@ -190,6 +187,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             val gattCharacteristicGroupData = ArrayList<HashMap<String, String>>()
             val gattCharacteristics = gattService.characteristics
             val charas = ArrayList<BluetoothGattCharacteristic>()
+
             // Loops through available Characteristics.
             for (gattCharacteristic in gattCharacteristics) {
                 charas.add(gattCharacteristic)
@@ -229,23 +227,21 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
         // Launch AutoSync
         SyncJobScheduler.setAutoSync(SYNC_MOD, INFLUXDB_SYNC_FREQ, this)
-        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = R.string.ioio_regex.toString().toRegex())) {
+        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.IOIO_REGEX)) {
             supportActionBar!!.setBackgroundDrawable(ColorDrawable(Color.parseColor("#ffdc41")))
             var bundle = Bundle()
             bundle.putString("sensor_name" , mPrefs.getString("sensor_name" , "sensor_name does not exist"))
             mFragmentViewPager.setArguments(bundle)
-             startService(Intent(applicationContext, IOIOService::class.java))
+            startService(Intent(applicationContext, IOIOService::class.java))
             replaceFragment(mFragmentViewPager)
-
         }
-
     }
 
     override fun onStart() {
         super.onStart()
 
         //APPA
-        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = R.string.appa_regex.toString().toRegex())) {
+        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.APPA_REGEX)) {
             supportActionBar!!.setBackgroundDrawable(ColorDrawable(Color.parseColor("#428aff")))
             val gattServiceIntent = Intent(this@MainActivity, BluetoothLeService::class.java)
             bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE)
@@ -313,7 +309,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                             Toasty.warning(applicationContext, "Please enable your Wi-Fi connection or change synchronization policy", Toast.LENGTH_SHORT, true).show()
                         }
                     }
-
                     else -> {
                         mJobManager.addJobInBackground(SyncInfluxDBJob())
                         Toasty.warning(applicationContext, "No internet connection ! Synchronization job added to queue", Toast.LENGTH_LONG, true).show()
@@ -324,7 +319,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
             R.id.start -> {
-                if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = R.string.appa_regex.toString().toRegex())) {
+                if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.APPA_REGEX)) {
                     registerReceiver(mGattUpdateReceiver, MainActivity.makeGattUpdateIntentFilter())
                     if (MainActivity.mBluetoothLeService != null) {
                         val result = MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address","address not found"))
@@ -338,7 +333,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 }
             }
             R.id.pause -> {
-                if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = R.string.appa_regex.toString().toRegex())) {
+                if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.APPA_REGEX)) {
                     MainActivity.mBluetoothLeService!!.disconnect()
                     return true
                 }
@@ -355,7 +350,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         // Handle navigation view item clicks here.
         val itemId = item.itemId
         val groupId = item.groupId
-
         when (groupId) {
             R.id.grp_capteur -> if (itemId == R.id.nav_ioio) {
                 val viewPagerFragment = ViewPagerFragment()
@@ -369,7 +363,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
             }
         }
-
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.closeDrawer(GravityCompat.START)
         return true
@@ -380,7 +373,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         val backStateName = fragment.javaClass.name
         val manager = supportFragmentManager
         val fragmentPopped = manager.popBackStackImmediate(backStateName, 0)
-
         if (!fragmentPopped && manager.findFragmentByTag(backStateName) == null) { //fragment not in back stack, create it.
             val ft = manager.beginTransaction()
             ft.replace(R.id.fragment, fragment, backStateName)
@@ -413,17 +405,13 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         }
         super.onDestroy()
         cancelAutoSync(false)
-        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = R.string.ioio_regex.toString().toRegex())) {
+        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.IOIO_REGEX)) {
             stopService(Intent(this, IOIOService::class.java))
-
         }
         else {
-
             MainActivity.mBluetoothLeService!!.disconnect()
             unbindService(mServiceConnection)
-
         }
-
     }
 
     private fun checkBlueToothState() {
@@ -447,7 +435,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == REQUEST_CODE_ENABLE_BLUETOOTH) {
             if (resultCode == Activity.RESULT_OK) {
                 if (!IOIOService.getServiceStatus()) {
@@ -466,7 +453,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 //checkBlueToothState()
                 Toasty.error(applicationContext, "Bluetooth NOT enabled", Toast.LENGTH_LONG, true).show()
             }
-
         }
     }
 
@@ -500,7 +486,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         internal var mapFragment: MapFragment? = null
         @SuppressLint("StaticFieldLeak")
         internal var img: ImageView? = null
-
 
         private fun makeGattUpdateIntentFilter(): IntentFilter {
             val intentFilter = IntentFilter()
