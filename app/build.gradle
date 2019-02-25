@@ -116,17 +116,6 @@ android {
         multiDexEnabled true
     }
 
-//    flavorDimensions 'tier'
-//    productFlavors {
-//        development {
-//            dimension 'tier'
-//            applicationId "science.apolline"
-//        }
-//        production {
-//            dimension 'tier'
-//            applicationId "science.apolline"
-//        }
-//    }
 
 }
 
