@@ -229,7 +229,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
         // Launch AutoSync
         SyncJobScheduler.setAutoSync(SYNC_MOD, INFLUXDB_SYNC_FREQ, this)
-        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = "^ioio.".toRegex())) {
+        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = R.string.ioio_regex.toString().toRegex())) {
             supportActionBar!!.setBackgroundDrawable(ColorDrawable(Color.parseColor("#ffdc41")))
             var bundle = Bundle()
             bundle.putString("sensor_name" , mPrefs.getString("sensor_name" , "sensor_name does not exist"))
@@ -245,7 +245,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         super.onStart()
 
         //APPA
-        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = "^appa.".toRegex())) {
+        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = R.string.appa_regex.toString().toRegex())) {
             supportActionBar!!.setBackgroundDrawable(ColorDrawable(Color.parseColor("#428aff")))
             val gattServiceIntent = Intent(this@MainActivity, BluetoothLeService::class.java)
             bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE)
@@ -324,7 +324,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
             R.id.start -> {
-                if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = "^appa.".toRegex())) {
+                if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = R.string.appa_regex.toString().toRegex())) {
                     registerReceiver(mGattUpdateReceiver, MainActivity.makeGattUpdateIntentFilter())
                     if (MainActivity.mBluetoothLeService != null) {
                         val result = MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address","address not found"))
@@ -338,7 +338,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 }
             }
             R.id.pause -> {
-                if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = "^appa.".toRegex())) {
+                if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = R.string.appa_regex.toString().toRegex())) {
                     MainActivity.mBluetoothLeService!!.disconnect()
                     return true
                 }
@@ -413,7 +413,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         }
         super.onDestroy()
         cancelAutoSync(false)
-        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = "^ioio.".toRegex())) {
+        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = R.string.ioio_regex.toString().toRegex())) {
             stopService(Intent(this, IOIOService::class.java))
 
         }
