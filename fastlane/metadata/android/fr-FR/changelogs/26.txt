@@ -1,0 +1,2 @@
+- quelques bugs fixés : crashs, la récupération des données ne fonctionnait pas après un changement d'écran, ainsi qu'après être sorti de l'application.  
+- Une notification est affichée lorsque le capteur bleu se déconnecte.

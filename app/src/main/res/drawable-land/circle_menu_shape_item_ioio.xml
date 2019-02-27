@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
 
-    <solid android:color="@color/bonded_bt_device_bg" />
+    <solid android:color="@color/ioio_sensor_bg" />
 
     <size
         android:width="32dp"

@@ -17,11 +17,9 @@ interface SensorDao {
     fun getLastEntries(nbDevice: Long): Flowable<List<Device>>
 
 
-
     @Transaction
     @Query("SELECT * FROM Device WHERE date <= :actualSyncDate AND date > :lastSyncDate ORDER BY date ASC LIMIT :nbDevice")
     fun getUnSyncByDate(actualSyncDate: Long, lastSyncDate: Long,nbDevice: Long): List<Device>
-
 
 
     @Query("SELECT count(*) FROM Device WHERE date > :lastSyncDate")
@@ -42,11 +40,12 @@ interface SensorDao {
     @Query("SELECT count(*) FROM Device")
     fun getCount(): Flowable<Long>
 
+    @Query("SELECT * FROM Device WHERE :dateStart <= date AND date <= :dateEnd LIMIT :MAX_DEVICE")
+    fun getEntriesByDate(dateStart: Long, dateEnd: Long, MAX_DEVICE: Long): Flowable<List<Device>>
+
     @Transaction
     @Query("SELECT * FROM Device WHERE id=:idDevice")
     fun getSensorById(idDevice: Long): LiveData<Device>
-
-
 
     @Query("DELETE FROM Device WHERE date <= :lastSyncDate")
     fun deleteDataSyncByDate(lastSyncDate: Long)

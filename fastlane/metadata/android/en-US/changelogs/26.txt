@@ -1,0 +1,2 @@
+- some bugs fixed : crashs, getting data from the sensor was not working when coming back after screen was changed or after app was closed temporarily.
+- a notification is displayed when the blue sensor is disconnected.

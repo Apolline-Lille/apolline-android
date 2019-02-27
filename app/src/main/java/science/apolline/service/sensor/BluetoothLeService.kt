@@ -481,9 +481,6 @@ class BluetoothLeService : Service(),AnkoLogger {
         }
     }
 
-
-
-
     private fun broadcastUpdate(action: String) {
         val intent = Intent(action)
         println("sending broadcast ... " + action)

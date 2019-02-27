@@ -3,6 +3,9 @@
 
     <string name="todo">TODO</string>
 
+    <string name="disconnected_sensor_display_title">Capteur déconnecté</string>
+    <string name="disconnected_sensor_display_message">Le capteur a été déconnecté. Vérifiez qu\'il est allumé et qu\'il est à proximité de votre téléphone.</string>
+
     <string name="unknown_characteristic">Unknown characteristic</string>
     <string name="unknown_service">Unknown service</string>
     <string name="ble_not_supported">BLE is not supported</string>

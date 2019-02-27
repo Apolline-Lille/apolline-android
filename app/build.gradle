@@ -25,9 +25,9 @@ android {
         applicationId "science.apolline"
         minSdkVersion 21
         targetSdkVersion 27
-
-        versionCode 25
-        versionName "2.4.8"
+        
+        versionCode 26
+        versionName "2.4.9"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -116,17 +116,6 @@ android {
         multiDexEnabled true
     }
 
-//    flavorDimensions 'tier'
-//    productFlavors {
-//        development {
-//            dimension 'tier'
-//            applicationId "science.apolline"
-//        }
-//        production {
-//            dimension 'tier'
-//            applicationId "science.apolline"
-//        }
-//    }
 
 }
 
@@ -303,6 +292,8 @@ dependencies {
     // KPermissions
     implementation "com.github.fondesa:kpermissions:$kpermissions_version"
 
+    //
+    implementation 'com.squareup:android-times-square:1.6.5@aar'
 }
 
 repositories {
