@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattService
 import android.content.*
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.wifi.WifiManager.WifiLock
@@ -82,8 +83,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     private var destroyed = false
 
 
-
-
     // Handles various events fired by the Service.
     // ACTION_GATT_CONNECTED: connected to a GATT server.
     // ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
@@ -98,18 +97,18 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 invalidateOptionsMenu()
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 mConnected = false
-                if(destroyed == false) {
+                if (destroyed == false) {
                     val builder = AlertDialog.Builder(this@MainActivity)
                     builder.setTitle(R.string.disconnected_sensor_display_title)
                     builder.setMessage(R.string.disconnected_sensor_display_message)
-                    builder.setPositiveButton("reconnecter"){dialog, which ->
+                    builder.setPositiveButton("reconnecter") { dialog, which ->
                         registerReceiver(this, MainActivity.makeGattUpdateIntentFilter())
                         if (MainActivity.mBluetoothLeService != null) {
-                            val result = MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address","address not found"))
+                            val result = MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address", "address not found"))
                             Log.d(MainActivity.TAG, "Connect request result=$result")
                         }
                     }
-                    builder.setNegativeButton("Ok"){dialog,which ->
+                    builder.setNegativeButton("Ok") { dialog, which ->
                     }
                     val dialog: AlertDialog = builder.create()
                     dialog.show()
@@ -152,18 +151,17 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 finish()
             }
             var bundle = Bundle()
-            bundle.putString("sensor_name" , mPrefs.getString("sensor_name" , "sensor_name does not exist"))
+            bundle.putString("sensor_name", mPrefs.getString("sensor_name", "sensor_name does not exist"))
             mFragmentViewPager.setArguments(bundle)
             replaceFragment(mFragmentViewPager)
             registerReceiver(mGattUpdateReceiver, MainActivity.makeGattUpdateIntentFilter())
-            MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address","address not found"))
+            MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address", "address not found"))
         }
 
         override fun onServiceDisconnected(componentName: ComponentName) {
             MainActivity.mBluetoothLeService = null
         }
     }
-
 
 
     private fun displayGattServices(gattServices: List<BluetoothGattService>?) {
@@ -203,9 +201,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -227,28 +222,38 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
         // Launch AutoSync
         SyncJobScheduler.setAutoSync(SYNC_MOD, INFLUXDB_SYNC_FREQ, this)
-        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.IOIO_REGEX)) {
+        if (mPrefs.getString("sensor_name", "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.IOIO_REGEX)) {
             supportActionBar!!.setBackgroundDrawable(ColorDrawable(Color.parseColor("#ffdc41")))
             var bundle = Bundle()
-            bundle.putString("sensor_name" , mPrefs.getString("sensor_name" , "sensor_name does not exist"))
+            bundle.putString("sensor_name", mPrefs.getString("sensor_name", "sensor_name does not exist"))
             mFragmentViewPager.setArguments(bundle)
             startService(Intent(applicationContext, IOIOService::class.java))
             replaceFragment(mFragmentViewPager)
         }
+        if (savedInstanceState == null) {
+            //APPA
+            if (mPrefs.getString("sensor_name", "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.APPA_REGEX)) {
+                supportActionBar!!.setBackgroundDrawable(ColorDrawable(Color.parseColor("#428aff")))
+                val gattServiceIntent = Intent(this@MainActivity, BluetoothLeService::class.java)
+                bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE)
+            }
+            SYNC_MOD = (mPrefs.getString("sync_mod", "2")).toInt()
+            INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
+        }
     }
 
-    override fun onStart() {
+    /*override fun onStart() {
         super.onStart()
 
         //APPA
-        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.APPA_REGEX)) {
+        if (mPrefs.getString("sensor_name", "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.APPA_REGEX)) {
             supportActionBar!!.setBackgroundDrawable(ColorDrawable(Color.parseColor("#428aff")))
             val gattServiceIntent = Intent(this@MainActivity, BluetoothLeService::class.java)
             bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE)
         }
         SYNC_MOD = (mPrefs.getString("sync_mod", "2")).toInt()
         INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
-    }
+    }*/
 
     override fun onBackPressed() {
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
@@ -257,7 +262,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         } else {
             val backStackEntryCount = supportFragmentManager.backStackEntryCount
             if (backStackEntryCount == 1) {
-                if (IOIOService.getServiceStatus()){
+                if (IOIOService.getServiceStatus()) {
                     stopService(Intent(applicationContext, IOIOService::class.java))
                 }
                 val intent = Intent(this, SplashScreen::class.java)
@@ -319,25 +324,23 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
             R.id.start -> {
-                if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.APPA_REGEX)) {
+                if (mPrefs.getString("sensor_name", "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.APPA_REGEX)) {
                     registerReceiver(mGattUpdateReceiver, MainActivity.makeGattUpdateIntentFilter())
                     if (MainActivity.mBluetoothLeService != null) {
-                        val result = MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address","address not found"))
+                        val result = MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address", "address not found"))
                         Log.d(MainActivity.TAG, "Connect request result=$result")
                     }
-                }
-                else {
+                } else {
                     stopService(Intent(applicationContext, IOIOService::class.java))
                     startService(Intent(applicationContext, IOIOService::class.java))
                     return true
                 }
             }
             R.id.pause -> {
-                if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.APPA_REGEX)) {
+                if (mPrefs.getString("sensor_name", "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.APPA_REGEX)) {
                     MainActivity.mBluetoothLeService!!.disconnect()
                     return true
-                }
-                else {
+                } else {
                     stopService(Intent(applicationContext, IOIOService::class.java))
                     return true
                 }
@@ -383,7 +386,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
 
-
     override fun onResume() {
         super.onResume()
     }
@@ -405,10 +407,9 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         }
         super.onDestroy()
         cancelAutoSync(false)
-        if (mPrefs.getString("sensor_name" , "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.IOIO_REGEX)) {
+        if (mPrefs.getString("sensor_name", "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.IOIO_REGEX)) {
             stopService(Intent(this, IOIOService::class.java))
-        }
-        else {
+        } else {
             MainActivity.mBluetoothLeService!!.disconnect()
             unbindService(mServiceConnection)
         }
@@ -440,11 +441,10 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 if (!IOIOService.getServiceStatus()) {
                     stopService(Intent(applicationContext, IOIOService::class.java))
                     startService(Intent(applicationContext, IOIOService::class.java))
-                }
-                else {
+                } else {
                     registerReceiver(mGattUpdateReceiver, MainActivity.makeGattUpdateIntentFilter())
                     if (MainActivity.mBluetoothLeService != null) {
-                        val result = MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address","address not found"))
+                        val result = MainActivity.mBluetoothLeService!!.connect(mPrefs.getString("sensor_mac_address", "address not found"))
                         Log.d(MainActivity.TAG, "Connect request result=$result")
                     }
                 }
@@ -464,7 +464,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         internal lateinit var mPrefs: SharedPreferences
         internal val EXTRAS_DEVICE_NAME = "DEVICE_NAME"
         internal val EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS"
-        var mFragment : Fragment? = null
+        var mFragment: Fragment? = null
         internal var mDeviceName: String = ""
         var mBluetoothLeService: BluetoothLeService? = null
         internal var mNotifyCharacteristic: BluetoothGattCharacteristic? = null
