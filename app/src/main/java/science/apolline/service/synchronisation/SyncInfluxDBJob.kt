@@ -19,6 +19,7 @@ import science.apolline.service.database.TimestampSyncDao
 import science.apolline.service.networks.ApiUtils
 import science.apolline.utils.CheckUtility
 import science.apolline.utils.CheckUtility.isNetworkConnected
+import science.apolline.utils.DataExport
 
 /**
  * Created by sparow on 19/01/2018.
@@ -108,8 +109,6 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
 
                     val dataToSend = RequestParser.createRequestBody(dataNotSync)
                     info(dataToSend)
-
-
                     val call = api.savePost(BuildConfig.INFLUXDB_DBNAME, BuildConfig.INFLUXDB_USR, BuildConfig.INFLUXDB_PWD, dataToSend)
 
                     call.enqueue(object : Callback<InfluxBody> {

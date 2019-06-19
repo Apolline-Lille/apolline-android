@@ -30,6 +30,7 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -140,6 +141,10 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
 
+    init {
+        info {  "*****TESTING " +this.toString() }
+    }
+
     // Code to manage Service lifecycle.
     private val mServiceConnection = object : ServiceConnection {
 
@@ -204,6 +209,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         mDisposable = CompositeDisposable()
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -338,7 +344,13 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             }
             R.id.pause -> {
                 if (mPrefs.getString("sensor_name", "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.APPA_REGEX)) {
-                    MainActivity.mBluetoothLeService!!.disconnect()
+                    try {
+                        MainActivity.mBluetoothLeService!!.disconnect()
+                    }
+                    catch (e : NullPointerException)
+                    {
+                        info { e.toString() }
+                    }
                     return true
                 } else {
                     stopService(Intent(applicationContext, IOIOService::class.java))
@@ -392,7 +404,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onPause() {
         super.onPause()
-
     }
 
 
@@ -405,14 +416,14 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             mWifiLock.release()
             info("WifiLock released")
         }
-        super.onDestroy()
         cancelAutoSync(false)
         if (mPrefs.getString("sensor_name", "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.IOIO_REGEX)) {
             stopService(Intent(this, IOIOService::class.java))
         } else {
             MainActivity.mBluetoothLeService!!.disconnect()
-            unbindService(mServiceConnection)
+            //unbindService(mServiceConnection)
         }
+        super.onDestroy()
     }
 
     private fun checkBlueToothState() {

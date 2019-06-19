@@ -69,6 +69,9 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
                 .build()
     }
 
+    init {
+        info {  "*****TESTING " +this.toString() }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
