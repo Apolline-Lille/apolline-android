@@ -11,7 +11,6 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import science.apolline.utils.CheckUtility
 import science.apolline.utils.GeoHashHelper
-import science.apolline.utils.GeoHashHelper.decode
 
 
 @Entity

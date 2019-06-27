@@ -21,7 +21,7 @@
             app:tabSelectedTextColor="@color/icons"
             app:tabTextColor="@color/divider" />
 
-        <science.apolline.viewModel.NotSwipeableViewPager
+        <science.apolline.utils.NotSwipeableViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

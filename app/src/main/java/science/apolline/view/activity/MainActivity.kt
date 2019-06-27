@@ -1,20 +1,17 @@
 package science.apolline.view.activity
 
 
-import android.Manifest
+
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.FragmentManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattService
 import android.content.*
-import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.wifi.WifiManager.WifiLock
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.os.IBinder
 import android.os.PowerManager.WakeLock
 import android.preference.PreferenceManager
@@ -35,9 +32,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.birbit.android.jobqueue.JobManager
-import com.fondesa.kpermissions.extension.listeners
-import com.fondesa.kpermissions.extension.permissionsBuilder
-import com.fondesa.kpermissions.request.PermissionRequest
 import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.with
 import com.google.android.gms.maps.GoogleMap
@@ -49,7 +43,6 @@ import org.jetbrains.anko.*
 import science.apolline.BuildConfig
 import science.apolline.R
 import science.apolline.root.RootActivity
-import science.apolline.root.RootFragment
 import science.apolline.service.sensor.BluetoothLeService
 import science.apolline.service.sensor.IOIOService
 import science.apolline.service.synchronisation.SyncInfluxDBJob
@@ -140,10 +133,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
-
-    init {
-        info {  "*****TESTING " +this.toString() }
-    }
 
     // Code to manage Service lifecycle.
     private val mServiceConnection = object : ServiceConnection {

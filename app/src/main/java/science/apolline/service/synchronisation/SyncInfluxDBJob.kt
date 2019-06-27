@@ -19,7 +19,6 @@ import science.apolline.service.database.TimestampSyncDao
 import science.apolline.service.networks.ApiUtils
 import science.apolline.utils.CheckUtility
 import science.apolline.utils.CheckUtility.isNetworkConnected
-import science.apolline.utils.DataExport
 
 /**
  * Created by sparow on 19/01/2018.

@@ -278,7 +278,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
                 }
                 catch (e : NullPointerException)
                 {
-                    info { e.toString() }
+                    info { "Exception caught : $e" }
                 }
             }
         }

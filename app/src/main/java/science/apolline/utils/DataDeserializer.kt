@@ -1,6 +1,5 @@
 package science.apolline.utils
 
-import android.text.format.DateFormat
 import com.google.gson.*
 
 import java.lang.reflect.Type

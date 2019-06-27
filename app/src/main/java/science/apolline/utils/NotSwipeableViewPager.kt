@@ -12,7 +12,7 @@ import android.view.MotionEvent
 class NotSwipeableViewPager(context: Context,attrs: AttributeSet) : ViewPager(context,attrs)
 {
     /**
-     * This method always return false to ensure that the swipe feature is not available
+     * This function always return false to ensure that the swipe feature is not available
      *@return false
      */
     override fun onTouchEvent(ev: MotionEvent?): Boolean {
@@ -20,7 +20,7 @@ class NotSwipeableViewPager(context: Context,attrs: AttributeSet) : ViewPager(co
     }
 
     /**
-     * This method always return false to ensure that the swipe feature is not available
+     * This function always return false to ensure that the swipe feature is not available
      * @return false
      */
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
