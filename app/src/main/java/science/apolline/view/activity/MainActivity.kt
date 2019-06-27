@@ -102,7 +102,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                             Log.d(MainActivity.TAG, "Connect request result=$result")
                         }
                     }
-                    builder.setNegativeButton("Ok") { dialog, which ->
+                    builder.setNegativeButton(R.string.negative_button_ok) { dialog, which ->
                     }
                     val dialog: AlertDialog = builder.create()
                     dialog.show()
@@ -236,19 +236,6 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
         }
     }
-
-    /*override fun onStart() {
-        super.onStart()
-
-        //APPA
-        if (mPrefs.getString("sensor_name", "sensor_name does not exist").toLowerCase().contains(regex = SplashScreen.APPA_REGEX)) {
-            supportActionBar!!.setBackgroundDrawable(ColorDrawable(Color.parseColor("#428aff")))
-            val gattServiceIntent = Intent(this@MainActivity, BluetoothLeService::class.java)
-            bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE)
-        }
-        SYNC_MOD = (mPrefs.getString("sync_mod", "2")).toInt()
-        INFLUXDB_SYNC_FREQ = (mPrefs.getString("sync_frequency", "60")).toLong()
-    }*/
 
     override fun onBackPressed() {
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
@@ -410,7 +397,7 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             stopService(Intent(this, IOIOService::class.java))
         } else {
             MainActivity.mBluetoothLeService!!.disconnect()
-            //unbindService(mServiceConnection)
+            unbindService(mServiceConnection)
         }
         super.onDestroy()
     }

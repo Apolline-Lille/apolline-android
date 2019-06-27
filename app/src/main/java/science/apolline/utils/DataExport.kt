@@ -67,7 +67,6 @@ object DataExport : AnkoLogger {
                 val fw = FileWriter(createFileName("json"))
                 val gson = GsonBuilder().setPrettyPrinting().create()
                 val jsonFile = gson.toJson(dataList)
-                print(jsonFile.toString())
                 fw.write(jsonFile)
                 true
             } else {
