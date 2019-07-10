@@ -69,7 +69,6 @@ class ChartFragment : RootFragment(), OnChartValueSelectedListener, FragmentLife
                 .build()
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mViewModel = ViewModelProviders.of(this).get(SensorViewModel::class.java).init(appKodein())

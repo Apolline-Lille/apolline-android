@@ -108,8 +108,6 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
 
                     val dataToSend = RequestParser.createRequestBody(dataNotSync)
                     info(dataToSend)
-
-
                     val call = api.savePost(BuildConfig.INFLUXDB_DBNAME, BuildConfig.INFLUXDB_USR, BuildConfig.INFLUXDB_PWD, dataToSend)
 
                     call.enqueue(object : Callback<InfluxBody> {

@@ -1,7 +1,6 @@
 package science.apolline.utils
 
 import android.content.Context
-import android.widget.TextView
 
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
@@ -14,7 +13,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-import science.apolline.R
 
 
 class CustomMarkerView(context: Context, layoutResource: Int, private val referenceTimestamp: Long  // minimum timestamp in your data set
