@@ -109,10 +109,11 @@
     <string name="pref_header_data_sync">Data &amp; sync</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string name="pref_title_local_sync_frequency">Local sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
         <item>1 minute</item>
-        <item>5 minute</item>
-        <item>10 minute</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
         <item>15 minutes</item>
         <item>30 minutes</item>
         <item>1 hour</item>
@@ -215,6 +216,8 @@
     <string name="number_of_data_unsynchronized">Number of data unsynchronized :</string>
     <string name="date_of_last_synchronization_with_the_server">Date of last synchronization with the server :</string>
     <string name="_0">0</string>
+
+    <string name="negative_button_ok">Ok</string>
 
     <!--<string name="pref_title_chart_range_y">Axe Y visibility</string>-->
     <!--<string name="pref_title_chart_range_y_summary">Min &lt; Max  </string>-->

@@ -35,6 +35,7 @@ import com.fondesa.kpermissions.request.PermissionRequest
 import org.jetbrains.anko.*
 import science.apolline.service.sensor.IOIOService.Companion.getServiceStatus
 import science.apolline.utils.CheckUtility
+import java.lang.NullPointerException
 
 class SplashScreen : RootActivity(), AnkoLogger {
 
@@ -61,6 +62,7 @@ class SplashScreen : RootActivity(), AnkoLogger {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         if (getServiceStatus()){
             val intent = Intent(this, MainActivity::class.java)
@@ -270,8 +272,14 @@ class SplashScreen : RootActivity(), AnkoLogger {
                     finish()
                 }
             } else {
-                Toasty.info(applicationContext, "Default PIN code for IOIO sensor is: 4545", Toast.LENGTH_LONG, true).show()
-                device!!.createBond()
+                try {
+                    Toasty.info(applicationContext, "Default PIN code for IOIO sensor is: 4545", Toast.LENGTH_LONG, true).show()
+                    device!!.createBond()
+                }
+                catch (e : NullPointerException)
+                {
+                    info { "Exception caught : $e" }
+                }
             }
         }
 

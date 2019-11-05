@@ -4,7 +4,6 @@ import android.app.Activity
 import android.os.AsyncTask
 import android.os.Build
 import android.support.annotation.RequiresApi
-import android.util.Log
 import science.apolline.service.database.AppDatabase
 import science.apolline.view.activity.SettingsActivity
 import java.lang.ref.WeakReference

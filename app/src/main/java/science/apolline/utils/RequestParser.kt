@@ -1,6 +1,5 @@
 package science.apolline.utils
 
-import org.jetbrains.anko.AnkoLogger
 import org.json.JSONException
 import science.apolline.models.Device
 

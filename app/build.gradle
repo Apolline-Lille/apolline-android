@@ -29,6 +29,9 @@ android {
         versionCode 26
         versionName "2.4.9"
 
+        manifestPlaceholders = [fabric_api_key:"apiKey",
+                                google_map_api_key:"apiKey"]
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
