@@ -1,6 +1,7 @@
 ![apolline_logo_final-01](https://user-images.githubusercontent.com/22281426/36351313-1bac8b88-14a8-11e8-90f4-de41287cd1e9.png)
 [![Build Status](https://travis-ci.org/Apolline-Lille/apolline-android.svg?branch=master)](https://travis-ci.org/Apolline-Lille/apolline-android)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Apolline-Lille_apolline-android&metric=alert_status)](https://sonarcloud.io/dashboard?id=Apolline-Lille_apolline-android)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/63f3aaefb1e84e079fed7293b878bd89)](https://www.codacy.com/manual/rouvoy/apolline-android?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Apolline-Lille/apolline-android&amp;utm_campaign=Badge_Grade)
 
 # Apolline-android
 Android application for collecting air measurements.
