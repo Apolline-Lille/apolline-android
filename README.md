@@ -1,5 +1,7 @@
 ![apolline_logo_final-01](https://user-images.githubusercontent.com/22281426/36351313-1bac8b88-14a8-11e8-90f4-de41287cd1e9.png)
 [![Build Status](https://travis-ci.org/Apolline-Lille/apolline-android.svg?branch=master)](https://travis-ci.org/Apolline-Lille/apolline-android)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Apolline-Lille_apolline-android&metric=alert_status)](https://sonarcloud.io/dashboard?id=Apolline-Lille_apolline-android)
+
 # Apolline-android
 Android application for collecting air measurements.
 
@@ -46,25 +48,18 @@ Supported sensors:
  * [Android Ripple Background](https://github.com/skyfishjy/android-ripple-background) - A beautiful ripple animation. Gives ability to easily change its color, speed of wave, one ripple or multiple ripples.
  * [Fastlane](https://github.com/fastlane/fastlane) - Fastlane is a tool for iOS and Android developers to automate tedious tasks like generating screenshots, dealing with provisioning profiles, and releasing your application.
  * [GitFlow](http://nvie.com/posts/a-successful-git-branching-model/) - Gitflow Workflow is a Git workflow design that was first published and made popular by Vincent Driessen at nvie.
+
 ## Download (Unreleased)
 
 <a href="https://play.google.com/store/apps/details?id=science.apolline"> <img src="https://storage.googleapis.com/support-kms-prod/9DB3D190FD6DC8155EEDBCDEB4942128BE6B" alt="Play Store" width="200" height="60"></a>
 
 # Contributors
 
-Alphabetical order of last names
+Alphabetical order of last names:
 
 * Moncef AOUDIA
 * Patrick BINCHTA
-* Cyril Delegove
+* Aymane BOUZIANE 
+* Cyril DELEGOVE
 * Guillaume Jean-Jaques SEM
 * Damien TOULOUSE
-* Aymane BOUZIANE 
- 
- 
- 
- 
- 
- 
- 
- 
