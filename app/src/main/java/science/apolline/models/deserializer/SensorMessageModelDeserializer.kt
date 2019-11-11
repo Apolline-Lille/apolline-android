@@ -70,7 +70,7 @@ class SensorMessageModelDeserializer {
 
             if( deserializer.containsKey( entry.key ) ){
 
-                var manip = deserializer[ entry.key ];
+                var manip = deserializer[ entry.key ]!!;
                 try{
                     success = success && manip.invoke( output, entry.value.map { splited[ it ] } );
                 } catch ( e : Exception ){
