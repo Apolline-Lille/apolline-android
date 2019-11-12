@@ -166,6 +166,7 @@ project.ext {
     circle_menu_version = '2.0.0'
     rxbluetooth_version = '2.0.1'
     kpermissions_version = '1.0.0'
+    zxing_version = '3.6.0'
 }
 
 
@@ -299,6 +300,7 @@ dependencies {
     implementation 'com.squareup:android-times-square:1.6.5@aar'
 
     testCompile "org.testcontainers:testcontainers:1.12.3"
+    implementation "com.journeyapps:zxing-android-embedded:$zxing_version"
 }
 
 repositories {
