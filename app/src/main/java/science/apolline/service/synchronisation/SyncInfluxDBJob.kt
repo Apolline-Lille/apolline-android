@@ -45,7 +45,7 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
 
         // Preferences.
         mPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        SYNC_MOD = (mPrefs.getString("sync_type", "2")).toInt()
+        SYNC_MOD = (mPrefs.getString("sync_mod", "2")).toInt()
 
         info("SYNC_MOD: $SYNC_MOD")
 
