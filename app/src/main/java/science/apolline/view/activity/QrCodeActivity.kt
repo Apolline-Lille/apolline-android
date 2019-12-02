@@ -5,18 +5,32 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.widget.Toast
 import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.android.synthetic.main.activity_qr_code.*
 import science.apolline.R
+import science.apolline.view.adapter.SettingAdapter
 
 class QrCodeActivity : AppCompatActivity() {
+
+    private var Adapter = SettingAdapter()
+    private var paramFromParsedUri = HashMap<String,String>()
 
     private lateinit var mPrefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qr_code)
+        var rvSetting = this.findViewById<RecyclerView>(R.id.recycler_param)
+        rvSetting.layoutManager = LinearLayoutManager(this)
+        rvSetting.adapter = Adapter
+        btn_save.isEnabled =false
 
         initFunction()
     }
@@ -39,9 +53,7 @@ class QrCodeActivity : AppCompatActivity() {
                 //the result data is null or empty then
                 Toast.makeText(this,"The data is empty",Toast.LENGTH_SHORT).show()
             }else{
-                //result may be empty then we use settext
-                edt_scan_value.setText(result.contents.toString())
-                saveSettings(result.contents.toString())
+                LoadResult(result.contents.toString())
             }
         }else{
             // the camera will not close
@@ -59,25 +71,41 @@ class QrCodeActivity : AppCompatActivity() {
      * Synchronisation en wifi uniquement / Boolean / SYNC_WIFI / False(Synchro 4G autorisée)
      * Affiachage données / Boolean / DISPLAY_DATA / True(Les données sont affichées)
      */
-    private fun saveSettings(result : String){
+    private fun LoadResult(result : String){
         val uri = Uri.parse(result)
-        //println(uri)
-        //println(uri.queryParameterNames)
-        //println(uri.getQueryParameter(uri.queryParameterNames.iterator().next()))
 
         var iterator = uri.queryParameterNames.iterator()
 
+        var paramFromUriParsedList = ArrayList<String>()
+
         while(iterator.hasNext()){
+
             var key = iterator.next()
             var value = uri.getQueryParameter(key)
-            println(key +" "+ value)
+            paramFromUriParsedList.add(key + ":" + value)
+            paramFromParsedUri.put(key,value)
         }
 
+        Adapter.setValue(paramFromUriParsedList)
 
-        //val editor = mPrefs.edit()
-        //with(editor) {
+        btn_save.isEnabled = true
+        btn_save.setOnClickListener{
+            saveSettings()
+        }
 
-        //    apply()
-        //}
+    }
+
+    private fun saveSettings() {
+
+        val editor = mPrefs.edit()
+
+        paramFromParsedUri.forEach {
+            (key, value) -> editor.putString(key.toLowerCase(),paramFromParsedUri.get(key))
+        }
+
+        editor.apply()
+
+
+        this.finish()
     }
 }
