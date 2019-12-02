@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.Toast
 import com.google.zxing.integration.android.IntentIntegrator
+import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_qr_code.*
 import science.apolline.R
 import science.apolline.view.adapter.SettingAdapter
@@ -86,6 +87,12 @@ class QrCodeActivity : AppCompatActivity() {
             paramFromParsedUri.put(key,value)
         }
 
+        paramFromParsedUri.put("host","http://"+uri.host)
+        paramFromParsedUri.put("port",uri.port.toString())
+
+        paramFromUriParsedList.add("host" + ":" + uri.host)
+        paramFromUriParsedList.add("port" + ":" + uri.port)
+
         Adapter.setValue(paramFromUriParsedList)
 
         btn_save.isEnabled = true
@@ -105,6 +112,7 @@ class QrCodeActivity : AppCompatActivity() {
 
         editor.apply()
 
+        Toasty.success(applicationContext, "Settings saved !", Toast.LENGTH_LONG, true).show()
 
         this.finish()
     }
