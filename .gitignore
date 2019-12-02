@@ -86,8 +86,8 @@ captures/
 .idea/sqlDataSources.xml
 .idea/dynamic.xml
 .idea/uiDesigner.xml
-.idea/codeStyles.Project.xml
-.idea.modules.xml
+.idea/codeStyles/Project.xml
+.idea/modules.xml
 
 # Keystore files
 *.jks
