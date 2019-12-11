@@ -28,7 +28,7 @@
         android:title="Delete synchronized data" />
 
     <header
-        android:icon="@drawable/ic_device_bluetooth_phone"
+        android:icon="@drawable/qr_code"
         android:title="QR Code">
 
 

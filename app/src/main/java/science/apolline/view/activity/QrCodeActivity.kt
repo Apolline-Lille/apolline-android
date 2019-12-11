@@ -40,6 +40,10 @@ class QrCodeActivity : AppCompatActivity() {
         btn_scan.setOnClickListener{
             initScan()
         }
+
+        btn_exit.setOnClickListener{
+            closeActivity()
+        }
     }
 
     private fun initScan(){
@@ -114,6 +118,11 @@ class QrCodeActivity : AppCompatActivity() {
 
         Toasty.success(applicationContext, "Settings saved !", Toast.LENGTH_LONG, true).show()
 
+        this.finish()
+    }
+
+    private fun closeActivity(){
+        Toasty.warning(applicationContext, "Settings not saved !", Toast.LENGTH_LONG, true).show()
         this.finish()
     }
 }
