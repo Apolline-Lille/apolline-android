@@ -11,6 +11,11 @@ import science.apolline.models.SensorMessageModel
 import science.apolline.models.deserializer.SensorMessageModelDeserializer
 import java.util.*
 
+/**
+ * @brief This class give :
+ *   - bluetooth status
+ *   - data readed
+ */
 class BluetoothGateway : BluetoothGattCallback() {
 
     /**
