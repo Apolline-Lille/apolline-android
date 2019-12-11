@@ -81,6 +81,10 @@
         </provider>
 
         <activity
+            android:name=".view.debugging.BluetoothServiceDebuggingActivity"
+            android:label="@string/title_activity_debugging_bluetooth"/>
+
+        <activity
             android:name=".view.activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
