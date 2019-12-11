@@ -50,6 +50,7 @@ import science.apolline.utils.CheckUtility
 import science.apolline.utils.SampleGattAttributes
 import science.apolline.utils.SyncJobScheduler
 import science.apolline.utils.SyncJobScheduler.cancelAutoSync
+import science.apolline.view.debugging.BluetoothServiceDebuggingActivity
 import science.apolline.view.fragment.ViewPagerFragment
 import java.util.ArrayList
 import java.util.HashMap
@@ -348,6 +349,10 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
             }
             R.id.grp_fonction -> if (itemId == R.id.nav_setting) {
                 val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.grp_debugging -> if (itemId == R.id.nav_debugging) {
+                val intent = Intent(this, BluetoothServiceDebuggingActivity::class.java)
                 startActivity(intent)
             }
             else -> {
