@@ -49,9 +49,6 @@ import android.util.Log
 import android.widget.Toast
 
 
-import science.apolline.models.APPAData
-
-
 import science.apolline.view.activity.MainActivity
 
 import android.support.v4.app.ActivityCompat.checkSelfPermission
@@ -79,12 +76,12 @@ import java.util.Calendar
 import java.util.UUID
 
 import science.apolline.R
-import science.apolline.models.Device
-import science.apolline.models.IOIOData
-import science.apolline.models.Position
 import science.apolline.service.database.SensorDao
 import science.apolline.utils.*
 import org.jetbrains.anko.AnkoLogger
+import science.apolline.models.*
+import science.apolline.models.deserializer.SensorMessageModelDeserializer
+import java.lang.IllegalStateException
 
 /**
  * Service for managing connection and data communication with a GATT server hosted on a
@@ -195,7 +192,8 @@ class BluetoothLeService : Service(),AnkoLogger {
             override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
                 COLLECT_DATA_FREQ = (mPrefs.getString("collect_data_frequency", "1")).toInt()
                 //this bleu sensor branch
-                val tempBuff = characteristic.getStringValue(0)
+                val tempBuff = characteristic.getStringValue(0);
+                var model = SensorMessageModel();
                 buff += tempBuff
 
 
@@ -204,136 +202,10 @@ class BluetoothLeService : Service(),AnkoLogger {
 
                 if (buff.contains("\n")) {
                     if (!buff.contains("#") && buff.indexOf("2") == 0) {
-                        //Decode rawdata
-                        //date
-                        appaData.dateGPS = buff.substring(0, buff.indexOf(";"))
-                        //PM1
-                        var debut = buff.indexOf(";")
-                        var fin = buff.indexOf(";", debut + 1)
-                        var Value = buff.substring(debut + 1, fin)
-                        try {
-                            appaData.pm01Value = Integer.parseInt(Value)
-                        } catch (e: NumberFormatException) {
-                            appaData.pm01Value = 0
-                        }
 
-                        //PM2.5
-                        debut = fin
-                        fin = buff.indexOf(";", debut + 1)
-                        Value = buff.substring(debut + 1, fin)
-                        try {
-                            appaData.pm2_5Value = Integer.parseInt(Value)
-                        } catch (e: NumberFormatException) {
-                            appaData.pm2_5Value = 0
-                        }
-
-                        //PM10
-                        debut = fin
-                        fin = buff.indexOf(";", debut + 1)
-                        Value = buff.substring(debut + 1, fin)
-                        try {
-                            appaData.pm10Value = Integer.parseInt(Value)
-                        } catch (e: NumberFormatException) {
-                            appaData.pm10Value = 0
-                        }
-
-                        if (Integer.parseInt(Value) <= 25) {
-                            col = Integer.parseInt(Value) * 10
-                            color = Color.rgb(col, 0xFF, 0)
-                        } else if (Integer.parseInt(Value) <= 50) {
-                            col = 0xFF - (Integer.parseInt(Value) - 25) * 10
-                            color = Color.rgb(0xFF, col, 0)
-                        } else
-                            color = Color.rgb(0xFF, 0, 0)
-                        //Position GPS
-                        //Lat
-                        for (i in 0..6) {
-                            debut = fin
-                            fin = buff.indexOf(";", debut + 1)
-                        }
-                        try {
-                            LatGPS = java.lang.Double.parseDouble(buff.substring(debut + 1, fin))
-                        } catch (e: NumberFormatException) {
-                            LatGPS = 0.0
-                        }
-
-                        //Long
-                        debut = fin
-                        fin = buff.indexOf(";", debut + 1)
-                        try {
-                            LongGPS = java.lang.Double.parseDouble(buff.substring(debut + 1, fin))
-                        } catch (e: NumberFormatException) {
-                            LongGPS = 0.0
-                        }
-
-                        //Altitude
-                        debut = fin
-                        fin = buff.indexOf(";", debut + 1)
-                        try {
-                            appaData.AltiGPS = java.lang.Double.parseDouble(buff.substring(debut + 1, fin))
-                        } catch (e: NumberFormatException) {
-                            appaData.AltiGPS = 0.0
-                        }
-
-                        //Vitesse(km/h)
-                        debut = fin
-                        fin = buff.indexOf(";", debut + 1)
-                        try {
-                            appaData.SpeedGPS = java.lang.Double.parseDouble(buff.substring(debut + 1, fin))
-                        } catch (e: NumberFormatException) {
-                            appaData.SpeedGPS = 0.0
-                        }
-
-                        //nb satellites
-                        debut = fin
-                        fin = buff.indexOf(";", debut + 1)
-                        try {
-                            appaData.SatGPS = Integer.parseInt(buff.substring(debut + 1, fin))
-                        } catch (e: NumberFormatException) {
-                            appaData.SatGPS = 0
-                        }
-
-                        //T° Dps310
-                        debut = fin
-                        fin = buff.indexOf(";", debut + 1)
-                        //Pression
-                        debut = fin
-                        fin = buff.indexOf(";", debut + 1)
-                        try {
-                            appaData.pression = java.lang.Double.parseDouble(buff.substring(debut + 1, fin)) / 100
-                        } catch (e: NumberFormatException) {
-                            appaData.pression = 0.0
-                        }
-
-                        //T° HDC1080
-                        debut = fin
-                        fin = buff.indexOf(";", debut + 1)
-                        try {
-                            appaData.tempe = java.lang.Double.parseDouble(buff.substring(debut + 1, fin))
-                            appaData.tempKelvin = appaData.tempe.toFloat() + 273.15.toFloat()
-
-                        } catch (e: NumberFormatException) {
-                            appaData.tempe = 0.0
-                        }
-
-                        // Humidité
-                        debut = fin
-                        fin = buff.indexOf(";", debut + 1)
-                        try {
-                            appaData.humi = java.lang.Double.parseDouble(buff.substring(debut + 1, fin))
-                            appaData.rh = appaData.humi.toFloat()
-                            appaData.rht = appaData.rh/ (1.0546 - 0.00216 * (appaData.tempKelvin - 273.15)) * 10
-                        } catch (e: NumberFormatException) {
-                            appaData.humi = 0.0
-                        }
-
-                        // batterie level
-                        debut = fin
-                        fin = buff.indexOf(";", debut + 1)
-                        try {
-                            appaData.bat_volt = java.lang.Double.parseDouble(buff.substring(debut + 1, fin))
-                        } catch (e: NumberFormatException) {
-                            appaData.bat_volt = 0.0
+                        var success = SensorMessageModelDeserializer().fromString( buff, model );
+                        if( ! success ){
+                            throw IllegalStateException( "Unable to parse the data from the bluethooth" );
                         }
 
                     }

@@ -1,19 +1,21 @@
 package science.apolline.service.sensor
 
 import android.app.Service
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothManager
+import android.bluetooth.*
 import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
+import science.apolline.service.bluetooth.BluetoothGateway
+import science.apolline.utils.SampleGattAttributes
+import java.util.*
 
 class BluetoothService : Service() {
 
     companion object{
         val TAG = "apoline";
+        val UUID_DATA_DUST_SENSOR = UUID.fromString(SampleGattAttributes.DATA_DUST_SENSOR);
     }
 
     override fun onBind( intent : Intent ): IBinder? {
@@ -22,7 +24,13 @@ class BluetoothService : Service() {
 
     private var binder = BluetoothServiceBinder()
 
-    internal inner class BluetoothServiceBinder : Binder();
+    internal inner class BluetoothServiceBinder : Binder(){
+
+        /**
+         * Get service instance
+         */
+        fun getService() = this@BluetoothService;
+    }
 
     /**
      * @brief After using a given device, you should make sure that BluetoothGatt.close() is called
@@ -70,7 +78,10 @@ class BluetoothService : Service() {
         return true
     }
 
-    private var mBluetoothGatt = BluetoothGatt();
+    private var mBluetoothDeviceAddress: String? = null
+    private var mBluetoothGatt: BluetoothGatt? = null
+    private var mGattCallback = BluetoothGateway();
+    fun getGateway() = mGattCallback
 
     /**
      * Connects to the GATT server hosted on the Bluetooth LE device.
@@ -102,7 +113,6 @@ class BluetoothService : Service() {
         // We want to directly connect to the device, so we are setting the autoConnect
         // parameter to false.
 
-        injector.inject(appKodein())
         mBluetoothGatt = device.connectGatt(this, false, mGattCallback)
 
         Log.d(TAG, "Trying to create a new connection.")
