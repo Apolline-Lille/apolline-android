@@ -4,8 +4,8 @@
     <group android:id="@+id/grp_capteur" android:checkableBehavior="single" >
         <item
         android:id="@+id/nav_ioio"
-        android:icon="@drawable/loa_logo"
-        android:title="@string/loa_ioio_name" />
+        android:icon="@drawable/logo_apolline"
+        android:title="@string/app_name" />
     </group>
 
     <group android:id="@+id/grp_fonction" android:checkableBehavior="single">
