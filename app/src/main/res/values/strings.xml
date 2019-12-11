@@ -47,8 +47,6 @@
     <string name="drawer_contact">Contact</string>
     <string name="drawer_capteur">Capteur</string>
 
-    <string name="loa_ioio_name">LOA IOIO</string>
-
     <string name="sensorBroadCast">apolineSensorBroadCast</string>
 
     <string name="serviceBroadCastDataSet">dataSet</string>
