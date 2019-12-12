@@ -297,6 +297,8 @@ dependencies {
 
     //
     implementation 'com.squareup:android-times-square:1.6.5@aar'
+
+    testCompile "org.testcontainers:testcontainers:1.12.3"
 }
 
 repositories {
