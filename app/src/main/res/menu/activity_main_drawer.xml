@@ -23,12 +23,6 @@
             <!--android:icon="@drawable/ic_account_circle_black_48dp"-->
             <!--android:title="@string/drawer_contact" />-->
     </group>
-    <group android:id="@+id/grp_debugging" >
-        <item
-            android:id="@+id/nav_debugging"
-            android:icon="@drawable/bug_icon"
-            android:title="@string/title_menu_debug" />
-    </group>
 
     <!--<item android:title="Communicate">-->
         <!--<menu>-->

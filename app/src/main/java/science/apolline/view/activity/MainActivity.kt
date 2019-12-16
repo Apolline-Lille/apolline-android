@@ -351,10 +351,10 @@ class MainActivity : RootActivity(), NavigationView.OnNavigationItemSelectedList
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
             }
-            R.id.grp_debugging -> if (itemId == R.id.nav_debugging) {
+            /*R.id.grp_debugging -> if (itemId == R.id.nav_debugging) {
                 val intent = Intent(this, BluetoothServiceDebuggingActivity::class.java)
                 startActivity(intent)
-            }
+            }*/
             else -> {
 
             }

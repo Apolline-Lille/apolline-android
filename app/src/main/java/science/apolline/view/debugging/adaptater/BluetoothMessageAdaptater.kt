@@ -13,6 +13,7 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import science.apolline.R
 
 class BluetoothMessageAdaptater : RecyclerView.Adapter< BluetoothMessageAdaptater.MessageHolder >() {
 

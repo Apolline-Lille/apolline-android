@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView
 import science.apolline.models.SensorMessageModel
 import science.apolline.service.sensor.BluetoothService
 import science.apolline.view.debugging.adaptater.BluetoothMessageAdaptater
+import science.apolline.R
 
 class BluetoothServiceDebuggingActivity : Activity() {
 
@@ -26,7 +27,7 @@ class BluetoothServiceDebuggingActivity : Activity() {
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             if( service is BluetoothService.BluetoothServiceBinder ){
-                mService = ( service as BluetoothService.BluetoothServiceBinder ).getService();
+                mService = service.getService()
                 getBluetoothService().getGateway().getData().observe(
                         this@BluetoothServiceDebuggingActivity as LifecycleOwner,
                         Observer<SensorMessageModel> { msg ->
@@ -62,7 +63,9 @@ class BluetoothServiceDebuggingActivity : Activity() {
 
     private var mIsBound = false;
 
-    fun doBindService() {
+    override fun onStart() {
+        super.onStart()
+
         bindService(
                 Intent( this, BluetoothService.javaClass ),
                 mConnection,
