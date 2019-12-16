@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/apolline-android.iml" filepath="$PROJECT_DIR$/apolline-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Appolline.iml" filepath="$PROJECT_DIR$/Appolline.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/Appolline-app.iml" filepath="$PROJECT_DIR$/app/Appolline-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Desktop-apolline-android.iml" filepath="$PROJECT_DIR$/Desktop-apolline-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/apolline-android.iml" filepath="$PROJECT_DIR$/.idea/apolline-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/apolline-android-app.iml" filepath="$PROJECT_DIR$/app/apolline-android-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

@@ -27,4 +27,18 @@
         android:icon="@drawable/ic_rubbish_bin"
         android:title="Delete synchronized data" />
 
+    <header
+        android:icon="@drawable/qr_code"
+        android:title="QR Code">
+
+
+        <intent
+            android:targetPackage="science.apolline"
+            android:targetClass="science.apolline.view.activity.QrCodeActivity" />
+
+    </header>
+
+
+
+
 </preference-headers>
