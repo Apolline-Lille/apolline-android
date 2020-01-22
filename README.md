@@ -54,6 +54,19 @@ Supported sensors:
 
 <a href="https://play.google.com/store/apps/details?id=science.apolline"> <img src="https://storage.googleapis.com/support-kms-prod/9DB3D190FD6DC8155EEDBCDEB4942128BE6B" alt="Play Store" width="200" height="60"></a>
 
+## Resolving Apolline dependency problems
+
+Sometimes when importing Apolline in Android Studio, you can encounter some dependency problems. Here are some issues to resolve them.
+
+
+* Checkout the project directly in Android Studio via git interface `Check out project from Version Control`. Android Studio will automatically try to resolve all dependencies. (update modules, plugins)
+
+* After that, also try to sync gradle `Sync now`. Normally, all dependencies should be fixed.
+
+* Google maps and fabric require some keys. But for development, you don't need to set key values. You can simply remove `{value}` in `metadata` tag for google maps and fabric in `AndroidManifest.xml`.
+
+* For `google-services.json` file, you should ask for to the [maintener](romain.rouvoy@univ-lille.fr) of the project.
+
 # Contributors
 
 Alphabetical order of last names:
