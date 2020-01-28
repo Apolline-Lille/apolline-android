@@ -54,7 +54,7 @@ class QrCodeActivity : AppCompatActivity() {
         val result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data)
         //check if result is qrcode
         if(result != null){
-            if(result.contents == null){
+            if(result.contents.isNullOrEmpty()){
                 //the result data is null or empty then
                 Toast.makeText(this,"The data is empty",Toast.LENGTH_SHORT).show()
             }else{
