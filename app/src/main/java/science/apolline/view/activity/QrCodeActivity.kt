@@ -80,15 +80,15 @@ class QrCodeActivity : AppCompatActivity() {
     private fun LoadResult(result : String){
         val uri = Uri.parse(result)
 
-        var iterator = uri.queryParameterNames.iterator()
+        val iterator = uri.queryParameterNames.iterator()
 
-        var paramFromUriParsedList = ArrayList<String>()
+        val paramFromUriParsedList = ArrayList<String>()
 
         while(iterator.hasNext()){
 
-            var key = iterator.next()
-            var value = uri.getQueryParameter(key)
-            paramFromUriParsedList.add(key + ":" + value)
+            val key = iterator.next()
+            val value = uri.getQueryParameter(key)
+            paramFromUriParsedList.add("$key:$value")
             paramFromParsedUri.put(key,value)
         }
 
