@@ -75,7 +75,7 @@ class QrCodeActivity : AppCompatActivity() {
      * Fréquence de syncrhonisation (app->serveur) / int(secondes) / SYNC_FREQUENCY / 60(1minute)
      * Fréquence d'acquisition(capteur->app) / int(secondes) / ACQ_FREQUENCY / 5(seconde)
      * Synchronisation en wifi uniquement / Boolean / SYNC_WIFI / False(Synchro 4G autorisée)
-     * Affiachage données / Boolean / DISPLAY_DATA / True(Les données sont affichées)
+     * Affichage données / Boolean / DISPLAY_DATA / True(Les données sont affichées)
      */
     private fun LoadResult(result : String){
         val uri = Uri.parse(result)
