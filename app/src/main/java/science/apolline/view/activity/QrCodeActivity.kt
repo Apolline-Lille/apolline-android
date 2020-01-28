@@ -62,6 +62,7 @@ class QrCodeActivity : AppCompatActivity() {
             }
         }else{
             // the camera will not close
+            // if there is no QR_Code the camera will continue to scan until user cancel action
             super.onActivityResult(requestCode, resultCode, data)
         }
 
