@@ -32,9 +32,12 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
 
     private lateinit var sensorModel: SensorDao
     private lateinit var timestampModel: TimestampSyncDao
-    private var SYNC_MOD = 2 // Wi-Fi only
     private lateinit var mPrefs: SharedPreferences
     private var TO_MILLISECONDS: Int = 1000000
+
+    private val SYNC_MODE_DENIED: Int = 0 //NO SYNCHRO
+    private val SYNC_MODE_4G: Int = 1 //DATA ONLY (3g,4g,5g)
+    private val SYNC_MODE_WIFI = 2 // Wi-Fi only
 
     override fun onAdded() {
         info("onAdded: ")
@@ -43,20 +46,23 @@ class SyncInfluxDBJob : Job(Params(PRIORITY)
     @Throws(Throwable::class)
     override fun onRun() {
 
+
         // Preferences.
         mPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        SYNC_MOD = (mPrefs.getString("sync_type", "1")).toInt()
 
-        info("SYNC_MOD: $SYNC_MOD")
+        //Retrive user choice, if not defined, DATA (3g,4g,5g) will be used by default
+        var SYNC_MODE_USER = (mPrefs.getString("sync_type", SYNC_MODE_4G.toString())).toInt()
 
-        when (SYNC_MOD) {
-            0 -> {
+        info("SYNC_MODE_USER: $SYNC_MODE_USER")
+
+        when (SYNC_MODE_USER) {
+            SYNC_MODE_DENIED -> {
                 info("User denied sync job")
             }
-            1 -> {
+            SYNC_MODE_4G -> {
                 syncData()
             }
-            2 -> {
+            SYNC_MODE_WIFI -> {
                 if (CheckUtility.isWifiNetworkConnected(applicationContext))
                     syncData()
                 else
