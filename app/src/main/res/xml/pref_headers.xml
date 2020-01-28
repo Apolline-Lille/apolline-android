@@ -24,8 +24,8 @@
 
     <header
         android:fragment="science.apolline.view.activity.SettingsActivity$DataErasePreferenceFragment"
-        android:icon="@drawable/ic_rubbish_bin"
-        android:title="Delete synchronized data" />
+        android:icon="@drawable/ic_save_black_24dp"
+        android:title="@string/pref_header_manage_data" />
 
     <header
         android:icon="@drawable/qr_code"

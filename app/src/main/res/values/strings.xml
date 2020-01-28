@@ -221,5 +221,6 @@
     <!--<string name="pref_title_chart_range_y_summary">Min &lt; Max  </string>-->
     <!--<string name="pref_title_chart_range_y_unit">Points</string>-->
 
+    <string name="pref_header_manage_data">Manage synchronized data</string>
 
 </resources>
