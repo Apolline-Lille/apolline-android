@@ -1,19 +1,16 @@
 package science.apolline.view.activity
 
 import android.annotation.TargetApi
-import android.app.Activity
 import android.app.AlertDialog
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.*
 import android.preference.*
-import android.support.annotation.RequiresApi
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -22,13 +19,9 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import es.dmoral.toasty.Toasty
-import kotlinx.android.synthetic.main.activity_main_content.*
-import org.w3c.dom.Text
 import science.apolline.R
-import science.apolline.service.database.AppDatabase
 import science.apolline.utils.QueryBDDAsyncTask
 import science.apolline.utils.QuerySynchro
-import java.lang.ref.WeakReference
 import java.util.*
 
 
@@ -46,6 +39,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setupActionBar()
     }
 
@@ -173,7 +167,15 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     class DataSyncPreferenceFragment : PreferenceFragment() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            addPreferencesFromResource(R.xml.pref_data_sync)
+            val mPrefs = PreferenceManager.getDefaultSharedPreferences(this.activity)
+
+            val xmlAccordingToUserRights = if(mPrefs.getBoolean("isAdmin", false)) {
+                R.xml.pref_data_sync_enabled
+            } else {
+                R.xml.pref_data_sync_disabled
+            }
+
+            addPreferencesFromResource(xmlAccordingToUserRights)
             setHasOptionsMenu(true)
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
