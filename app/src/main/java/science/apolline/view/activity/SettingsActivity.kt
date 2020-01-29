@@ -169,13 +169,15 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             super.onCreate(savedInstanceState)
             val mPrefs = PreferenceManager.getDefaultSharedPreferences(this.activity)
 
-            val xmlAccordingToUserRights = if(mPrefs.getBoolean("isAdmin", false)) {
-                R.xml.pref_data_sync_enabled
+            val isAdminString = mPrefs.getString("isAdmin", "false")
+            val isUserAnAdmin = isAdminString?.toBoolean() ?: false
+
+            if(isUserAnAdmin) {
+                addPreferencesFromResource(R.xml.pref_data_sync_enabled)
             } else {
-                R.xml.pref_data_sync_disabled
+                addPreferencesFromResource(R.xml.pref_data_sync_disabled)
             }
 
-            addPreferencesFromResource(xmlAccordingToUserRights)
             setHasOptionsMenu(true)
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
